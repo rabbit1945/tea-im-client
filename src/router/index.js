@@ -99,17 +99,11 @@ router.beforeEach(async (to, from, next) => {
               })
             
           }));
-          await store.dispatch('getOfflineMsg',{'room_id':room_id}).then(res=>{
-            if (res.length <= 0) {
-               store.dispatch('getHistoryMsg',{
-                'room_id':room_id
-                
-              })
-            }
-          });
+          await store.dispatch('getOfflineMsg',{'room_id':room_id});
           
           next();
         } catch (error) {
+          console.log(error);
           //token失效从新登录
           await store.dispatch('userLogout');
           next({ name: 'Login' })

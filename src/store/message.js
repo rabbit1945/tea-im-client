@@ -11,7 +11,6 @@ const state = {
     messageList:[],
     offLineMessageList:[],
     historyMessageList:[],
-    minSeq:""
    
   
 };
@@ -20,7 +19,7 @@ const mutations = {
    
     GETMESSAGELIST(state, data) {
         
-        state.messageList.push(data)
+        state.messageList = data
 
     },
     GETOFFLINEMESSAGELIST(state,data) {
@@ -36,11 +35,6 @@ const mutations = {
 
 
     },
-    GETMINREQ(state,data){
-        console.log("getHistoryMsg",data);
-        state.minSeq = data
-
-    }
 
 };
 
@@ -59,16 +53,10 @@ const actions = {
             let list = result.data;
 
             const user_id = store.state.user.userInfo.user_id;
-            
             var receiveData = [];
             var tag = 0; // 0 自己发的  1 被人发的
             for (var i = 0; i < list.length; i++) {
                
-                if (i == 0) {
-                    
-                    commit("GETMINREQ",list[i].seq)  
-
-                }
                 if (user_id != list[i].msg_form ) {
                     tag = 1;
                 } else {
@@ -95,10 +83,6 @@ const actions = {
 
             //用户已经登录成功且获取到token 
             return true;
-        } else {
-            
-            return result.data;
-           
         }
 
     },
@@ -116,17 +100,13 @@ const actions = {
             let list = result.data.list;
 
             const user_id = store.state.user.userInfo.user_id;
-            
+            const oldMsg = state.historyMessageList;
+
             var receiveData = [];
             var tag = 0; // 0 自己发的  1 被人发的
             for (var i = 0; i < list.length; i++) {
                 
-                if (i == 0) {
-                   
-                    commit("GETMINREQ",list[i].seq)  
-
-                }
-
+               
                 if (user_id != list[i].msg_form) {
                     tag = 1;
                 } else {
@@ -145,33 +125,16 @@ const actions = {
                 }
             
                 
-                receiveData.push(messageList)
-
+                oldMsg.push(messageList)
+            
             }
-            console.log("receiveData:",receiveData)
-            // setCache("historyMessageList",JSON.stringify(receiveData))
             
-            let historyMessageList = state.historyMessageList;
-            
-            if (historyMessageList.length > 0) {
-                for (var i = 0; i < historyMessageList.length; i++) {
-                    
-                    receiveData.push(historyMessageList[i])
-                }
-                
-
-            } 
-            const res = new Map();
-            receiveData.filter((arr) => !res.has(receiveData.seq) && res.set(receiveData.seq, 1))
-            commit("GETHISTORYMESSAGELIST",receiveData);
+            console.log("receiveData:",oldMsg)
+            commit("GETHISTORYMESSAGELIST",oldMsg);
 
             //用户已经登录成功且获取到token 
-            return true;
-        } else {
-            
-            return result.data;
-           
-        }
+            return oldMsg;
+        } 
 
     },
 
@@ -200,15 +163,12 @@ const actions = {
                 "send_time":data.send_time,
                 "userLogo":data.userLogo,
             }
-            commit("GETMINREQ",data.seq)  
+           
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 
             return true;
-        } else {
-            console.log("聊天数据为空",data);
-            return false;
-        }
+        } 
     
     },
  

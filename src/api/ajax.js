@@ -44,7 +44,7 @@ requests.interceptors.response.use(
         return data;
     } else {
       // token 校验失效
-      if (data.code == '20001') {
+      if (data.code == '20014') {
         removeToken();
         return alert(data.msg)
       }
