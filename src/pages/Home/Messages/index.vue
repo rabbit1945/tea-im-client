@@ -3,22 +3,21 @@
       <div class="message" v-bind="message"  >
          <!-- 接收到的消息 -->
          <span v-if = "isLoading === true" class='time-line'>正在加载 </span>
-         <div ref = "returnTop">
+         
           <virtual-list
+          ref = "returnTop"
             class="msg-list"
             :data-key="'seq'"
             :data-sources="historyMessageList"
             :data-component="itemComponent"
             :keeps =10
-            :estimate-size= 85
+            :estimate-size= 82
             @totop = "totop"
+            :start = 100
 
             
           />
-         </div>
-
-        
-         
+  
         <div> 
 
           <!-- 离线消息 -->
@@ -81,7 +80,7 @@
           isEnd :false,
           page:0,
           limit:20,
-          timer: "",
+          timer: 0,
           itemComponent: Item,
           
         }
@@ -90,79 +89,63 @@
       
       },
       mounted(){
-        window.addEventListener("scroll", this.handleScroll, true);
-        this.getdata()
+       
+        // window.addEventListener("scroll", this.handleScroll, true);
+        this.initLoadMsg()
       },
       destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug
-        window.removeEventListener('scroll', this.handleScroll,true)
+        // window.removeEventListener('scroll', this.handleScroll,true)
       },
     
       methods:{
         totop(){
           console.log("到顶了")
-          let now = new Date().getTime();
-          this.timer = now;
+          
           this.getdata(); 
         },
            
         enter(val){
           if (val) {
-            const scrollHeight=this.$refs.returnTop.scrollHeight;
-            const deviceHeight = this.$refs.returnTop.clientHeight;
-            
-            this.$nextTick(() => {
-              this.$refs.returnTop.scrollTop = scrollHeight 
-            })
+            this.$refs.returnTop.scrollToBottom();
+           
           }
           
         },
 
         getdata() {
-          this.page++;
-          this.isLoading = true;
-          this.$store.dispatch('getHistoryMsg',{
-                room_id:this.room_id,
-                page:this.page,
-                limit:this.limit
-              }).then(res => {
-                console.log(res)
-                this.$nextTick(()=>{
-                  this.isLoading = false;
-                  if(!res) {
-                    this.isEnd = true;
-                  }
-                
-                })
-                
-              
-              });
-        },
-       
-        handleScroll(e) {
          
-          let now = new Date().getTime();
-          if (!this.isEnd && now - this.timer >= 1000 ) {
-          
-           
-            let scrollTop =  this.$refs.returnTop.scrollTop; // 滚动距离
-            const deviceHeight = this.$refs.returnTop.clientHeight; // 窗口高度
-
-            console.log("滑动:",scrollTop);
-            console.log(deviceHeight);
-            if ( !this.isLoading && !this.isEnd && scrollTop == 0) {
-              // this.timer = now;
-              // this.getdata(); 
-            } 
-
-
+          if (!this.isEnd  && !this.isLoading ) {
+            
+           this.initLoadMsg();
           }
-      }
+          
+        },
+
+        initLoadMsg() {
+            this.page++;
+            this.isLoading = true;
+            this.$store.dispatch('getHistoryMsg',{
+                  room_id:this.room_id,
+                  page:this.page,
+                  limit:this.limit
+                }).then(res => {
+                  console.log(res)
+                  this.$nextTick(()=>{
+                    this.isLoading = false;
+                    if(!res) {
+                      this.isEnd = true;
+                    }
+            
+                  })
+                  
+                });
+        }
       },
      
-
       computed: {
        
         message: {
+          
           get() {
             let offLineMessageList = this.$store.state.message.offLineMessageList;
             let historyMessageList = this.$store.state.message.historyMessageList;
@@ -170,6 +153,7 @@
             this.offLineMessageList = offLineMessageList;     
             this.historyMessageList = historyMessageList;
             this.historyMessageList.push(wsmessageList);
+            
            
           }
         }

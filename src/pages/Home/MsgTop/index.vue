@@ -1,8 +1,8 @@
  <template>
      <div class="top">
-            <span class="chatRoomName">{{ RoomName }}</span>
+            <span class="chatRoomName">{{ roomName }}</span>
             <span class="peopleNumber">
-                1/1
+               在线 {{ userList.isOnlineNum }} 人
             </span>
 
         </div>
@@ -15,7 +15,9 @@
     name: "MsgTop",
     data() {
       return {
-        "RoomName":store.state.user.roomInfo.roomName
+        "roomName":store.state.user.roomInfo.roomName,
+        "userList":store.state.user.roomUserList
+
       }
     }
   }
