@@ -16,7 +16,7 @@
             </template>
 
            
-          {{ val.nick_name }}
+            {{ val.nick_name }}
           </li>
         </ul>
     </div>
@@ -31,7 +31,7 @@
           noMore:false, //控制滚动禁用 
           loading: false, //控制滚动条禁用
           pages:0 , // 页码
-          size: 10, // 条数
+          size: 20, // 条数
 
         }
       },
@@ -77,19 +77,6 @@
       }
     }
   </script>
-
-  <!-- <script>
-  export default {
-    name: "UserList",
-    props: {
-    
-    },
-    mounted() {
-      //派发一个action||获取聊天室的用户列表
-      this.$store.dispatch("getCategoryList");
-    },
-  }
-  </script> -->
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>

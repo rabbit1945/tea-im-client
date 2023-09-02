@@ -125,7 +125,7 @@
   .msg-el-button {
     margin-right: 10px;
     border: none;  
-    background:#fffbf0;
+    background:white;
   }
   .msg-img {
     width: 25px;

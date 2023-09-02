@@ -58,9 +58,7 @@ const actions = {
 
             return true;
 
-        } else {
-            return Promise.reject(new Error("faile"));
-        }
+        } 
     },
     
 
@@ -72,10 +70,7 @@ const actions = {
             commit("ROOMUSERLIST",result.data);
             return true;
 
-        } else {
-            return Promise.reject(new Error("faile"));
-
-        }
+        } 
 
     },
     //获取聊天室信息
@@ -93,9 +88,6 @@ const actions = {
             commit("GETROOMINFO", list?.roomInfo);
             
             return true;
-        }else{
-            
-            return Promise.reject(new Error('faile'));
         }
     },
     // async getMessage({commit}, data){
@@ -143,8 +135,6 @@ const actions = {
             removeToken();
             commit("USERLOGIN",false);
             return true;
-        }else{
-            return Promise.reject(new Error('faile'));
         }
   },
 
