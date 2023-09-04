@@ -1,0 +1,9 @@
+{
+    "plugins": [
+        "transform-vue-jsx",
+        "transform-runtime",  
+        "transform-remove-strict-mode"
+    ]
+}
+
+

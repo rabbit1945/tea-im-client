@@ -3,7 +3,7 @@
       <!-- 路由组件出口的地方 -->
     
       <!--头部 -->
-       <MsgTop />
+       <MsgTop/>
         <div> 
           <!--用户基本信息 -->
           <MsgBase :userStatus="userStatus"/>
@@ -25,7 +25,6 @@ import MsgTop from './MsgTop';
 import MsgBase from './MsgBase';
 import Messages from './Messages';
 import UserList from './UserList';
-import { setToken, getToken,removeToken} from "@/utils/token";
 
 
 
@@ -62,9 +61,7 @@ export default {
       if (this.$socket.connected === false) {
           this.userStatus = "offline"
 
-      }
-    
-      
+      }   
     },
     async connect_error (error) {
       console.log("Socket 连接失败",error);

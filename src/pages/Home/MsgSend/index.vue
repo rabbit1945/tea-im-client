@@ -1,10 +1,9 @@
  <template>
+
+  
      <div class="world">
      
-      <!-- <div  @keydown="offMsessageWrap($event)" class="send" ref="getValue" contenteditable="true" placeholder="一起来聊天吧">
-
-      </div> -->
-      
+     
       <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectEmoji"/>
       
       <div class="msg-button">
@@ -12,8 +11,9 @@
         <el-button @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
           <img class = "msg-img" src="/emoji/QQ/png/0fix@2x.png">
         </el-button>
-       
+        <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
+      
       <el-input
           id="input"
           v-model="text"
@@ -23,18 +23,20 @@
           :rows="5"
           placeholder="请输入内容">
         </el-input>
-    
-        
+      
     </div>
  </template>
   
   <script>  
-  import {VEmojiPicker} from 'v-emoji-picker'
+  import {VEmojiPicker} from 'v-emoji-picker';
+  import Audio from '../Audio'
 
   export default {
     name: "MsgSend",
     components: {
-      VEmojiPicker
+      VEmojiPicker,
+      Audio
+    
     },
     data(){
       return {
@@ -46,6 +48,7 @@
         "nick_name":this.$store.state.user.userInfo.nick_name,
         "userLogo":this.$store.state.user.userInfo.photo,
         "room_id":this.$store.state.user.roomInfo.room_id,
+        "audio":[],
         
       }
     },
@@ -62,6 +65,14 @@
     },
   
     methods: {
+      audioData(val) {
+        console.log("val",val);
+        if (val) {
+          this.audio = val;
+          this.msgSend();
+        }
+        
+      },
       selectEmoji(emoji) {// 选择emoji后调用的函数
         let input = document.getElementById("input")
         let startPos = input.selectionStart
@@ -79,26 +90,34 @@
       },
       msgSend(){
         this.$socket.open();
-        const messgae = this.text;
+        
+        let messgae = this.text;
+        let content_type = 0; // 音频
+        if (this.audio.fileSize > 0 && !messgae ) {
+           messgae = this.audio.newbolb.join(',');
+           content_type = 1; // 音频
+        } 
+        console.log("this.audio.newbolb:",messgae);
+
         if (!messgae) {
           alert("你好，客官你还没有添写消息呢！！！");
           return false;
         }
+        
+       
         const user_id = this.user_id;
         const nick_name = this.nick_name;
         const userLogo = this.userLogo;
         const room_id   = this.room_id;
-
-        
         this.$socket.volatile.emit('room',{
             "room_id": room_id,
             "user_id": user_id,
             "nick_name": nick_name,
             "msg": messgae,
             "userLogo":userLogo,
+            "content_type": content_type 
             
         }); 
-        this.$emit('enter',true);
         
       },
   
@@ -109,6 +128,12 @@
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
+  .audio {
+    float: left;
+    width: 25px;
+    height: 25px; 
+
+  }
   .world {
     position: absolute;
     bottom: 0;

@@ -90,41 +90,6 @@ const actions = {
             return true;
         }
     },
-    // async getMessage({commit}, data){
-    //     console.log("服务端发过来了一个数据:",data);
-    //     if ( Object.keys(data).length > 0) {
-    //         if (data.code == 20014 ) {
-    //             next('/login');
-
-    //         }
-    //         const user_id = state.userInfo.user_id;
-    //         var tag = 0; // 0 自己发的  1 被人发的
-    //         if (user_id !== data.user_id ) {
-    //           tag = 1;
-    //         }
-
-    //         let messageList = {
-    //             "user_id": data.user_id,
-    //             "tag":tag,
-    //             "nick_name":data.nick_name,
-    //             "msg":data.msg,
-    //             "room_id":1,
-    //             "send_time":data.send_time,
-    //             "sender":data.sender,
-    //             "userLogo":data.userLogo,
-    //         }
-               
-    //          // 聊天记录
-    //          commit("GETMESSAGELIST", messageList)
-
-    //         return true;
-    //     } else {
-    //         console.log("聊天数据为空",data);
-    //         return false;
-    //     }
-    
-    // },
- 
     //退出登录
     async userLogout({commit}) {
         //只是向服务器发起一次请求，通知服务器清除token
