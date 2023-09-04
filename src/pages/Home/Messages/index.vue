@@ -16,43 +16,9 @@
             :start = 100
 
             
-          />
-  
-        <div> 
+          />  
 
-          <!-- 离线消息 -->
-          <span v-if = "offLineMessageList != false" class='time-line'>以下为新消息 </span>
-
-          <div  v-for="val in offLineMessageList">
-            <span class='time-line'>{{ val.send_time }} </span>
-            <div :class= "val.tag == 1 ? 'userInfo' : 'my-userInfo' "> 
-              
-                <h4>{{ val.nick_name}}</h4>
-                <a  href='#' :class = "val.tag == 1 ? 'userInfo-logo' : 'my-userInfo-logo'" >
-                  <img :src=val.userLogo>
-                </a>
-                <div class="msg-frame">{{ val.msg }}</div>
-                
-            </div>
-
-          </div>
-          <!-- ws交互的消息 -->
-          <!-- <div v-for="val in wsmessageList" >
-            <span class='time-line'>{{ val.send_time }} </span>
-            <div :class= "val.tag == 1 ? 'userInfo' : 'my-userInfo' "> 
-              
-                <h4>{{ val.nick_name}}</h4>
-                <a  href='#' :class = "val.tag == 1 ? 'userInfo-logo' : 'my-userInfo-logo'" >
-                  <img :src=val.userLogo>
-                </a>
-                <div class="msg-frame">{{ val.msg }}</div>
-                
-            </div>
-
-          </div> -->
-        </div>   
-
-          <MsgSend v-on:enter="enter"/>
+          <MsgSend/>
       
       </div>
      
@@ -103,14 +69,7 @@
           
           this.getdata(); 
         },
-           
-        enter(val){
-          if (val) {
-            this.$refs.returnTop.scrollToBottom();
-           
-          }
-          
-        },
+        
 
         getdata() {
          

@@ -2,7 +2,7 @@
      <div class="top">
             <span class="chatRoomName">{{ roomName }}</span>
             <span class="peopleNumber">
-               在线 {{ userList.isOnlineNum }} 人
+               在线 {{ isOnlineNum }} 人
             </span>
 
         </div>
@@ -10,15 +10,14 @@
   
   <script>
   //引入store
-  import store from "@/store";
+  // import store from "@/store";
   export default {
     name: "MsgTop",
     data() {
       return {
-        "roomName":store.state.user.roomInfo.roomName,
-        "userList":store.state.user.roomUserList
-
-      }
+        "roomName":this.$store.state.user.roomInfo.roomName,
+        "isOnlineNum":this.$store.state.user.roomInfo.countOnline
+       }
     }
   }
   </script>
