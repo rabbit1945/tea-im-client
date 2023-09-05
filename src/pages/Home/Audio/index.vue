@@ -26,7 +26,7 @@
   const lamejs = require('lamejstmp')
   const recorder = new Recorder({
     sampleBits: 16,                 // 采样位数，支持 8 或 16，默认是16
-    sampleRate: 16000,              // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，我的chrome是48000
+    sampleRate: 11025,              // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，我的chrome是48000
     numChannels: 1,                 // 声道，支持 1 或 2， 默认是1
     compiling: true, // 是否边录边转换，默认是false
   })
@@ -88,15 +88,19 @@
            recorder.start().then(() => {
             this.drawRecord();//开始绘制图片
             this.startEnd = true;
-            console.log("drawRecordId:",this.drawRecordId)
             }, (error) => {
+              this.stopRecorder();
+              this.startEnd = false;
              
               // 出错了
               console.log("error:",error);
             });
            
         } else {
-          this.getRecorder();//获取 WAV 数据
+          this.stopRecorder();
+          this.getRecorder();
+         
+         
           this.startEnd = false;
 
         }
@@ -121,7 +125,6 @@
       },
       // 录音播放
       playRecorder () {
-
         recorder.play();
         this.drawPlay();//绘制波浪图
       },
@@ -149,18 +152,15 @@
       /**
        *  获取录音文件
        * */
-      getRecorder(){
+       async getRecorder(){
         let toltime = recorder.duration;//录音总时长
         let fileSize = recorder.fileSize;//录音总大小
- 
         //录音结束，获取取录音数据
         // let PCMBlob = recorder.getPCMBlob();//获取 PCM 数据
-        let wavBlob = recorder.getWAVBlob();//获取 WAV 数据
+        // let wavBlob = recorder.getWAVBlob();//获取 WAV 数据
           
-        let channel = recorder.getChannelData();//获取左声道和右声道音频数据
-        
+        // let channel = recorder.getChannelData();//获取左声道和右声道音频数据
         const mp3Blob = this.convertToMp3(recorder.getWAV());
-       
         
         this.uploadWAVData(mp3Blob,toltime,fileSize)
       },
@@ -181,17 +181,17 @@
           //上传wav录音数据
     uploadWAVData(wavBlob,toltime,fileSize) {
       
-      // var formData = new FormData()
+      var formData = new FormData()
       // // 此处获取到blob对象后需要设置fileName满足当前项目上传需求，其它项目可直接传把blob作为file塞入formData
       // const newbolb = new Blob([wavBlob], { type: 'audio/wav' })
       // // 获取当时时间戳作为文件名
-      // const fileOfBlob = new File([newbolb], new Date().getTime() + '.wav')
-      // formData.append('file', fileOfBlob)
-      
-      // const url = window.URL.createObjectURL(wavBlob)
-      // // this.src = url 
-      // console.log(url);
-      this.$emit('audioData',{"newbolb":wavBlob,"toltime":toltime,"fileSize":fileSize});
+      const fileOfBlob = new File([wavBlob], new Date().getTime() + '.mp3')
+      formData.append("file",fileOfBlob)
+      this.$emit('audioData',{
+        "formData":formData,
+        "toltime":toltime,
+        "fileSize":fileSize
+      });
 
     },
       /**
@@ -255,9 +255,8 @@
         if (enc.length > 0) {
           buffer.push(enc);
         }
-        console.log(buffer);
-        return buffer;
-        // return new Blob(buffer, { type: "audio/mp3" });
+       
+        return new Blob(buffer, { type: "audio/mp3" });
       },
  
       /**
@@ -270,7 +269,6 @@
         // 实时获取音频大小数据
         let dataArray = recorder.getRecordAnalyseData(),
             bufferLength = dataArray.length;
- 
         // 填充背景色
         this.ctx.fillStyle = 'rgb(200, 200, 200)';
         this.ctx.fillRect(0, 0, this.oCanvas.width, this.oCanvas.height);
@@ -308,7 +306,6 @@
       drawPlay () {
         // 用requestAnimationFrame稳定60fps绘制
         this.drawPlayId = requestAnimationFrame(this.drawPlay);
-        console.log("drawPlayId:",this.drawPlayId);
         // 实时获取音频大小数据
         let dataArray = recorder.getPlayAnalyseData(),
                 bufferLength = dataArray.length;

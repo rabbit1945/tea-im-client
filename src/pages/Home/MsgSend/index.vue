@@ -65,11 +65,24 @@
     },
   
     methods: {
-      audioData(val) {
+      async audioData(val) {
         console.log("val",val);
+        
         if (val) {
-          this.audio = val;
-          this.msgSend();
+          await this.$store.dispatch("uploadAudio", val.formData).then(res => {
+                   let path = res.file
+                   this.audio = {
+                    'file':path,
+                    'toltime':val.toltime,
+                    'fileSize':val.toltime
+
+                   }
+                   this.msgSend()
+
+          })
+        } else {
+           tihs.alert("语音出现问题，请重试！！！");
+           return false;
         }
         
       },
@@ -94,13 +107,13 @@
         let messgae = this.text;
         let content_type = 0; // 音频
         if (this.audio.fileSize > 0 && !messgae ) {
-           messgae = this.audio.newbolb.join(',');
+           messgae = this.audio.file;
            content_type = 1; // 音频
         } 
         console.log("this.audio.newbolb:",messgae);
 
         if (!messgae) {
-          alert("你好，客官你还没有添写消息呢！！！");
+          this.alert("你好，客官你还没有添写消息呢！！！");
           return false;
         }
         
