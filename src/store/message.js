@@ -2,7 +2,8 @@
 // 导入api
 import {
     reqOfflineMsg,
-    reqhistoryMsg
+    reqhistoryMsg,
+    reqUploadAudio
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
@@ -136,6 +137,13 @@ const actions = {
             return oldMsg;
         } 
 
+    },
+    async uploadAudio({commit}, data) {
+        let result = await reqUploadAudio(data);
+        console.log(result);
+        if (result.code == "10000") {
+            return result.data;
+        } 
     },
 
     async getMessage({commit}, data){

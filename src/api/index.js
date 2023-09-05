@@ -21,3 +21,5 @@ export const reqLogout = ()=>requests({url:'/v1/log/out',method:'post'});
 export const reqOfflineMsg = (data)=>requests({url:'/v1/user/offline/msg',data,method:'post'});
 // 历史消息
 export const reqhistoryMsg = (data)=>requests({url:'/v1/user/history/msg',data,method:'post'});
+// 上传音频 /upload/audio
+export const reqUploadAudio =  (data)=>requests({url:'/v1/upload/audio',data,method:'post'});
