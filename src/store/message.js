@@ -73,6 +73,7 @@ const actions = {
                     "seq":list[i].seq,
                     "send_time":list[i].send_time,
                     "userLogo":list[i].photo,
+                    "content_type":list[i].content_type,
                 }
                 
                 receiveData.push(messageList)
@@ -123,10 +124,11 @@ const actions = {
                     "seq":list[i].seq,
                     "send_time":list[i].send_time,
                     "userLogo":list[i].photo,
+                    "content_type":list[i].content_type,
                 }
             
                 
-                oldMsg.push(messageList)
+                oldMsg.unshift(messageList)
             
             }
             
@@ -170,6 +172,7 @@ const actions = {
                 "seq":data.seq,
                 "send_time":data.send_time,
                 "userLogo":data.userLogo,
+                "content_type":data.content_type,
             }
            
             // 聊天记录

@@ -10,12 +10,11 @@
             :data-key="'seq'"
             :data-sources="historyMessageList"
             :data-component="itemComponent"
-            :keeps =10
-            :estimate-size= 82
+            :keeps =20
+            :estimate-size= 50
             @totop = "totop"
             :start = 100
-
-            
+           
           />  
 
           <MsgSend/>
@@ -65,19 +64,14 @@
     
       methods:{
         totop(){
-          console.log("到顶了")
-          
           this.getdata(); 
         },
         
 
         getdata() {
-         
           if (!this.isEnd  && !this.isLoading ) {
-            
            this.initLoadMsg();
-          }
-          
+          }  
         },
 
         initLoadMsg() {
