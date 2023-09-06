@@ -65,11 +65,11 @@
     },
   
     methods: {
-      async audioData(val) {
+       audioData(val) {
         console.log("val",val);
         
         if (val) {
-          await this.$store.dispatch("uploadAudio", val.formData).then(res => {
+           this.$store.dispatch("uploadAudio", val.formData).then(res => {
                    let path = res.file
                    this.audio = {
                     'file':path,

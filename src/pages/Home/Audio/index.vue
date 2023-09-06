@@ -7,13 +7,10 @@
     <div tabindex="1" ref = 'keypressSpace'  v-show="isShowPermission" @keypress.space = "startRecorder()" class = " audio-tips"> 
         <img class = "msg-img" src="./images/mic.png">
         <span>按下空格开始录音，在按下空格录音结束。</span>
-        <Button type="success" @click="playRecorder()">录音播放</Button>
-        
-        <Button type="success" @click="getRecorder()">获取录音文件</Button>
-        <Button type="success" @click="getMp3Data()">下载录音文件</Button>
-        
-
+        <el-button round size="mini" type="success" @click="outPlay()">退出</el-button>
     </div>
+    <div v-show="startEnd && countdownimes === 0" class = "times">{{satrtTime}}</div>
+    <div v-show="startEnd && countdownimes > 0" class = "times">{{countdownimes}} 10秒之后自动发送</div>
     <canvas v-show="startEnd" id="canvas"  class = "canvas" >
     </canvas>
     <canvas id="playChart" class = "canvas"></canvas>
@@ -40,7 +37,6 @@
     console.log('当前录音的当前部分', params.getNextData);
 
     console.log('当前录音的总数据([DataView, DataView...])', params.getWholeData);
- 
     console.log('--------------END---------------')
   }
   
@@ -57,8 +53,10 @@
         pCanvas : null,
         pCtx : null,
         startEnd: false,
-        isShowPermission:false
-       
+        isShowPermission:false,
+        satrtTime:0, //开始计时时间
+        endTime:60,//结束计时时间
+        countdownimes: 0, // 倒计时
 
       }
     },
@@ -77,6 +75,14 @@
         this.pCanvas = document.getElementById('playChart');
         this.pCtx = this.pCanvas.getContext("2d");
       },
+
+      outPlay() {
+        
+        this.stopRecorder();
+        this.startEnd = false;
+        this.isShowPermission = false;
+       
+      },
  
       /**
        *  录音的具体操作功能
@@ -86,8 +92,8 @@
         
         if ( this.startEnd === false) {
            recorder.start().then(() => {
-            this.drawRecord();//开始绘制图片
             this.startEnd = true;
+            this.drawRecord();//开始绘制图片
             }, (error) => {
               this.stopRecorder();
               this.startEnd = false;
@@ -152,7 +158,7 @@
       /**
        *  获取录音文件
        * */
-       async getRecorder(){
+      getRecorder(){
         let toltime = recorder.duration;//录音总时长
         let fileSize = recorder.fileSize;//录音总大小
         //录音结束，获取取录音数据
@@ -263,6 +269,24 @@
        * 绘制波浪图-录音
        * */
       drawRecord () {
+       
+        this.satrtTime = Math.ceil(recorder.duration);//开始计时
+        //  剩余10秒倒计时
+        let countdownime = this.endTime - this.satrtTime;
+        if (countdownime <=10 && countdownime > 0 ) {        
+            this.countdownimes = this.endTime - this.satrtTime-1;
+            
+            if (this.countdownimes == 0 && this.startEnd) {
+              this.stopRecorder();
+              this.getRecorder();
+              this.startEnd = false;
+              this.satrtTime = 0;
+              this.countdownimes = 0;
+              return true;
+
+            } 
+          
+        }
         // 用requestAnimationFrame稳定60fps绘制
         this.drawRecordId = requestAnimationFrame(this.drawRecord);
  
@@ -347,11 +371,22 @@
 </script>
  
 <style  scoped>
+   
+.times {
+  width: 150px;
+  height: 30px; 
+  position:relative;
+  top: -73px;
+  left:270px;
+  text-align: center;
+  border-radius: 30px;
+  z-index: 1;
+}
 .canvas {
   width: 150px;
   height: 30px; 
   position:relative;
-  top: -60px;
+  top: -70px;
   left:270px;
   border-radius: 30px;
   z-index: 1;
