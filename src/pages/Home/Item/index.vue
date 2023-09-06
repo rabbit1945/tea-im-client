@@ -1,22 +1,27 @@
 <template>
     <div>
+        <span class='time-line'>{{ this.source.send_time }} </span>
+        <div :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator' ">
+            <div :class = "this.source.tag == 1 ? 'item' : 'item creator'">
+                <div class="avatar">
+                    <img :src=this.source.userLogo>
+                </div>
+                <div class = "body">
+                    <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
+                    <div class = "content">
+                        <div class="text" v-if = "this.source.content_type === 0">
+                            {{ this.source.msg }}
+                        </div>
 
-    <span class='time-line'>{{ this.source.send_time }} </span>
-   <div :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator' ">
-    <div :class = "this.source.tag == 1 ? 'item' : 'item creator'">
-        <div class="avatar">
-            <img :src=this.source.userLogo>
-        </div>
-        <div class = "body">
-            <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
-            <div class = "content">
-                <div class="text">
-                    {{ this.source.msg }}
+                        <div class="text" v-if = "this.source.content_type === 1">
+                            <mini-audio
+                                :audio-source= this.source.msg
+                            ></mini-audio>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-   </div>
     </div>
    
   </template>

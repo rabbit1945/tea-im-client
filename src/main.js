@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import VueAudio from 'vue-audio-better'
 
 
 import App from './App.vue';
@@ -22,7 +23,7 @@ import * as API from '@/api';
 //引入表单校验插件
 Vue.config.productionTip = false
 Vue.use(ElementUI);
-
+Vue.use(VueAudio)
 new Vue({
   render: h => h(App),
   //全局事件总线$bus配置
