@@ -50,12 +50,9 @@
         }
       },
      
-      beforeCreate()
-      {
-
-      },
+    
       mounted(){
-       
+        this.historyMessageList = []
         // window.addEventListener("scroll", this.findNewMsg, true);
         this.initLoadMsg()
       },
@@ -69,8 +66,8 @@
             if (val) {
               this.$nextTick(() => {
               var div=this.$refs.returnBottom.$refs.root;
-              console.log(div);
-              div.scrollTop = div.scrollHeight;
+              console.log(div.scrollHeight);
+              div.scrollTop = div.scrollHeight+440;
             })
           }
           

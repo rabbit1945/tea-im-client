@@ -106,16 +106,16 @@
       msgSend(){
         this.$socket.open();
         
-        let messgae = this.text;
+        let messgae = this.text.trim();
         let content_type = 0; // 音频
         if (this.audio.fileSize > 0 ) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
-        console.log("this.audio.newbolb:",this.audio);
-
-        if (!messgae) {
-          this.alert("你好，客官你还没有添写消息呢！！！");
+       
+        if (messgae === ''|| messgae === null || messgae === undefined ) {
+          
+          this.$alert("你好，客官你还没有添写消息呢！！！");
           return false;
         }
         
