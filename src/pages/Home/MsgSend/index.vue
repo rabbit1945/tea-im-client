@@ -48,7 +48,7 @@
         "nick_name":this.$store.state.user.userInfo.nick_name,
         "userLogo":this.$store.state.user.userInfo.photo,
         "room_id":this.$store.state.user.roomInfo.room_id,
-        "audio":[],
+        "audio":{},
         
       }
     },
@@ -62,7 +62,7 @@
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
         this.$emit('findNewMsg',true);
-        this.audio = null
+        this.audio.fileSize = 0
       }
     },
   
@@ -77,7 +77,6 @@
                     'file':path,
                     'toltime':val.toltime,
                     'fileSize':val.fileSize
-
                    }
                    this.msgSend()
 
@@ -108,7 +107,7 @@
         
         let messgae = this.text.trim();
         let content_type = 0; // 音频
-        if (this.audio) {
+        if (this.audio.fileSize > 0) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
