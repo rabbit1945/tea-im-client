@@ -13,7 +13,7 @@
     <div v-show="startEnd && countdownimes > 0" class = "times">{{countdownimes}} 10秒之后自动发送</div>
     <canvas v-show="startEnd" id="canvas"  class = "canvas" >
     </canvas>
-    <canvas id="playChart" class = "canvas"></canvas>
+    <!-- <canvas id="playChart" class = "canvas"></canvas> -->
     
   </div>
 </template>
@@ -31,7 +31,7 @@
   // 绑定事件-打印的是当前录音数据
   recorder.onprogress = function(params) {
     console.log('--------------START---------------')
-    console.log('录音时长(秒)', params.duration);
+    // console.log('录音时长(秒)', params.duration);
     console.log('录音大小(字节)', params.fileSize);
     console.log('录音音量百分比(%)', params.vol);
     console.log('当前录音的当前部分', params.getNextData);
@@ -72,8 +72,8 @@
         this.oCanvas = document.getElementById('canvas');
         this.ctx = this.oCanvas.getContext("2d");
         //播放波浪
-        this.pCanvas = document.getElementById('playChart');
-        this.pCtx = this.pCanvas.getContext("2d");
+        // this.pCanvas = document.getElementById('playChart');
+        // this.pCtx = this.pCanvas.getContext("2d");
       },
 
       outPlay() {
@@ -159,8 +159,8 @@
        *  获取录音文件
        * */
       getRecorder(){
-        let toltime = recorder.duration;//录音总时长
-        let fileSize = recorder.fileSize;//录音总大小
+        let toltime = recorder.duration || 0;//录音总时长
+        let fileSize = recorder.fileSize || 0;//录音总大小
         //录音结束，获取取录音数据
         // let PCMBlob = recorder.getPCMBlob();//获取 PCM 数据
         // let wavBlob = recorder.getWAVBlob();//获取 WAV 数据

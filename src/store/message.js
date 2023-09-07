@@ -9,9 +9,9 @@ import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
 
 const state = {
-    messageList:[],
+    messageList:null,
     offLineMessageList:[],
-    historyMessageList:[],
+    historyMessageList:null,
    
   
 };
@@ -27,14 +27,13 @@ const mutations = {
         state.offLineMessageList = data
 
     },
-    GETHISTORYMESSAGELIST(state,data) {
+    GETHISTORYMESSAGELIST(state,data) {   
         // console.log(getCache('historyMessageList'));
-        if(data.length > 0){
+        if(Object.keys(data).length > 0){
             state.offLineMessageList = []
+            state.historyMessageList = data
         }
-        state.historyMessageList = data
-
-
+        
     },
 
 };
@@ -102,37 +101,37 @@ const actions = {
             let list = result.data.list;
 
             const user_id = store.state.user.userInfo.user_id;
-            const oldMsg = state.historyMessageList;
-
-            var receiveData = [];
+            let oldMsg = state.historyMessageList || []; 
+            
             var tag = 0; // 0 自己发的  1 被人发的
             for (var i = 0; i < list.length; i++) {
                 
-               
-                if (user_id != list[i].msg_form) {
-                    tag = 1;
-                } else {
-                    tag = 0;
+                if (list[i].msg_form) {
+                    if (user_id != list[i].msg_form) {
+                        tag = 1;
+                    } else {
+                        tag = 0;
+                    }
+
+                    let messageList = {
+                        "user_id": list[i].msg_form,
+                        "tag":tag,
+                        "nick_name":list[i].nick_name,
+                        "msg":list[i].msg_content,
+                        "room_id":list[i].room_id,
+                        "seq":list[i].seq,
+                        "send_time":list[i].send_time,
+                        "userLogo":list[i].photo,
+                        "content_type":list[i].content_type,
+                    }
+                    
+                    oldMsg.unshift(messageList)                   
                 }
 
-                let messageList = {
-                    "user_id": list[i].msg_form,
-                    "tag":tag,
-                    "nick_name":list[i].nick_name,
-                    "msg":list[i].msg_content,
-                    "room_id":list[i].room_id,
-                    "seq":list[i].seq,
-                    "send_time":list[i].send_time,
-                    "userLogo":list[i].photo,
-                    "content_type":list[i].content_type,
-                }
-            
-                
-                oldMsg.unshift(messageList)
-            
             }
+
             
-            console.log("receiveData:",oldMsg)
+
             commit("GETHISTORYMESSAGELIST",oldMsg);
 
             //用户已经登录成功且获取到token 

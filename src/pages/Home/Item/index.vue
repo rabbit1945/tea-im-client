@@ -16,6 +16,8 @@
                         <div class="text" v-if = "this.source.content_type === 1">
                             <mini-audio
                                 :audio-source= this.source.msg
+                                @canplay="showLong"
+                                volume =  30
                             ></mini-audio>
                         </div>
                     </div>
@@ -29,22 +31,40 @@
   <script>
     export default {
         name: 'Item',
+        data(){
+            return {
+                progress: 0,
+                is_stop: true,
+                duration: 0,
+                curr: 0,
+                volume:0,
+            }
+        },
         props: {
-            // index of current item
+        // index of current item
             index: { 
-            type: Number
+                type: Number
             },
             source: { 
-            type: Object,
-            default () {
-                return {}
-            }
+                type: Object,
+                default () {
+                    return {}
+                }
             },
-           
+         
+        },
+        mounted(){
             
-        mounted(){}
+        },
+        methods:{
+            showLong() {//音频加载成功后获取时长
+                this.duration = parseInt(this.$refs.audio.duration)
+
+            } 
+
+           
         }
-    }   
+}   
   </script>
   <style scoped>
   .empty .stream-item.creator, .stream .stream-item.creator {

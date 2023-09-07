@@ -57,9 +57,11 @@
     sockets: {
       async roomCallback (data) {
         // console.log("客户端发过来了一个请求",data);
+        // 最新消息的标签
         // 获取服务端发来的数据
         await this.$store.dispatch("getMessage", data);
-
+         // 定位最新数据的位置
+        this.$emit('findNewMsg',true);
 
       }
     },
@@ -74,7 +76,7 @@
                    this.audio = {
                     'file':path,
                     'toltime':val.toltime,
-                    'fileSize':val.toltime
+                    'fileSize':val.fileSize
 
                    }
                    this.msgSend()
@@ -131,6 +133,7 @@
             "content_type": content_type 
             
         }); 
+       
         
       },
   
