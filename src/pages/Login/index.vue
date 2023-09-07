@@ -1,62 +1,80 @@
 <template>
-    <div class="logon login-form">
-        <h1>登录</h1>
+<div class="logon login-form">
+    <h1>登录</h1>
+    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" label-position = "left" class="demo-ruleForm ">
+        <el-form-item 
+         label="账号"
+         prop="login"
+         :rules="[
+      { required: true, message: '账号不能为空'},
+      { type: 'email', message: '账号必须是邮箱格式'}
+    ]"
+         >
+         <el-input type="login" v-model="ruleForm.login" autocomplete="off"></el-input>
 
-       <input type="text" v-model = "login" placeholder="账号"/>
+        </el-form-item>
+        <el-form-item label="密码" prop="pass">
+            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+        </el-form-item>      
+        <el-form-item>
+            <el-button class = "but" type="primary" @click="submitForm('ruleForm')">提交</el-button>
+        </el-form-item>
+    </el-form>
 
-       <input type="password" v-model="password" placeholder="密码"/>
-
-        <button @click.prevent="userLogin" >登&nbsp;&nbsp;录</button>
-        
-
-    </div>
+</div>
 </template>
  
  <script>
  export default {
-   name: "",
-   data(){
-        return {
-            login: "",
-            password: "",
+    data() {
+      
+      var validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.ruleForm.checkPass !== '') {
+            this.$refs.ruleForm.validateField('checkPass');
+          }
+          callback();
         }
-   },
-   props: {
-   
-   },
-   methods:{
-    async userLogin() {
-        try {
-            //登录成功
-            const { login, password } = this;
-            login&&password&&(
-                await this.$store.dispatch("userLogin", { login, password }).then (res => {
-                    // if (res === true) {
-                    //     console.log("登录日志",res)
-                    //    return this.$store.dispatch("addUserLoginLogs")
-                    // } 
-                    alert("登录成功")
-                }).catch(res=>{
-                    alert("登录失败") 
-                })
-            );
-            
-            // 登录成功跳转页面
-            this.$router.push('/');
-        } catch (error) {
-            alert(error.message);
-            
-        }
+      };
 
+      
+     
+      return {
+        ruleForm: {
+          login:'',
+          pass: '',
+        },
+        rules: {
+          pass: [
+            { validator: validatePass, trigger: 'blur' }
+          ]
+        }
+      };
+    },
+    methods: {
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      
     }
-
-   }
- }
+  }
  </script>
  
  <!-- Add "scoped" attribute to limit CSS to this component only -->
  <style scoped>
-
+.but {
+    width: 300px !important;
+    margin-left: 0px!important;
+}
 .login-form{
     box-shadow: 0 2px 12px 0  ALICEBLUE;
     border-radius: 8px; 
@@ -68,13 +86,13 @@
     position:absolute; 
     top:50%;
     left:50%;
-    margin:-160px 0 0 -200px; 
+    margin:-150px 0 0 -260px; 
 }
 
 
-body {
+/* body {
     background-image: url(./images/猫.jpeg);
-}
+} */
 
 
 
@@ -106,7 +124,7 @@ body {
     width: 200px;
     height: 30px;
     margin-top: 21px;
-    margin-left: 100px;    
+    margin-left: 139px;    
     margin-bottom: 30px;
     padding-left: 67px;
 

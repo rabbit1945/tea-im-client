@@ -2,6 +2,13 @@
     margin: 0;
     padding: 0;
 }
+
+body {
+
+    background-image: url(../images/猫.jpeg);
+}
+
 /* ::-webkit-scrollbar{
     display:none;
   } */
+
