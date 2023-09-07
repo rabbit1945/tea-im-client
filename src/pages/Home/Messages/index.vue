@@ -52,7 +52,7 @@
      
     
       mounted(){
-        this.historyMessageList = []
+        this.$store.state.message.historyMessageList= null
         // window.addEventListener("scroll", this.findNewMsg, true);
         this.initLoadMsg()
       },
@@ -67,7 +67,7 @@
               this.$nextTick(() => {
               var div=this.$refs.returnBottom.$refs.root;
               console.log(div.scrollHeight);
-              div.scrollTop = div.scrollHeight+440;
+              div.scrollTop = div.scrollHeight+(this.page*this.limit * 80)+400;
             })
           }
           
