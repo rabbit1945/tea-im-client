@@ -11,7 +11,9 @@ import router from "@/router";
 import store from "@/store";
 
 import { Button,MessageBox} from 'element-ui';
-
+//引入表单校验插件
+// import "@/plugins/validate";
+	
 //注册全局组件
 Vue.component(Button.name,Button);
 
