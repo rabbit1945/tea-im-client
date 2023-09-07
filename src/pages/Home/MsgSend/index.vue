@@ -62,7 +62,7 @@
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
         this.$emit('findNewMsg',true);
-
+        this.audio = null
       }
     },
   
@@ -108,7 +108,7 @@
         
         let messgae = this.text.trim();
         let content_type = 0; // 音频
-        if (this.audio.fileSize > 0 ) {
+        if (this.audio) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
