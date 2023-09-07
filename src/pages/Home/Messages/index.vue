@@ -5,19 +5,18 @@
          <span v-if = "isLoading === true" class='time-line'>正在加载 </span>
          
           <virtual-list
-          ref = "returnTop"
+            ref = "returnBottom"
             class="msg-list"
             :data-key="'seq'"
             :data-sources="historyMessageList"
             :data-component="itemComponent"
-            :keeps =20
+            :keeps =30
             :estimate-size= 50
             @totop = "totop"
-            :start = 100
-           
+            :start = 100  
           />  
 
-          <MsgSend/>
+          <MsgSend v-on:findNewMsg = "findNewMsg"/>
       
       </div>
      
@@ -37,7 +36,7 @@
       data() {
         return {  
           // wsmessageList: [], // ws 消息
-          historyMessageList:{},//获取在线消息
+          historyMessageList:[],//获取在线消息
           offLineMessageList:false,  // 获取离线    
           tabshow: false,//是否进行某种操作
           room_id:this.$store.state.user.roomInfo.room_id,
@@ -50,29 +49,43 @@
           
         }
       },
-      props: {
-      
+     
+      beforeCreate()
+      {
+
       },
       mounted(){
        
-        // window.addEventListener("scroll", this.handleScroll, true);
+        // window.addEventListener("scroll", this.findNewMsg, true);
         this.initLoadMsg()
       },
       destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug
-        // window.removeEventListener('scroll', this.handleScroll,true)
+        // window.removeEventListener('scroll', this.findNewMsg,true)
       },
     
       methods:{
-        totop(){
-          this.getdata(); 
-        },
         
+        findNewMsg(val) {
+            if (val) {
+              this.$nextTick(() => {
+              var div=this.$refs.returnBottom.$refs.root;
+              console.log(div);
+              div.scrollTop = div.scrollHeight;
+            })
+          }
+          
+      },
+      
+      totop(){
+        this.getdata()
+      },
+      
 
-        getdata() {
-          if (!this.isEnd  && !this.isLoading ) {
-           this.initLoadMsg();
-          }  
-        },
+      getdata() {
+        if (!this.isEnd  && !this.isLoading ) {
+          this.initLoadMsg();
+        }  
+      },
 
         initLoadMsg() {
             this.page++;
@@ -82,7 +95,7 @@
                   page:this.page,
                   limit:this.limit
                 }).then(res => {
-                  console.log(res)
+                  console.log(this.page,res)
                   this.$nextTick(()=>{
                     this.isLoading = false;
                     if(!res) {
@@ -101,12 +114,15 @@
           
           get() {
             let offLineMessageList = this.$store.state.message.offLineMessageList;
-            let historyMessageList = this.$store.state.message.historyMessageList;
+            let historyMessageList = this.$store.state.message.historyMessageList || [];
             let wsmessageList = this.$store.state.message.messageList; 
             this.offLineMessageList = offLineMessageList;     
             this.historyMessageList = historyMessageList;
-            this.historyMessageList.push(wsmessageList);
+            if (wsmessageList) {
+              this.historyMessageList.push(wsmessageList);
+            }
             
+            console.log(this.historyMessageList);
            
           }
         }
