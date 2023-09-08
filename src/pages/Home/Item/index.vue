@@ -17,7 +17,7 @@
                             <mini-audio
                                 :audio-source= this.source.msg
                                 @canplay="showLong"
-                                volume =  30
+                                
                             ></mini-audio>
                         </div>
                     </div>

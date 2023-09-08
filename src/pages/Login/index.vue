@@ -3,18 +3,24 @@
     <h1>登录</h1>
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" label-position = "left" class="demo-ruleForm ">
         <el-form-item 
-         label="账号"
          prop="login"
          :rules="[
       { required: true, message: '账号不能为空'},
       { type: 'email', message: '账号必须是邮箱格式'}
     ]"
          >
-         <el-input type="login" v-model="ruleForm.login" autocomplete="off"></el-input>
+         <el-input type="login" v-model="ruleForm.login" autocomplete="off" placeholder = "账号"></el-input>
 
         </el-form-item>
-        <el-form-item label="密码" prop="pass">
-            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+        <el-form-item 
+         prop="password"
+         :rules="[
+            { required: true, message: '密码不能为空'},
+            { type: 'string', required: true, min: 6, message: '密码大于5个字符'}
+
+          ]"
+         >
+            <el-input type="password" v-model="ruleForm.password" autocomplete="off" placeholder="密码"></el-input>
         </el-form-item>      
         <el-form-item>
             <el-button class = "but" type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -25,39 +31,55 @@
 </template>
  
  <script>
+ import { setToken, getToken,removeToken} from "@/utils/token";
+
  export default {
     data() {
-      
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-
-      
-     
+    
       return {
         ruleForm: {
           login:'',
-          pass: '',
+          password: '',
         },
-        rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ]
+        rules:{
+
         }
+        
       };
     },
     methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+      async submitForm(formName) {
+        this.$refs[formName].validate(async(valid) => {
           if (valid) {
-            alert('submit!');
+            
+            try {
+              //登录成功
+              const { login, password } = this.ruleForm;
+              console.log(login, password)
+            
+              login&&password&&(await this.$store.dispatch("userLogin", { login, password }).then (res => {
+                  // if (res === true) {
+                  //     console.log("登录日志",res)
+                  //    return this.$store.dispatch("addUserLoginLogs")
+                  // } 
+                  console.log(res);
+                  if (res.code === '20001') {
+                    alert("登录失败")
+                    return;
+                    
+                  }
+                  let toPath = this.$route.query.redirect||"/";
+                  this.$router.push(toPath);
+                  alert("登录成功")
+              }).catch(res=>{
+                  alert("登录失败") 
+              }) )  
+              // 登录成功跳转页面
+              this.$router.push('/');
+        } catch (error) {
+            alert(error.message);
+            
+        }
           } else {
             console.log('error submit!!');
             return false;
@@ -72,12 +94,12 @@
  <!-- Add "scoped" attribute to limit CSS to this component only -->
  <style scoped>
 .but {
-    width: 300px !important;
-    margin-left: 0px!important;
+    /* width: 300px !important; */
+    margin-left: 47px!important;
 }
 .login-form{
-    box-shadow: 0 2px 12px 0  ALICEBLUE;
-    border-radius: 8px; 
+    /* box-shadow: 0 2px 12px 0  ALICEBLUE;
+    border-radius: 8px;  */
     width: 400px;
     height: 300px;
     max-width: 100%;
@@ -85,7 +107,7 @@
     margin:auto;
     position:absolute; 
     top:50%;
-    left:50%;
+    left:80%;
     margin:-150px 0 0 -260px; 
 }
 

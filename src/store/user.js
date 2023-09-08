@@ -8,14 +8,13 @@ import {
     reqLogout
 
 } from "@/api";
-import { setCache, getCache,removeCache} from "@/utils/cache";
 
 import { setToken, getToken,removeToken} from "@/utils/token";
 //登录与注册的模块
 const state = {
   code: "",
   userIsOnLine:"offline",
-  token: getToken(),
+  token: "",
   userInfo: {},
   roomInfo:{},
   roomUserList:[],
@@ -48,17 +47,19 @@ const actions = {
     async userLogin({ commit }, data) {
         // 请求参数
         let result = await reqUserLogin(data);
-        if (result.code == 10000) {
+        if (result.code === '10000') {
             // 添加登录日志
-
+             
             //用户已经登录成功且获取到token
             commit("USERLOGIN", result.data.token);
             //持久化存储token
             setToken(result.data.token);
 
-            return true;
+            return result.data;
 
-        } 
+        } else {
+            return result;
+        }
     },
     
 
@@ -78,7 +79,7 @@ const actions = {
         let result = await reqRoomInfo();
         
         let code = result?.code;
-        if (code == '10000') {
+        if (code === '10000') {
             
             let list = result?.data;
         
