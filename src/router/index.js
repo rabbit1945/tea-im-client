@@ -72,7 +72,7 @@ router.beforeEach(async (to, from, next) => {
    let token  = store.state.user.token;
    console.log(router.app.$options.store.state.user);
    console.log("token:",
-   router.app.$options.store.state.user.token
+   token
    );
 
    //用户登录了

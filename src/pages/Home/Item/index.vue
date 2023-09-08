@@ -17,7 +17,7 @@
                             <mini-audio
                                 :audio-source= this.source.msg
                                 @canplay="showLong"
-                                
+                                :volume="[leftVolume, rightVolume]"
                             ></mini-audio>
                         </div>
                     </div>
@@ -38,6 +38,7 @@
                 duration: 0,
                 curr: 0,
                 volume:0,
+                balance: 50
             }
         },
         props: {
@@ -55,6 +56,14 @@
         },
         mounted(){
             
+        },
+        computed: {
+            leftVolume() {
+                return this.balance < 50 ? 1 : 1 - ((this.balance - 50) / 50);
+            },
+            rightVolume() {
+                return this.balance > 50 ? 1 : this.balance / 50;
+            }
         },
         methods:{
             showLong() {//音频加载成功后获取时长

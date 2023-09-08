@@ -87,7 +87,7 @@
         initLoadMsg() {
             this.page++;
             this.isLoading = true;
-            this.$store.dispatch('getHistoryMsg',{
+            this.$store.dispatch('getGetMsg',{
                   room_id:this.room_id,
                   page:this.page,
                   limit:this.limit
