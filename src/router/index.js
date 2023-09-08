@@ -70,9 +70,13 @@ router.beforeEach(async (to, from, next) => {
   //  next();
   //获取仓库中的token-----可以确定用户是登录了
    let token  = store.state.user.token;
-   console.log(token)
+   console.log(router.app.$options.store.state.user);
+   console.log("token:",
+   router.app.$options.store.state.user.token
+   );
+
    //用户登录了
-   if(token){
+   if(token && to.meta.requiresAuth ){
      //已经登录而且还想去登录------不行
         try {
           // 获取房间信息
