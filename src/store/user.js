@@ -14,7 +14,7 @@ import { setToken, getToken,removeToken} from "@/utils/token";
 const state = {
   code: "",
   userIsOnLine:"offline",
-  token: "",
+  token: getToken(),
   userInfo: {},
   roomInfo:{},
   roomUserList:[],

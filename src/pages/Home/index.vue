@@ -68,7 +68,7 @@ export default {
       // alert("通信连接失败，请尝试刷新页面！！！")
       
       this.handleClose("服务器连接失败！！！");
-      this.$socket.close()
+      // this.$socket.close()
       console.log("connect_error是否连接服务端：",this.$socket.connected); // false
       if (this.$socket.connected === false) {
           this.userStatus = "offline"

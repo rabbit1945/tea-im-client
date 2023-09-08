@@ -2,7 +2,7 @@
 // 导入api
 import {
     reqOfflineMsg,
-    reqhistoryMsg,
+    reqGetMsg,
     reqUploadAudio
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
@@ -93,9 +93,9 @@ const actions = {
      * @param {*} data 
      * @returns 
      */
-    async getHistoryMsg({commit}, data) {
+    async getGetMsg({commit}, data) {
         // 请求参数
-        let result = await reqhistoryMsg(data);
+        let result = await reqGetMsg(data);
         if (result.code == "10000") {
             
             let list = result.data.list;
