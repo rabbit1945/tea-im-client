@@ -9,8 +9,9 @@
                 <div class = "body">
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
                     <div class = "content">
-                        <div class="text" v-if = "this.source.content_type === 0">
-                            {{ this.source.msg }}
+                        <div  class="text"  v-if = "this.source.content_type === 0"  >
+                            <div v-html="this.source.msg"></div>
+                            <!-- {{ this.source.msg }} -->
                         </div>
 
                         <div class="text" v-if = "this.source.content_type === 1">
@@ -32,13 +33,14 @@
     export default {
         name: 'Item',
         data(){
+            
             return {
                 progress: 0,
                 is_stop: true,
                 duration: 0,
                 curr: 0,
                 volume:0,
-                balance: 50
+                balance: 50,       
             }
         },
         props: {

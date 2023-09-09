@@ -88,7 +88,7 @@ const actions = {
 
     },
     /**
-     * 
+     * 获取所有消息
      * @param {*} param0 
      * @param {*} data 
      * @returns 
@@ -112,12 +112,23 @@ const actions = {
                     } else {
                         tag = 0;
                     }
+                    let msg = list[i].msg_content;
+                    let pattern = /\b(https?:\/\/[^\s]+)/g;
+                    let matches = msg.match(pattern); 
+                    if (matches !== null) {   
+                       
+                        for (var urlKey=0;urlKey < matches.length;urlKey++) {
+                        
+                            msg = msg.replace(matches[urlKey], `<a href=${matches[urlKey]}>${matches[urlKey]}</a>`);
+                            
+                        }
+                    }
 
                     let messageList = {
                         "user_id": list[i].msg_form,
                         "tag":tag,
                         "nick_name":list[i].nick_name,
-                        "msg":list[i].msg_content,
+                        "msg":msg,
                         "room_id":list[i].room_id,
                         "seq":list[i].seq,
                         "send_time":list[i].send_time,
@@ -161,19 +172,30 @@ const actions = {
             if (user_id !== data.user_id ) {
               tag = 1;
             }
-
+            let msg = data.msg;
+            let pattern = /\b(https?:\/\/[^\s]+)/g;
+            let matches = msg.match(pattern); 
+            if (matches !== null) {   
+                       
+                for (var urlKey=0;urlKey < matches.length;urlKey++) {
+                
+                    msg = msg.replace(matches[urlKey], `<a href=${matches[urlKey]}>${matches[urlKey]}</a>`);
+                    
+                }
+            }
+            
             let messageList = {
                 "user_id": data.user_id,
                 "tag":tag,
                 "nick_name":data.nick_name,
-                "msg":data.msg,
+                "msg":msg,
                 "room_id":data.room_id,
                 "seq":data.seq,
                 "send_time":data.send_time,
                 "userLogo":data.userLogo,
                 "content_type":data.content_type,
             }
-           
+            console.log("msg::",messageList);
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 
