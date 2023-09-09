@@ -1,13 +1,7 @@
  <template>
-
-  
      <div class="world">
-     
-     
-      <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectEmoji"/>
-      
-      <div class="msg-button">
-        
+      <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectEmoji"/>     
+      <div class="msg-button">       
         <el-button @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
           <img class = "msg-img" src="/emoji/QQ/png/0fix@2x.png">
         </el-button>
@@ -57,7 +51,6 @@
     sockets: {
       async roomCallback (data) {
         // console.log("客户端发过来了一个请求",data);
-        // 最新消息的标签
         // 获取服务端发来的数据
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
