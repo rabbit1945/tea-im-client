@@ -172,7 +172,7 @@ const actions = {
             if (user_id !== data.user_id ) {
               tag = 1;
             }
-            let msg = data.msg;
+            let msg = data.sensitiveMsg;
             let pattern = /\b(https?:\/\/[^\s]+)/g;
             let matches = msg.match(pattern); 
             if (matches !== null) {   
