@@ -8,7 +8,7 @@
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
       
-      <el-input
+      <!-- <el-input
           id="input"
           v-model="text"
           type="textarea"
@@ -16,8 +16,12 @@
           @keyup.enter.native="msgSend"
           :rows="5"
           placeholder="请输入内容">
-        </el-input>
-      
+      </el-input> -->
+      <div ref="input" class="msg-content"  contenteditable="true"   placeholder="请输入内容" @keyup.enter="msgSend">
+       
+      </div>
+
+
     </div>
  </template>
   
@@ -43,7 +47,6 @@
         "userLogo":this.$store.state.user.userInfo.photo,
         "room_id":this.$store.state.user.roomInfo.room_id,
         "audio":{},
-        
       }
     },
     
@@ -81,15 +84,37 @@
         
       },
       selectEmoji(emoji) {// 选择emoji后调用的函数
-        let input = document.getElementById("input")
-        let startPos = input.selectionStart
-        let endPos = input.selectionEnd
-        let resultText = input.value.substring(0, startPos) + emoji.data + input.value.substring(endPos)
-        input.value = resultText
-        input.focus()
-        input.selectionStart = startPos + emoji.data.length
-        input.selectionEnd = startPos + emoji.data.length
-        this.text = resultText
+         // 定义最后光标对象
+        var lastEditRange;
+        let input = this.$refs.input
+       
+        let range = getSelection().getRangeAt(0); 
+        // 编辑框获得焦点
+        input.focus() 
+        // 获取选定对象
+        let selection = getSelection()
+        // 判断是否有最后光标对象存在
+        if (lastEditRange) {
+            // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+            selection.removeAllRanges()
+            selection.addRange(lastEditRange)
+        } 
+        // 获取光标对象的范围界定对象，一般就是textNode对象
+        let textNode = range.startContainer;
+        let rangeStartOffset = range.startOffset
+        // 文本节点在光标位置处插入新的表情内容
+        textNode.insertData(rangeStartOffset, emoji.data)
+        // 光标移动到到原来的位置加上新内容的长度
+        range.setStart(textNode, rangeStartOffset + emoji.data.length)
+        // 光标开始和光标结束重叠
+        range.collapse(true)
+        // 清除选定对象的所有光标对象
+        selection.removeAllRanges()
+        // 插入新的光标对象
+        selection.addRange(range)
+        // 无论如何都要记录最后光标对象
+        lastEditRange = selection.getRangeAt(0)
+        this.text = textNode
       },
       //打开表情弹窗
       toogleDialogEmoji () {
@@ -97,8 +122,10 @@
       },
       msgSend(){
         this.$socket.open();
-        
-        let messgae = this.text.trim();
+        let input = this.$refs.input.innerText
+        console.log(input);
+        let messgae = input.trim();
+        console.log("ss::",this.text);
         let content_type = 0; // 音频
         if (this.audio.fileSize > 0) {
            messgae = this.audio.file;
@@ -181,6 +208,13 @@
     background-color: white;
     overflow: scroll;
 
+  }
+
+  .msg-content {
+    margin-top: 13px;
+    height:107px;
+    padding: 1px;
+    overflow:scroll;
   }
   
   
