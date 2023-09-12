@@ -10,7 +10,7 @@
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
                     <div class = "content">
                         <div  class="text"  v-if = "this.source.content_type === 0"  >
-                            <div v-html="this.source.msg"></div>
+                            <div v-html="this.source.msg" class="msg-html"  ></div>
                             <!-- {{ this.source.msg }} -->
                         </div>
 
@@ -167,6 +167,11 @@
     width: 700px;
     text-align: center;
     vertical-align: middle;
+}
+.msg-html {
+   
+    word-wrap: break-word;
+    max-width:  600px;
 }
 </style>
   
