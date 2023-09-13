@@ -1,20 +1,20 @@
 <template>
     <div>
         <span class='time-line'>{{ this.source.send_time }} </span>
-        <div :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator' ">
+        <div  :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator' ">
             <div :class = "this.source.tag == 1 ? 'item' : 'item creator'">
                 <div class="avatar">
                     <img :src=this.source.userLogo>
                 </div>
-                <div class = "body">
+                <div class = "body" @contextmenu.prevent.stop="clickMsg()">
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
                     <div class = "content">
-                        <div  class="text"  v-if = "this.source.content_type === 0"  >
+                        <div contenteditable = "false" class="text"  v-if = "this.source.content_type === 0"  >
                             <div v-html="this.source.msg" class="msg-html"  ></div>
                             <!-- {{ this.source.msg }} -->
                         </div>
 
-                        <div class="text" v-if = "this.source.content_type === 1">
+                        <div contenteditable = "false" class="text" v-if = "this.source.content_type === 1">
                             <mini-audio
                                 :audio-source= this.source.msg
                                 @canplay="showLong"
@@ -71,7 +71,10 @@
             showLong() {//音频加载成功后获取时长
                 this.duration = parseInt(this.$refs.audio.duration)
 
-            } 
+            } ,
+            clickMsg() {
+                
+            }
 
            
         }

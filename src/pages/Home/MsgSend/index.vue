@@ -1,39 +1,36 @@
  <template>
      <div class="world">
-      <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectEmoji"/>     
+      <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectMsg"/>     
       <div class="msg-button">       
         <el-button @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
           <img class = "msg-img" src="/emoji/QQ/png/0fix@2x.png">
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
-      
-      <!-- <el-input
-          id="input"
-          v-model="text"
-          type="textarea"
-          resize="none"
-          @keyup.enter.native="msgSend"
-          :rows="5"
-          placeholder="请输入内容">
-      </el-input> -->
-      <div ref="input" class="msg-content"  contenteditable="true"   placeholder="请输入内容" @keyup.enter="msgSend">
-       
+     
+      <UserList :showUser="showUser" @lineInfo="lineInfo"/>
+     
+      <div ref="input" class="msg-content" placeholder="说点什么…"  contenteditable="true"
+        @keyup.delete="noneUserList"
+        @keydown.shift.50="showUserList" 
+        @keyup.enter="msgSend">
+        
       </div>
+       
 
-
-    </div>
+      </div>
  </template>
   
   <script>  
   import {VEmojiPicker} from 'v-emoji-picker';
   import Audio from '../Audio'
-
+  import UserList from '../UserList';
   export default {
     name: "MsgSend",
     components: {
       VEmojiPicker,
-      Audio
+      Audio,
+      UserList
     
     },
     data(){
@@ -42,14 +39,20 @@
         showDialog:false,
         drawer: false,
         direction: 'btt',
-        "user_id":this.$store.state.user.userInfo.user_id,
-        "nick_name":this.$store.state.user.userInfo.nick_name,
-        "userLogo":this.$store.state.user.userInfo.photo,
-        "room_id":this.$store.state.user.roomInfo.room_id,
-        "audio":{},
+        user_id:this.$store.state.user.userInfo.user_id,
+        nick_name:this.$store.state.user.userInfo.nick_name,
+        userLogo:this.$store.state.user.userInfo.photo,
+        room_id:this.$store.state.user.roomInfo.room_id,
+        audio:{},
+        showUser:false,        
       }
     },
-    
+    watch: {
+      'fullname': function(newVal){
+          console.log(newVal)
+          // return this.firstname + '-' + this.lastname
+      }
+    },
    
     sockets: {
       async roomCallback (data) {
@@ -61,11 +64,40 @@
         this.audio.fileSize = 0
       }
     },
+    mounted(){
+      document.addEventListener('click',(e)=>{
+       if(this.$refs.showPanel){
+           let isSelf = this.$refs.showPanel.contains(e.target)
+           if(!isSelf){
+               this.showUser = false
+           }
+       }
+   }),
+      document.addEventListener("keydown",function(e){
+          console.log("您按下的按钮的keyCode为："+e.keyCode)
+      })
+    },
   
-    methods: {
-       audioData(val) {
-        console.log("val",val);
+    methods: { 
+      lineInfo(data) {
+        let input = this.$refs.input
+        let html = input.innerHTML
+        let nick_name = data.nick_name
+        let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `
+
+
+       this.$refs.input.innerHTML = html + button
+  
+      },
+      noneUserList() {
+        this.showUser = false
+      },
+      showUserList() {
         
+        this.showUser = true
+      },
+       audioData(val) {
+        console.log("val",val);        
         if (val) {
            this.$store.dispatch("uploadAudio", val.formData).then(res => {
                    let path = res.file
@@ -75,7 +107,6 @@
                     'fileSize':val.fileSize
                    }
                    this.msgSend()
-
           })
         } else {
            tihs.alert("语音出现问题，请重试！！！");
@@ -83,16 +114,22 @@
         }
         
       },
-      selectEmoji(emoji) {// 选择emoji后调用的函数
+      selectMsg(val) {// 选择emoji后调用的函数
          // 定义最后光标对象
         var lastEditRange;
         let input = this.$refs.input
-       
-        let range = getSelection().getRangeAt(0); 
+        let selection = getSelection()
+         
         // 编辑框获得焦点
         input.focus() 
         // 获取选定对象
-        let selection = getSelection()
+        let range = []
+        console.log(selection.rangeCount)
+        if (selection.rangeCount > 0) {
+          // 获取选定对象
+          range = selection.getRangeAt(0); 
+        
+       
         // 判断是否有最后光标对象存在
         if (lastEditRange) {
             // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
@@ -103,9 +140,11 @@
         let textNode = range.startContainer;
         let rangeStartOffset = range.startOffset
         // 文本节点在光标位置处插入新的表情内容
-        textNode.insertData(rangeStartOffset, emoji.data)
+        
+        textNode.insertData(rangeStartOffset, val.data)
+
         // 光标移动到到原来的位置加上新内容的长度
-        range.setStart(textNode, rangeStartOffset + emoji.data.length)
+        range.setStart(textNode, rangeStartOffset + val.data.length)
         // 光标开始和光标结束重叠
         range.collapse(true)
         // 清除选定对象的所有光标对象
@@ -114,7 +153,10 @@
         selection.addRange(range)
         // 无论如何都要记录最后光标对象
         lastEditRange = selection.getRangeAt(0)
-        this.text = textNode
+      
+      } 
+
+      
       },
       //打开表情弹窗
       toogleDialogEmoji () {
@@ -123,9 +165,7 @@
       msgSend(){
         this.$socket.open();
         let input = this.$refs.input.innerText
-        console.log(input);
         let messgae = input.trim();
-        console.log("ss::",this.text);
         let content_type = 0; // 音频
         if (this.audio.fileSize > 0) {
            messgae = this.audio.file;
@@ -209,12 +249,26 @@
     overflow: scroll;
 
   }
-
   .msg-content {
     margin-top: 13px;
     height:107px;
     padding: 1px;
     overflow:scroll;
+  }
+
+  .msg-content:empty::before {
+      content: attr(placeholder);
+  }
+
+  .userList {
+    min-width: 100px;
+    height: 200px;
+    border: 1px;
+    position: absolute;
+    bottom: 110px;
+    left: 70px;
+    overflow:auto;
+    border-color:  #ff0 transparent transparent;
   }
   
   

@@ -10,7 +10,7 @@
           <!-- 聊天记录 -->
           <Messages />
           <!-- 用户信息 -->
-          <UserList />
+          <UserList :showUser="true" />
             
         </div>
         <router-view></router-view>
