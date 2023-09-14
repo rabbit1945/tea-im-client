@@ -71,7 +71,8 @@
     mounted(){
       document.addEventListener('click',(e)=>{
         console.log("this.$refs.showPanel:",e.target.className)
-        if (e.target.className !== 'list list-line') {
+        console.log(e)
+        if (e.target.id !== 'userLine') {
           this.showUser = false
         }
       //  if(this.showUser){
