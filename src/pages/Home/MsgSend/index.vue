@@ -8,9 +8,12 @@
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
      
-      <UserList :showUser="showUser" @lineInfo="lineInfo"/>
+      <UserList :showUser="showUser" ref = "showPanel" @lineInfo="lineInfo"/>
      
-      <div ref="input" class="msg-content" placeholder="说点什么…"  contenteditable="true"
+      <div ref="input" 
+        class="msg-content" 
+        placeholder="说点什么…"
+        contenteditable="true"
         @keyup.delete="noneUserList"
         @keydown.shift.50="showUserList" 
         @keyup.enter="msgSend">
@@ -45,6 +48,7 @@
         room_id:this.$store.state.user.roomInfo.room_id,
         audio:{},
         showUser:false,        
+        sumNoticeOtherUser:0,
       }
     },
     watch: {
@@ -66,12 +70,16 @@
     },
     mounted(){
       document.addEventListener('click',(e)=>{
-       if(this.$refs.showPanel){
-           let isSelf = this.$refs.showPanel.contains(e.target)
-           if(!isSelf){
-               this.showUser = false
-           }
-       }
+        console.log("this.$refs.showPanel:",e.target.className)
+        if (e.target.className !== 'list list-line') {
+          this.showUser = false
+        }
+      //  if(this.showUser){
+      //      let isSelf = this.$refs.showPanel.contains(e.target)
+      //      if(!isSelf){
+      //          this.showUser = false
+      //      }
+      //  }
    }),
       document.addEventListener("keydown",function(e){
           console.log("您按下的按钮的keyCode为："+e.keyCode)
@@ -82,21 +90,26 @@
       lineInfo(data) {
         let input = this.$refs.input
         let html = input.innerHTML
-        let nick_name = data.nick_name
-        let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `
-
-
-       this.$refs.input.innerHTML = html + button
-  
+        let nick_name = ""
+        this.sumNoticeOtherUser++
+        console.log(this.sumNoticeOtherUser);
+        if (this.sumNoticeOtherUser == 1) {
+          nick_name = data.nick_name
+        } else {
+          nick_name = '@'+data.nick_name
+        }    
+       let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `        
+       let val = html + button
+       this.$refs.input.innerHTML = val 
       },
       noneUserList() {
+        this.sumNoticeOtherUser = 0;
         this.showUser = false
       },
       showUserList() {
-        
         this.showUser = true
       },
-       audioData(val) {
+      audioData(val) {
         console.log("val",val);        
         if (val) {
            this.$store.dispatch("uploadAudio", val.formData).then(res => {
@@ -154,9 +167,7 @@
         // 无论如何都要记录最后光标对象
         lastEditRange = selection.getRangeAt(0)
       
-      } 
-
-      
+      }     
       },
       //打开表情弹窗
       toogleDialogEmoji () {
