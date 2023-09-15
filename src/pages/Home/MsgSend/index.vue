@@ -8,14 +8,17 @@
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
      
-      <UserList :showUser="showUser" ref = "showPanel" @lineInfo="lineInfo"/>
+      <UserList :showUser="showUser" ref = "searchUser" @lineInfo="lineInfo"/>
      
       <div ref="input" 
         class="msg-content" 
         placeholder="说点什么…"
         contenteditable="true"
-        @keyup.delete="noneUserList"
+        @input="editorInput"
+        @keyup.delete="del"
         @keydown.shift.50="showUserList" 
+        @compositionstart="handleStart"
+        @compositionend="handleEnd"
         @keyup.enter="msgSend">
         
       </div>
@@ -47,14 +50,8 @@
         userLogo:this.$store.state.user.userInfo.photo,
         room_id:this.$store.state.user.roomInfo.room_id,
         audio:{},
-        showUser:false,        
-        sumNoticeOtherUser:0,
-      }
-    },
-    watch: {
-      'fullname': function(newVal){
-          console.log(newVal)
-          // return this.firstname + '-' + this.lastname
+        showUser:false,    // 是否显示@他人的用户表单
+        sumNoticeOtherUser:0,    
       }
     },
    
@@ -69,42 +66,77 @@
       }
     },
     mounted(){
-      document.addEventListener('click',(e)=>{
-        console.log("this.$refs.showPanel:",e.target.className)
-        console.log(e)
-        if (e.target.id !== 'userLine') {
-          this.showUser = false
-        }
-      //  if(this.showUser){
-      //      let isSelf = this.$refs.showPanel.contains(e.target)
-      //      if(!isSelf){
-      //          this.showUser = false
-      //      }
-      //  }
-   }),
-      document.addEventListener("keydown",function(e){
-          console.log("您按下的按钮的keyCode为："+e.keyCode)
-      })
+      document.addEventListener('click',this.eventUser,true)
+    },
+    destroyed() {
+      document.removeEventListener('click', this.eventUser,true)
+
     },
   
     methods: { 
+      editorInput(e){
+        console.log("editorInput",e.data);
+        if (e.data != '@') {
+          this.$refs.searchUser.searchUser({"words":e.data});
+        }
+       
+      },
+      handleStart(e){
+          console.log("handleStart",e);
+      },
+      handleEnd(e){
+        console.log("handleEnd",e);
+      },
+      eventUser(e) {
+        if (e.target.id !== 'userLine') {
+          this.sumNoticeOtherUser = 0
+          this.showUser = false
+        }
+      },
       lineInfo(data) {
         let input = this.$refs.input
         let html = input.innerHTML
         let nick_name = ""
-        this.sumNoticeOtherUser++
-        console.log(this.sumNoticeOtherUser);
+        this.sumNoticeOtherUser = this.sumNoticeOtherUser +1
         if (this.sumNoticeOtherUser == 1) {
           nick_name = data.nick_name
         } else {
           nick_name = '@'+data.nick_name
         }    
-       let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `        
-       let val = html + button
-       this.$refs.input.innerHTML = val 
+        let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `        
+        let val = html + button
+        this.$refs.input.innerHTML = val
+        
+      },
+      del() {
+        let input = this.$refs.input
+        let text = input.innerText
+        if (window.getSelection().type == 'None') {
+                console.log('页面编辑器中没有光标的时候', window.getSelection().type);
+                return;
+        }
+        var win = document.defaultView || document.parentWindow;
+        var sel;
+        if (typeof win.getSelection != "undefined") {
+            sel = win.getSelection();
+            if (sel.rangeCount > 0) {
+                var range = win.getSelection().getRangeAt(0);
+                let textNode = range.startContainer.textContent;
+                let rangeStartOffset = range.startOffset-1;
+                if (textNode.slice(rangeStartOffset,rangeStartOffset+1) === '@'){
+                  this.showUser = true
+                }
+
+                console.log("===",textNode.slice(rangeStartOffset,rangeStartOffset+1),range,textNode,rangeStartOffset);
+ 
+            }
+        }
+
+
+
       },
       noneUserList() {
-        this.sumNoticeOtherUser = 0;
+        this.sumNoticeOtherUser = 0
         this.showUser = false
       },
       showUserList() {
@@ -138,12 +170,9 @@
         input.focus() 
         // 获取选定对象
         let range = []
-        console.log(selection.rangeCount)
         if (selection.rangeCount > 0) {
           // 获取选定对象
-          range = selection.getRangeAt(0); 
-        
-       
+          range = selection.getRangeAt(0);       
         // 判断是否有最后光标对象存在
         if (lastEditRange) {
             // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
@@ -175,6 +204,7 @@
         this.showDialog = !this.showDialog
       },
       msgSend(){
+        if (this.showUser) return true; 
         this.$socket.open();
         let input = this.$refs.input.innerText
         let messgae = input.trim();
@@ -188,9 +218,7 @@
           
           this.$alert("你好，客官你还没有添写消息呢！！！");
           return false;
-        }
-        
-       
+        }    
         const user_id = this.user_id;
         const nick_name = this.nick_name;
         const userLogo = this.userLogo;
@@ -282,6 +310,12 @@
     overflow:auto;
     border-color:  #ff0 transparent transparent;
   }
+
+  [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
   
   
   </style>

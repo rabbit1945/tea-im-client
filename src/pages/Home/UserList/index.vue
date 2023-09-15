@@ -33,7 +33,7 @@
           noMore:false, //控制滚动禁用 
           loading: false, //控制滚动条禁用
           pages:0 , // 页码
-          size: 20, // 条数
+          size: 100, // 条数
 
         }
       },
@@ -49,7 +49,6 @@
       },
       methods: {
         lineInfo(val) {
-          console.log(val )
           this.$emit('lineInfo',val)
         },
         load () {
@@ -57,31 +56,47 @@
           this.pages += 1 // 每次滚动加1
           this.getUserList();
         },
+        // 获取没有@的用户列表
+        searchUser(parm = {}){
+          let userList = []
+          let words = parm.words;
+          this.data = this.$store.state.user.roomUserList.userList
+          for (let item in this.data) {
+            let nick_name = this.data[item].nick_name;
+            if (nick_name.includes(words)) {
+              userList.push(this.data[item])
+            } 
+                
+          }
+          console.log("searchUser",userList)
+          if (userList.length > 0){
+            this.data = userList
+          } 
+          
+        },
+
         // 获取数据
         getUserList() {
+          let datas = {'pages':this.pages,'size':this.size};
           //派发一个action||获取聊天室的用户列表
-          this.$store.dispatch("getRoomUserList",{'pages':this.pages,'size':this.size}).then (res => {
-            let list = this.$store.state.user.roomUserList.userList;
-              console.log(list)
-            for (let i = 0; i < list.length; i++) {
+          this.$store.dispatch("getRoomUserList",datas).then (res => {
+            let list = res.userList;
+            
+           
+            for (let i = 0; i < list.length; i++) {             
               this.data.push(list[i]);
             }
             // 如果请求回来的数据小于Size，则说明数据到底了。
             if (list.length < this.size) {
               this.noMore = true;
             }
-
             // 避免数据总条数是pageSize的倍数时，数据到底还会请求一次。
             if (this.data.length === this.$store.state.user.roomUserList.total) {
               this.noMore = true;
             }
-
             this.loading = false;
 
-          }).catch(res=>{
-            
           })
-
           }
 
       }
