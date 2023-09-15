@@ -69,7 +69,7 @@ const actions = {
         let result = await reqRoomUserList(data);
         if (result.code == 10000) {
             commit("ROOMUSERLIST",result.data);
-            return true;
+            return result.data;
 
         } 
 
