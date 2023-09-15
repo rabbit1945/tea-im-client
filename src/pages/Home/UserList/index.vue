@@ -60,18 +60,25 @@
         searchUser(parm = {}){
           let userList = []
           let words = parm.words;
-          this.data = this.$store.state.user.roomUserList.userList
-          for (let item in this.data) {
-            let nick_name = this.data[item].nick_name;
-            if (nick_name.includes(words)) {
-              userList.push(this.data[item])
+          if (words != '') {
+           if (words === '@') return  this.data = this.$store.state.user.roomUserList.userList
+
+            for (let item in this.data) {
+              let nick_name = this.data[item].nick_name;
+              if (nick_name.includes(words)) {
+                userList.push(this.data[item])
+              } 
+                  
+            }
+            console.log("searchUser",userList)
+            if (userList.length > 0){
+              this.data = userList
+              return this.data;
             } 
-                
+            return [];
+            
           }
-          console.log("searchUser",userList)
-          if (userList.length > 0){
-            this.data = userList
-          } 
+          
           
         },
 
