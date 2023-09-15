@@ -16,6 +16,7 @@
         contenteditable="true"
         @input="editorInput"
         @keyup.delete="del"
+        @keydown.32="del" 
         @keydown.shift.50="showUserList" 
         @compositionstart="handleStart"
         @compositionend="handleEnd"
@@ -51,7 +52,8 @@
         room_id:this.$store.state.user.roomInfo.room_id,
         audio:{},
         showUser:false,    // 是否显示@他人的用户表单
-        sumNoticeOtherUser:0,    
+        sumNoticeOtherUser:0,
+        countStr:0 // 统计字符的数量
       }
     },
    
@@ -75,11 +77,19 @@
   
     methods: { 
       editorInput(e){
-        console.log("editorInput",e.data);
-        if (e.data != '@') {
-          this.$refs.searchUser.searchUser({"words":e.data});
+       let searchUser =  this.$refs.searchUser.searchUser({"words":e.data});
+       if (searchUser === undefined) {
+          this.showUser = false
+        } else {
+          if (searchUser.length > 0){
+            this.countStr ++
+            this.showUser = true
+          } else {
+            this.showUser = false
+          }
         }
-       
+        
+        
       },
       handleStart(e){
           console.log("handleStart",e);
@@ -90,57 +100,103 @@
       eventUser(e) {
         if (e.target.id !== 'userLine') {
           this.sumNoticeOtherUser = 0
+          this.countStr = 0
           this.showUser = false
         }
       },
       lineInfo(data) {
+        if (!this.showUser) return false;
         let input = this.$refs.input
         let html = input.innerHTML
+        let text = input.innerText
         let nick_name = ""
+        var win = document.defaultView || document.parentWindow;
+
+        var range = win.getSelection().getRangeAt(0);
+        let textNode = range.startContainer.textContent;
+        let rangeStartOffset = range.startOffset;
         this.sumNoticeOtherUser = this.sumNoticeOtherUser +1
         if (this.sumNoticeOtherUser == 1) {
-          nick_name = data.nick_name
+          let countStr =  this.countStr
+          let len = html.length
+
+          console.log("rangeStartOffset",html.slice(len-countStr));
+          
         } else {
-          nick_name = '@'+data.nick_name
-        }    
-        let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `        
+          this.countStr = 0
+        }
+        nick_name = '&nbsp;@'+data.nick_name+ '&nbsp;'
+            
+        let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `     
+        // console.log("rangeStartOffset",input.innerHTML.replace('',''));
+
         let val = html + button
-        this.$refs.input.innerHTML = val
-        
+        input.innerHTML = val
+           
       },
       del() {
-        let input = this.$refs.input
-        let text = input.innerText
-        if (window.getSelection().type == 'None') {
-                console.log('页面编辑器中没有光标的时候', window.getSelection().type);
-                return;
-        }
-        var win = document.defaultView || document.parentWindow;
-        var sel;
-        if (typeof win.getSelection != "undefined") {
-            sel = win.getSelection();
-            if (sel.rangeCount > 0) {
-                var range = win.getSelection().getRangeAt(0);
-                let textNode = range.startContainer.textContent;
-                let rangeStartOffset = range.startOffset-1;
-                if (textNode.slice(rangeStartOffset,rangeStartOffset+1) === '@'){
-                  this.showUser = true
-                }
-
-                console.log("===",textNode.slice(rangeStartOffset,rangeStartOffset+1),range,textNode,rangeStartOffset);
- 
+        
+            if (window.getSelection().type == 'None') {
+                    console.log('页面编辑器中没有光标的时候', window.getSelection().type);
+                    return;
             }
-        }
+            var win = document.defaultView || document.parentWindow;
+            var sel;
+            if (typeof win.getSelection != "undefined") {
+                sel = win.getSelection();
+                if (sel.rangeCount > 0) {
+                    var range = win.getSelection().getRangeAt(0);
+                    let textNode = range.startContainer.textContent;
+                    let rangeStartOffset = range.startOffset-1;
+                    let strSlice = textNode.slice(rangeStartOffset,rangeStartOffset+1)
+                    let input = this.$refs.input
+                    let text = input.innerText
+                    console.log("text",text);
+                    // @ 后边必须是空格 || @是第一个字符
+                    if ((strSlice === '@' && rangeStartOffset == 0 ) 
+                    || (strSlice === '@' && rangeStartOffset > 0 && text.slice(-2) == "" )){
+                      this.showUser = true
+                    } 
 
+                    if (this.showUser) {
+                      let searchUser = this.$refs.searchUser.searchUser({"words":strSlice})
+                    
+                      if (searchUser === undefined) {
+                        this.showUser = false
+                      } else {
+                        if (searchUser.length > 0){
+                          this.showUser = true
+                        } else {
+                          this.showUser = false
+                        }
+                      }
+                      this.countStr --
+                                                          
+                    }
 
+                    console.log("===",strSlice,range,textNode,rangeStartOffset,text.slice(-2));
 
+                }
+            }
+        
       },
       noneUserList() {
         this.sumNoticeOtherUser = 0
         this.showUser = false
       },
       showUserList() {
-        this.showUser = true
+        let input = this.$refs.input
+        let text = input.innerText
+
+        console.log("showUserList:",text,text.length-2,text.slice(-1));
+        // @ 后边必须是空格 
+        // @是第一个字符
+        if (text.length == 1 || text.slice(-1) == 0 ){
+            this.showUser = true
+        } else {
+          this.showUser = false
+        }
+        
       },
       audioData(val) {
         console.log("val",val);        
