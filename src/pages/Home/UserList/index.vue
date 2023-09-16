@@ -1,6 +1,6 @@
  <template>
 
-  <div class="userList" v-show = "showUser">
+  <div class="userList" >
     <div class="infinite-list-wrapper"  style="overflow:auto">
 
         <ul
@@ -48,40 +48,13 @@
           this.load();
       },
       methods: {
-        lineInfo(val) {
-          this.$emit('lineInfo',val)
-        },
+       
         load () {
           this.loading = true;
           this.pages += 1 // 每次滚动加1
           this.getUserList();
         },
-        // 获取没有@的用户列表
-        searchUser(parm = {}){
-          let userList = []
-          let words = parm.words;
-          if (words != '') {
-           if (words === '@') return  this.data = this.$store.state.user.roomUserList.userList
-
-            for (let item in this.data) {
-              let nick_name = this.data[item].nick_name;
-              if (nick_name.includes(words)) {
-                userList.push(this.data[item])
-              } 
-                  
-            }
-            console.log("searchUser",userList)
-            if (userList.length > 0){
-              this.data = userList
-              return this.data;
-            } 
-            return [];
-            
-          }
-          
-          
-        },
-
+       
         // 获取数据
         getUserList() {
           let datas = {'pages':this.pages,'size':this.size};
