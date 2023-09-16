@@ -8,22 +8,27 @@
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
      
-      <UserList :showUser="showUser" ref = "searchUser" @lineInfo="lineInfo"/>
-     
-      <div ref="input" 
-        class="msg-content" 
-        placeholder="说点什么…"
-        contenteditable="true"
-        @input="editorInput"
-        @keyup.delete="del"
-        @keydown.32="del" 
-        @keydown.shift.50="showUserList" 
-        @compositionstart="handleStart"
-        @compositionend="handleEnd"
-        @keyup.enter="msgSend">
-        
-      </div>
-       
+      <at
+       :members="members" 
+       :filter-match="filterMatch"
+       :delete-match="deleteMatch"
+       @insert="getValue"
+       name-key="nick_name">
+        <template slot="item" slot-scope="s">
+          <!-- <img :src="s.item.avatar"> -->
+          <span v-text="s.item.nick_name"></span>
+        </template>
+        <div
+          ref="input"
+          class="msg-content" 
+          placeholder="说点什么…"
+          @keyup.enter="msgSend"
+          
+          contenteditable>
+
+        </div>
+
+      </at>
 
       </div>
  </template>
@@ -31,13 +36,13 @@
   <script>  
   import {VEmojiPicker} from 'v-emoji-picker';
   import Audio from '../Audio'
-  import UserList from '../UserList';
+  import At from 'vue-at'
   export default {
     name: "MsgSend",
     components: {
       VEmojiPicker,
       Audio,
-      UserList
+      At
     
     },
     data(){
@@ -53,9 +58,13 @@
         audio:{},
         showUser:false,    // 是否显示@他人的用户表单
         sumNoticeOtherUser:0,
-        countStr:0 // 统计字符的数量
+        countStr:0, // 统计字符的数量
+        members: this.$store.state.user.roomUserList.userList,
+        contactList:[]
       }
     },
+      
+    
    
     sockets: {
       async roomCallback (data) {
@@ -68,136 +77,35 @@
       }
     },
     mounted(){
-      document.addEventListener('click',this.eventUser,true)
+     
+      
     },
     destroyed() {
-      document.removeEventListener('click', this.eventUser,true)
+      
+
 
     },
   
-    methods: { 
-      editorInput(e){
-       let searchUser =  this.$refs.searchUser.searchUser({"words":e.data});
-       if (searchUser === undefined) {
-          this.showUser = false
-        } else {
-          if (searchUser.length > 0){
-            this.countStr ++
-            this.showUser = true
-          } else {
-            this.showUser = false
-          }
-        }
-        
-        
+    methods: {
+     // 过滤联系人
+      filterMatch(name, chunk) {
+        return name.toLowerCase().indexOf(chunk.toLowerCase()) === 0;
       },
-      handleStart(e){
-          console.log("handleStart",e);
+      // 删除联系人
+      deleteMatch(name, chunk, suffix) {
+          this.contactList = this.contactList.filter(
+                  item => item.nick_name!= chunk.trim()
+          );
+        return chunk === name + suffix;
       },
-      handleEnd(e){
-        console.log("handleEnd",e);
+      // 获取联系人
+      getValue(val) {
+         
+          this.contactList.push({"nick_name":val.nick_name});
+          console.log(this.contactList)
+         
       },
-      eventUser(e) {
-        if (e.target.id !== 'userLine') {
-          this.sumNoticeOtherUser = 0
-          this.countStr = 0
-          this.showUser = false
-        }
-      },
-      lineInfo(data) {
-        if (!this.showUser) return false;
-        let input = this.$refs.input
-        let html = input.innerHTML
-        let text = input.innerText
-        let nick_name = ""
-        var win = document.defaultView || document.parentWindow;
-
-        var range = win.getSelection().getRangeAt(0);
-        let textNode = range.startContainer.textContent;
-        let rangeStartOffset = range.startOffset;
-        this.sumNoticeOtherUser = this.sumNoticeOtherUser +1
-        if (this.sumNoticeOtherUser == 1) {
-          let countStr =  this.countStr
-          let len = html.length
-
-          console.log("rangeStartOffset",html.slice(len-countStr));
-          
-        } else {
-          this.countStr = 0
-        }
-        nick_name = '&nbsp;@'+data.nick_name+ '&nbsp;'
-            
-        let button = `<el-button type="text" contenteditable = "false">${nick_name}</el-button> `     
-        // console.log("rangeStartOffset",input.innerHTML.replace('',''));
-
-        let val = html + button
-        input.innerHTML = val
-           
-      },
-      del() {
-        
-            if (window.getSelection().type == 'None') {
-                    console.log('页面编辑器中没有光标的时候', window.getSelection().type);
-                    return;
-            }
-            var win = document.defaultView || document.parentWindow;
-            var sel;
-            if (typeof win.getSelection != "undefined") {
-                sel = win.getSelection();
-                if (sel.rangeCount > 0) {
-                    var range = win.getSelection().getRangeAt(0);
-                    let textNode = range.startContainer.textContent;
-                    let rangeStartOffset = range.startOffset-1;
-                    let strSlice = textNode.slice(rangeStartOffset,rangeStartOffset+1)
-                    let input = this.$refs.input
-                    let text = input.innerText
-                    console.log("text",text);
-                    // @ 后边必须是空格 || @是第一个字符
-                    if ((strSlice === '@' && rangeStartOffset == 0 ) 
-                    || (strSlice === '@' && rangeStartOffset > 0 && text.slice(-2) == "" )){
-                      this.showUser = true
-                    } 
-
-                    if (this.showUser) {
-                      let searchUser = this.$refs.searchUser.searchUser({"words":strSlice})
-                    
-                      if (searchUser === undefined) {
-                        this.showUser = false
-                      } else {
-                        if (searchUser.length > 0){
-                          this.showUser = true
-                        } else {
-                          this.showUser = false
-                        }
-                      }
-                      this.countStr --
-                                                          
-                    }
-
-                    console.log("===",strSlice,range,textNode,rangeStartOffset,text.slice(-2));
-
-                }
-            }
-        
-      },
-      noneUserList() {
-        this.sumNoticeOtherUser = 0
-        this.showUser = false
-      },
-      showUserList() {
-        let input = this.$refs.input
-        let text = input.innerText
-
-        console.log("showUserList:",text,text.length-2,text.slice(-1));
-        // @ 后边必须是空格 
-        // @是第一个字符
-        if (text.length == 1 || text.slice(-1) == 0 ){
-            this.showUser = true
-        } else {
-          this.showUser = false
-        }
-        
-      },
+     
       audioData(val) {
         console.log("val",val);        
         if (val) {
