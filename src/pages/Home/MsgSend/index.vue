@@ -7,12 +7,12 @@
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
-     
       <at
        :members="members" 
        :filter-match="filterMatch"
        :delete-match="deleteMatch"
        @insert="getValue"
+       v-bind="userList" 
        name-key="nick_name">
         <template slot="item" slot-scope="s">
           <!-- <img :src="s.item.avatar"> -->
@@ -59,13 +59,11 @@
         showUser:false,    // 是否显示@他人的用户表单
         sumNoticeOtherUser:0,
         countStr:0, // 统计字符的数量
-        members: this.$store.state.user.roomUserList.userList,
+        members: [],
         contactList:[]
       }
     },
       
-    
-   
     sockets: {
       async roomCallback (data) {
         // console.log("客户端发过来了一个请求",data);
@@ -76,14 +74,19 @@
         this.audio.fileSize = 0
       }
     },
-    mounted(){
-     
+    mounted(){ 
       
     },
     destroyed() {
-      
+    },
+    computed:{
+      userList:{
+        get() {
+          this.members = this.$store.state.user.roomUserList.userList
 
-
+          console.log(this.members)
+        }
+      }
     },
   
     methods: {
@@ -100,9 +103,7 @@
       },
       // 获取联系人
       getValue(val) {
-         
-          this.contactList.push({"nick_name":val.nick_name});
-          console.log(this.contactList)
+         return this.contactList.push({"nick_name":val.nick_name});
          
       },
      
@@ -167,8 +168,7 @@
       toogleDialogEmoji () {
         this.showDialog = !this.showDialog
       },
-      msgSend(){
-        if (this.showUser) return true; 
+      msgSend(){ 
         this.$socket.open();
         let input = this.$refs.input.innerText
         let messgae = input.trim();
@@ -182,7 +182,7 @@
           
           this.$alert("你好，客官你还没有添写消息呢！！！");
           return false;
-        }    
+        }
         const user_id = this.user_id;
         const nick_name = this.nick_name;
         const userLogo = this.userLogo;
@@ -193,7 +193,8 @@
             "nick_name": nick_name,
             "msg": messgae,
             "userLogo":userLogo,
-            "content_type": content_type 
+            "content_type": content_type,
+            "contactList":this.contactList, //@他人功能
             
         }); 
        
