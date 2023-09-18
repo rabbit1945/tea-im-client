@@ -103,7 +103,7 @@
       },
       // 获取联系人
       getValue(val) {
-         return this.contactList.push({"nick_name":val.nick_name});
+         return this.contactList.push(val);
          
       },
      
@@ -172,7 +172,7 @@
         this.$socket.open();
         let input = this.$refs.input.innerText
         let messgae = input.trim();
-        let content_type = 0; // 音频
+        let content_type = 0; // 文本
         if (this.audio.fileSize > 0) {
            messgae = this.audio.file;
            content_type = 1; // 音频
@@ -187,7 +187,7 @@
         const nick_name = this.nick_name;
         const userLogo = this.userLogo;
         const room_id   = this.room_id;
-        this.$socket.volatile.emit('room',{
+        let msgData  = {
             "room_id": room_id,
             "user_id": user_id,
             "nick_name": nick_name,
@@ -196,7 +196,13 @@
             "content_type": content_type,
             "contactList":this.contactList, //@他人功能
             
-        }); 
+        };
+        this.$socket.volatile.emit('room',msgData); 
+        // if (this.contactList.length > 0) {
+        //   console.log("this.contactList.length::",this.contactList.length);
+
+        //   this.$socket.volatile.emit('robot',msgData); 
+        // }
        
         
       },
