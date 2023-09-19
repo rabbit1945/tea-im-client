@@ -8,7 +8,7 @@
           <!--用户基本信息 -->
           <MsgBase :userStatus="userStatus"/>
           <!-- 聊天记录 -->
-          <Messages />
+          <Messages/>
           <!-- 用户信息 -->
           <UserList :showUser="true" />
             
@@ -46,10 +46,20 @@ export default {
   },
   mounted() {
     this.$socket.open() 
+    window.addEventListener('visibilitychange',this.visibilitychange,true);
+    window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))  
+    window.addEventListener("blur", this.onblur,true);
+    window.addEventListener("focus", this.onfocus,true);   
+
     
   },
   beforeDestroy () {
     this.$socket.close()
+    window.removeEventListener('visibilitychange', this.visibilitychange,true)
+    window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
+    window.removeEventListener("focus", this.onfocus,true);   
+    window.removeEventListener("blur", this.onblur,true);
+
   },
   sockets: {
     async connecting () {
@@ -111,7 +121,36 @@ methods: {
           });
         })
         .catch(_ => {});
-  }
+  },
+  onfocus(e){
+      console.log('得到焦点');
+      
+      this.$store.dispatch("getTitle", {
+          "user_id":this.$store.state.user.userInfo.user_id,
+          "contactList":""
+        })
+    },
+    visibilitychange(e){
+        console.log(document.visibilityState);
+        let state = document.visibilityState
+        if(state == 'hidden'){
+            console.log(document.visibilityState,'用户离开了');
+        }
+        if(state == 'visible'){
+            console.log(document.visibilityState,'回来了');       
+        }
+    },
+    beforeunloadHandler(e) {
+      e = e || window.event
+      if (e) {
+        e.returnValue = '关闭提示'
+      }
+      return '关闭提示'
+    },
+    
+    onblur(e) {
+      console.log('失去焦点');
+    }
 }
 
  
