@@ -44,7 +44,7 @@ const actions = {
     async getTitle({commit}, data){
         let contactList = data.contactList.split(',')     
         let title = "闪电"
-        let context = "新消息"
+        let context = "新消息"    
         let user_id = store.state.user.userInfo.user_id;
         if (contactList.length > 0 && contactList.includes(user_id.toString()) === true) {
             context = "有人@我"
@@ -201,7 +201,7 @@ const actions = {
             if (matches !== null) {   
                        
                 for (var urlKey=0;urlKey < matches.length;urlKey++) {
-                
+             
                     msg = msg.replace(matches[urlKey], `<a href=${matches[urlKey]}>${matches[urlKey]}</a>`);
                     
                 }
@@ -218,7 +218,6 @@ const actions = {
                 "userLogo":data.userLogo,
                 "content_type":data.content_type,
             }
-            console.log("msg::",messageList);
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 
