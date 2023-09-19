@@ -42,16 +42,12 @@ const actions = {
      * 获取title 状态
      */
     async getTitle({commit}, data){
-       console.log(data.contactList)
         let contactList = data.contactList.split(',')     
         let title = "闪电"
         let context = "新消息"
         let user_id = store.state.user.userInfo.user_id;
-        console.log(contactList);
         if (contactList.length > 0 && contactList.includes(user_id.toString()) === true) {
-            
             context = "有人@我"
-            
         }
         if (user_id == data.user_id) {
             commit("GETTITLE",title);
