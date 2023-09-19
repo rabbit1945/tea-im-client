@@ -9,23 +9,19 @@ import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
 
 const state = {
+    title: "闪电",
     messageList:null,
     offLineMessageList:[],
-    historyMessageList:null,
-   
-  
+    historyMessageList:null
 };
 // 
 const mutations = {
    
-    GETMESSAGELIST(state, data) {
-        
+    GETMESSAGELIST(state, data) {      
         state.messageList = data
-
     },
     GETOFFLINEMESSAGELIST(state,data) {
         state.offLineMessageList = data
-
     },
     GETHISTORYMESSAGELIST(state,data) {   
         // console.log(getCache('historyMessageList'));
@@ -35,10 +31,41 @@ const mutations = {
         }
         
     },
+    GETTITLE(state,data) {
+        state.title = data
+    }
 
 };
 
 const actions = {
+    /**
+     * 获取title 状态
+     */
+    async getTitle({commit}, data){
+       console.log(data.contactList)
+        let contactList = data.contactList.split(',')     
+        let title = "闪电"
+        let context = "新消息"
+        let user_id = store.state.user.userInfo.user_id;
+        console.log(contactList);
+        if (contactList.length > 0 && contactList.includes(user_id.toString()) === true) {
+            
+            context = "有人@我"
+            
+        }
+        if (user_id == data.user_id) {
+            commit("GETTITLE",title);
+            return title;
+        }
+        if (Object.keys(data).length > 0) {
+            title = '【'+ context + '】' + '闪电'
+        }
+        
+        commit("GETTITLE",title);
+        return title;
+        
+
+    },
     /**
      * 获取离线消息
      * @param {*} param0 

@@ -2,7 +2,7 @@
     <!-- 聊天区域 -->   
       <div class="message" v-bind="message"  >
          <!-- 接收到的消息 -->
-         <span v-if = "isLoading === true" class='time-line'>正在加载 </span>
+         <span v-if = "isLoading === true" class='time-line'>历史消息</span>
          
           <virtual-list
             ref = "returnBottom"
@@ -16,7 +16,7 @@
             :start = 100  
           />  
 
-          <MsgSend v-on:findNewMsg = "findNewMsg"/>
+          <MsgSend :proTitle = "title" v-on:findNewMsg = "findNewMsg"/>
       
       </div>
      
@@ -49,7 +49,7 @@
           
         }
       },
-     
+      props:['title'],
     
       mounted(){
         this.$store.state.message.historyMessageList= null
@@ -92,7 +92,6 @@
                   page:this.page,
                   limit:this.limit
                 }).then(res => {
-                  console.log(this.page,res)
                   this.$nextTick(()=>{
                     this.isLoading = false;
                     if(!res) {

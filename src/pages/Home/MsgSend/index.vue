@@ -47,21 +47,28 @@
     },
     data(){
       return {
-        text:"",
+        title:"闪电",
+        text:"", // 消息
         showDialog:false,
         drawer: false,
         direction: 'btt',
-        user_id:this.$store.state.user.userInfo.user_id,
-        nick_name:this.$store.state.user.userInfo.nick_name,
-        userLogo:this.$store.state.user.userInfo.photo,
-        room_id:this.$store.state.user.roomInfo.room_id,
-        audio:{},
+        user_id:this.$store.state.user.userInfo.user_id, // 用户ID
+        nick_name:this.$store.state.user.userInfo.nick_name, // 昵称
+        userLogo:this.$store.state.user.userInfo.photo, // 头像
+        room_id:this.$store.state.user.roomInfo.room_id, // 房间ID
+        audio:{}, // 音频数据
         showUser:false,    // 是否显示@他人的用户表单
         sumNoticeOtherUser:0,
         countStr:0, // 统计字符的数量
-        members: [],
-        contactList:[]
+        members: [], // @ 用户列表
+        contactList:[] // 需要通知的列表
       }
+    },
+    metaInfo() {
+        return {
+          title: this.$store.state.message.title, // set a title 
+          
+        }
     },
       
     sockets: {
@@ -71,7 +78,16 @@
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
         this.$emit('findNewMsg',true);
+        // 默认音频的大小
         this.audio.fileSize = 0
+        
+        this.$store.dispatch("getTitle", {
+          "user_id":data.user_id,
+          "contactList":data.contactList
+        }).then(res =>{
+          this.title = this.$store.state.message.title;
+        })
+
       }
     },
     mounted(){ 
@@ -83,8 +99,6 @@
       userList:{
         get() {
           this.members = this.$store.state.user.roomUserList.userList
-
-          console.log(this.members)
         }
       }
     },
@@ -99,6 +113,7 @@
           this.contactList = this.contactList.filter(
                   item => item.nick_name!= chunk.trim()
           );
+          console.log("deleteMatch:",this.contactList);
         return chunk === name + suffix;
       },
       // 获取联系人
@@ -168,7 +183,8 @@
       toogleDialogEmoji () {
         this.showDialog = !this.showDialog
       },
-      msgSend(){ 
+      // 发送
+      msgSend(){
         this.$socket.open();
         let input = this.$refs.input.innerText
         let messgae = input.trim();
@@ -197,14 +213,8 @@
             "contactList":this.contactList, //@他人功能
             
         };
-        this.$socket.volatile.emit('room',msgData); 
-        // if (this.contactList.length > 0) {
-        //   console.log("this.contactList.length::",this.contactList.length);
-
-        //   this.$socket.volatile.emit('robot',msgData); 
-        // }
-       
         
+        this.$socket.volatile.emit('room',msgData);     
       },
   
     }
