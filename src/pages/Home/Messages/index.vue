@@ -7,6 +7,7 @@
           <virtual-list
             ref = "returnBottom"
             class="msg-list"
+
             :data-key="'seq'"
             :data-sources="historyMessageList"
             :data-component="itemComponent"
@@ -65,9 +66,8 @@
         findNewMsg(val) {
             if (val) {
               this.$nextTick(() => {
-              var div=this.$refs.returnBottom.$refs.root;
-              console.log(div.scrollHeight);
-              div.scrollTop = div.scrollHeight+(this.page*this.limit * 80)+400;
+              var div=this.$refs.returnBottom;
+              div.scrollToBottom();
             })
           }
           
