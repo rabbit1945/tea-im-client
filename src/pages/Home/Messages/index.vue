@@ -7,12 +7,11 @@
           <virtual-list
             ref = "returnBottom"
             class="msg-list"
-
             :data-key="'seq'"
             :data-sources="historyMessageList"
             :data-component="itemComponent"
-            :keeps =30
-            :estimate-size= 50
+            :keeps =this.keeps
+            :estimate-size= this.estimateSize
             @totop = "totop"
             :start = 100  
           />  
@@ -47,6 +46,8 @@
           limit:20,
           timer: 0,
           itemComponent: Item,
+          estimateSize:50,
+          keeps:20
           
         }
       },
@@ -67,6 +68,8 @@
             if (val) {
               this.$nextTick(() => {
               var div=this.$refs.returnBottom;
+              // div.scrollToBottom();
+              div.reset()
               div.scrollToBottom();
             })
           }
