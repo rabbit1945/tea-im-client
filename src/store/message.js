@@ -1,7 +1,6 @@
 
 // 导入api
 import {
-    reqOfflineMsg,
     reqGetMsg,
     reqUploadAudio
 } from "@/api";
@@ -11,22 +10,22 @@ import store from "@/store";
 const state = {
     title: "闪电",
     messageList:null,
-    offLineMessageList:[],
-    historyMessageList:null
+    historyMessageList:null,
+    offTotal:0
 };
 // 
 const mutations = {
+    GETOFFMSGTOTAL(state, data) {
+        state.offTotal = data
+    },
    
     GETMESSAGELIST(state, data) {      
         state.messageList = data
     },
-    GETOFFLINEMESSAGELIST(state,data) {
-        state.offLineMessageList = data
-    },
     GETHISTORYMESSAGELIST(state,data) {   
         // console.log(getCache('historyMessageList'));
         if(Object.keys(data).length > 0){
-            state.offLineMessageList = []
+            
             state.historyMessageList = data
         }
         
@@ -62,54 +61,7 @@ const actions = {
         
 
     },
-    /**
-     * 获取离线消息
-     * @param {*} param0 
-     * @param {*} data 
-     * @returns 
-     */
-    async getOfflineMsg({commit}, data) {
-        // 请求参数
-        let result = await reqOfflineMsg(data);
-        if (result.code == "10000") {
-            
-            let list = result.data;
-
-            const user_id = store.state.user.userInfo.user_id;
-            var receiveData = [];
-            var tag = 0; // 0 自己发的  1 被人发的
-            for (var i = 0; i < list.length; i++) {
-               
-                if (user_id != list[i].msg_form ) {
-                    tag = 1;
-                } else {
-                    tag = 0;
-                }
-
-                let messageList = {
-                    "user_id": list[i].msg_form,
-                    "tag":tag,
-                    "nick_name":list[i].nick_name,
-                    "msg":list[i].msg_content,
-                    "room_id":list[i].room_id,
-                    "seq":list[i].seq,
-                    "send_time":list[i].send_time,
-                    "userLogo":list[i].photo,
-                    "content_type":list[i].content_type,
-                }
-                
-                receiveData.push(messageList)
-
-
-            }
-
-            commit("GETOFFLINEMESSAGELIST",receiveData);
-
-            //用户已经登录成功且获取到token 
-            return true;
-        }
-
-    },
+   
     /**
      * 获取所有消息
      * @param {*} param0 
@@ -135,6 +87,7 @@ const actions = {
                     } else {
                         tag = 0;
                     }
+                    // url的处理
                     let msg = list[i].msg_content;
                     let pattern = /\b(https?:\/\/[^\s]+)/g;
                     let matches = msg.match(pattern); 
@@ -146,7 +99,7 @@ const actions = {
                             
                         }
                     }
-
+                    
                     let messageList = {
                         "user_id": list[i].msg_form,
                         "tag":tag,
@@ -159,17 +112,22 @@ const actions = {
                         "content_type":list[i].content_type,
                     }
                     
-                    oldMsg.unshift(messageList)                   
+                    oldMsg.unshift(messageList)  
+                                 
                 }
 
             }
 
-            
+            let total = result.data.offTotal
+            // if (total >= 0) {
+            //     commit("GETOFFMSGTOTAL",total);
+            // }
+           
 
             commit("GETHISTORYMESSAGELIST",oldMsg);
 
             //用户已经登录成功且获取到token 
-            return oldMsg;
+            return {msg:oldMsg,offTotal:total};
         } 
 
     },

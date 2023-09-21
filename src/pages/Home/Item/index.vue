@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :index = index >
         <span class='time-line'>{{ this.source.send_time }} </span>
         <div  :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator' ">
             <div :class = "this.source.tag == 1 ? 'item' : 'item creator'">

@@ -7,7 +7,7 @@
           class="list"
           v-infinite-scroll="load"
           infinite-scroll-disabled="disabled">
-          <li v-for="val in data" @click.left="lineInfo(val)" class="list list-line" id = "userLine" >
+          <li v-for="val in data" class="list list-line" id = "userLine" >
             <img class="logo" id = "userLine" :src="val.photo" alt="">
             <template v-if="val.is_online == 'online'">
               <span class="userStatus" style = "background-color: cadetblue;"></span>
