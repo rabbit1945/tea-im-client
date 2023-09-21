@@ -103,7 +103,6 @@ router.beforeEach(async (to, from, next) => {
               })
             
           }));
-          await store.dispatch('getOfflineMsg',{'room_id':room_id});
           
           next();
         } catch (error) {

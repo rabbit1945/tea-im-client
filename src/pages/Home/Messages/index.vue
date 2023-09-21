@@ -2,8 +2,7 @@
     <!-- 聊天区域 -->   
       <div class="message" v-bind="message"  >
          <!-- 接收到的消息 -->
-         <span v-if = "isLoading === true" class='time-line'>历史消息</span>
-         
+         <span v-if = "isLoading === true" class='time-line'>历史消息</span>       
           <virtual-list
             ref = "returnBottom"
             class="msg-list"
@@ -13,31 +12,32 @@
             :keeps =this.keeps
             :estimate-size= this.estimateSize
             @totop = "totop"
+            @tobottom = "bottom"
+            @scroll = "onScroll"
             :start = 100  
           />  
-
-          <MsgSend :proTitle = "title" v-on:findNewMsg = "findNewMsg"/>
-      
+          <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge">
+            <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
+          </el-badge>
+          <el-badge  v-if = "msgNum > 0 && isBottom === true" :value=msgNum 
+           
+            class="item msg-badge" 
+            style="margin-top:-430px;">
+            <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
+          </el-badge>
+          <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg"/>     
       </div>
-     
-
  </template>
-
-  
   <script>
   import virtualList from 'vue-virtual-scroll-list'
 
   import MsgSend from '../MsgSend';
   import Item from '../Item';
-
-
     export default {
       name: "Message",
       data() {
         return {  
-          // wsmessageList: [], // ws 消息
           historyMessageList:[],//获取在线消息
-          offLineMessageList:false,  // 获取离线    
           tabshow: false,//是否进行某种操作
           room_id:this.$store.state.user.roomInfo.room_id,
           isLoading :false,
@@ -47,40 +47,81 @@
           timer: 0,
           itemComponent: Item,
           estimateSize:50,
-          keeps:20
-          
+          keeps:30,
+          msgNum:0,
+          isBottom:false
         }
       },
       props:['title'],
     
       mounted(){
+
         this.$store.state.message.historyMessageList= null
-        // window.addEventListener("scroll", this.findNewMsg, true);
+        // window.addEventListener("scroll", this.onScroll, true);
+        // 初始化条数
         this.initLoadMsg()
+       
       },
       destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug
-        // window.removeEventListener('scroll', this.findNewMsg,true)
+        // window.removeEventListener('scroll', this.onScroll,true)
       },
     
       methods:{
-        
+        getLocation(e){
+          let div=this.$refs.returnBottom;
+          console.log("getLocation",this.page*this.limit-this.msgNum);
+          let location = this.page*this.limit-this.msgNum
+          if (this.isBottom === true) {
+            location =  location -10
+          } 
+          div.scrollToIndex(location);
+          this.msgNum = 0
+          this.isBottom = false
+        },
+        onScroll(e){
+          let div=this.$refs.returnBottom;
+          let getOffset = div.getOffset();
+          
+          if (this.page >1 ) {
+            this.msgNum = 0;
+          }
+        },
         findNewMsg(val) {
-            if (val) {
+            if (Object.keys(val).length > 0) {
               this.$nextTick(() => {
-              var div=this.$refs.returnBottom;
-              // div.scrollToBottom();
-              div.reset()
-              div.scrollToBottom();
+              if (val.sendUserId == val.userId ) {
+                let div=this.$refs.returnBottom;
+                div.reset()
+                div.scrollToBottom();
+                this.isBottom = true;
+                this.msgNum = 0;
+              } else {
+                // 记录其他用户发送的消息数量
+                this.isBottom = false
+                this.msgNum ++
+                console.log(this.msgNum, this.isBottom);
+
+              }
+              
             })
           }
           
       },
       
       totop(){
+        console.log("到顶了");
         this.getdata()
+
+      },
+      bottom(){
+        this.isBottom = true
+        let offTotal =  this.msgNum
+        if (offTotal >= 10) {
+          this.msgNum = offTotal
+        }
+        console.log("到底了");
       },
       
-
       getdata() {
         if (!this.isEnd  && !this.isLoading ) {
           this.initLoadMsg();
@@ -90,6 +131,8 @@
         initLoadMsg() {
             this.page++;
             this.isLoading = true;
+            let div = this.$refs.returnBottom;
+            
             this.$store.dispatch('getGetMsg',{
                   room_id:this.room_id,
                   page:this.page,
@@ -97,10 +140,18 @@
                 }).then(res => {
                   this.$nextTick(()=>{
                     this.isLoading = false;
-                    if(!res) {
+                    if(!res.msg) {
                       this.isEnd = true;
                     }
-            
+                    if (this.page == 1) {
+                      //刷新滚动条到最近一页
+                      div.reset()
+                      div.scrollToBottom();
+                      this.isBottom = true
+                      this.msgNum = res.offTotal
+                    } 
+                   
+
                   })
                   
                 });
@@ -112,17 +163,14 @@
         message: {
           
           get() {
-            let offLineMessageList = this.$store.state.message.offLineMessageList;
+        
             let historyMessageList = this.$store.state.message.historyMessageList || [];
             let wsmessageList = this.$store.state.message.messageList; 
-            this.offLineMessageList = offLineMessageList;     
             this.historyMessageList = historyMessageList;
             if (wsmessageList) {
               this.historyMessageList.push(wsmessageList);
-            }
-            
-            console.log(this.historyMessageList);
-           
+            }  
+            console.log(this.historyMessageList);  
           }
         }
       },
@@ -265,14 +313,17 @@
       background-color: aquamarine;
 
   }
-
-
-  .time-line {
-     
+  .time-line {    
       display: inline-block;
       width: 700px;
       text-align: center;
       vertical-align: middle;
+  }
+  .msg-badge {
+    float: right;
+    margin-right: 10px;
+    margin-top:-40px;
+   
   }
 </style>
     

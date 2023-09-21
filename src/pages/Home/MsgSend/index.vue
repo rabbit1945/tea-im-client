@@ -77,10 +77,10 @@
         // 获取服务端发来的数据
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
-        this.$emit('findNewMsg',true);
+        this.$emit('findNewMsg',{"sendUserId":data.user_id,"userId":this.user_id});
         // 默认音频的大小
         this.audio.fileSize = 0
-        
+        // 动态设置title
         this.$store.dispatch("getTitle", {
           "user_id":data.user_id,
           "contactList":data.contactList

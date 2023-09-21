@@ -69,9 +69,8 @@ export default {
       console.log("Socket 断开",reason);
       console.log("disconnect是否连接服务端：",this.$socket.connected); // false
       if (this.$socket.connected === false) {
-          this.userStatus = "offline"
-
-      }   
+          this.userStatus = "offline"  
+      }         
     },
     async connect_error (error) {
       console.log("Socket 连接失败",error);
@@ -94,15 +93,10 @@ export default {
 
       }
 
-      // this.$socket.send('4HelloWorld')
     },
     async error (error) {
         console.log("Socket错误:",error);
         this.handleClose("服务器出错，请联系管理员！！！");
-    },
-    async pushUserStatus(data){
-      console.log("用户状态:",data)
-      // this.$store.dispatch('eventUserStatus',data)
     }
        
 },
