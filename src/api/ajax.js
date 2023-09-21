@@ -19,7 +19,7 @@ let requests = axios.create({
 requests.interceptors.request.use(
   (config) => {
     //需要携带token带给服务器
-     let token = store.state.user.token
+    let token = store.state.user.token
     if(token){
       config.headers.Authorization = 'Bearer'+' '+ token;
     }
@@ -34,11 +34,9 @@ requests.interceptors.request.use(
 //响应拦截器----当服务器手动请求之后，做出响应（相应成功）会执行的
 requests.interceptors.response.use(
   (res) => {
-   
     let data = res.data;
     //进度条结束
     nprogress.done();
-   
     if (data.code == '10000'){   
         //相应成功做的事情
         return data;
@@ -46,7 +44,8 @@ requests.interceptors.response.use(
       // token 校验失效
       if (data.code == '20014') {
         removeToken();
-        return alert(data.msg)
+        this.$router.push({path:'/login'})
+        // return alert(data.msg)
       }
       return data;
     }
@@ -55,7 +54,7 @@ requests.interceptors.response.use(
   },
   (err) => {
     console.log("服务器响应数据失败",err)
-    return alert(err)
+    this.$router.push({path:'/login'})
   }
 );
 //最终需要对外暴露（不对外暴露外面模块没办法使用）
