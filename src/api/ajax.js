@@ -42,7 +42,7 @@ requests.interceptors.response.use(
         return data;
     } else {
       // token 校验失效
-      if (data.code == '20014') {
+      if (data.code == '500') {
         removeToken();
         this.$router.push({path:'/login'})
         // return alert(data.msg)
