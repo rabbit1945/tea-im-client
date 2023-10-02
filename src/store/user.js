@@ -47,7 +47,7 @@ const actions = {
     async userLogin({ commit }, data) {
         // 请求参数
         let result = await reqUserLogin(data);
-        if (result.code === '10000') {
+        if (result.code === 10000) {
             // 添加登录日志
              
             //用户已经登录成功且获取到token
@@ -79,7 +79,7 @@ const actions = {
         let result = await reqRoomInfo();
         
         let code = result?.code;
-        if (code === '10000') {
+        if (code === 10000) {
             
             let list = result?.data;
         
@@ -97,7 +97,7 @@ const actions = {
         let result = await reqLogout();
         
         //action里面不能操作state，提交mutation修改state
-        if(result.code== '10000'){
+        if(result.code === 10000){
             removeToken();
             commit("USERLOGIN",false);
             return true;

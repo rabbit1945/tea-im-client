@@ -37,12 +37,12 @@ requests.interceptors.response.use(
     let data = res.data;
     //进度条结束
     nprogress.done();
-    if (data.code == '10000'){   
+    if (data.code === 10000){   
         //相应成功做的事情
         return data;
     } else {
       // token 校验失效
-      if (data.code == '500') {
+      if (data.code === 500) {
         removeToken();
         this.$router.push({path:'/login'})
         // return alert(data.msg)
