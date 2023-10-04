@@ -53,8 +53,10 @@ requests.interceptors.response.use(
    
   },
   (err) => {
+    removeToken();
     console.log("服务器响应数据失败",err)
-    this.$router.push({path:'/login'})
+    // this.$router.push({path:'/login'})
+    return false
   }
 );
 //最终需要对外暴露（不对外暴露外面模块没办法使用）

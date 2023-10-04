@@ -62,27 +62,27 @@
                   //     console.log("登录日志",res)
                   //    return this.$store.dispatch("addUserLoginLogs")
                   // } 
-                  console.log(res);
-                  if (res.code === '20001') {
-                    alert("登录失败")
+                  
+                  if (res.code === 20001) {
+                    this.$alert("登录失败")
                     return;
                     
                   }
                   let toPath = this.$route.query.redirect||"/";
                   this.$router.push(toPath);
-                  alert("登录成功")
+                  this.$alert("登录成功")
               }).catch(res=>{
-                  alert("登录失败") 
+                this.$alert("登录失败") 
               }) )  
               // 登录成功跳转页面
               this.$router.push('/');
-        } catch (error) {
-            alert(error.message);
-            
-        }
+            } catch (error) {
+              this.$alert(error.message);
+                
+            }
           } else {
-            console.log('error submit!!');
-            return false;
+           
+            this.$alert("登录失败") 
           }
         });
       },
