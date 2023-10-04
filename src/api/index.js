@@ -3,6 +3,8 @@ import mockRequests  from "./mockAjax";
 //登录
 //URL:/api/v1/login  method:post phone password
 export const reqUserLogin = (data)=>requests({url:'/v1/login',data,method:'post'});
+// gitee 登录
+export const reqGiteeLogin = (data)=>requests({url:'/v1/login/giteeLogin',data,method:'get'});
 
 //聊天室的基本信息
 //URL:/api/v1/room/info  method:post phone password

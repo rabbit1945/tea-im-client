@@ -5,7 +5,8 @@ import {
     reqUserLogin,
     reqRoomInfo,
     reqRoomUserList,
-    reqLogout
+    reqLogout,
+    reqGiteeLogin
 
 } from "@/api";
 
@@ -60,6 +61,21 @@ const actions = {
         } else {
             return result;
         }
+    },
+    async giteeLogin({ commit }, data) {
+        let result = await reqGiteeLogin(data);
+        if (result.code == 10000) {
+            console.log(result);
+            //用户已经登录成功且获取到token
+            // commit("USERLOGIN", result.data.token);
+            // //持久化存储token
+            // setToken(result.data.token);
+
+            return result.data;
+        } else {
+            return result;
+        }
+
     },
     
 
