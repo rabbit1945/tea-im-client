@@ -1,5 +1,5 @@
-devServer: {
+{
     
-    historyApiFallback: true
+    true
     
   }

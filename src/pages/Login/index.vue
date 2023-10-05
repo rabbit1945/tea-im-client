@@ -20,11 +20,22 @@
 
           ]"
          >
-            <el-input type="password" v-model="ruleForm.password" autocomplete="off" placeholder="密码"></el-input>
+        <el-input type="password" v-model="ruleForm.password" autocomplete="off" placeholder="密码"></el-input>
         </el-form-item>      
         <el-form-item>
             <el-button class = "but" type="primary" @click="submitForm('ruleForm')">提交</el-button>
         </el-form-item>
+
+          <span class="icon-login">
+            <svg class="icon" aria-hidden="true" @click="otherLogin('gitee')">
+              <use xlink:href="#icon-gitee"></use>
+            </svg>
+
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-github-fill"></use>
+            </svg>
+          </span>
+        
     </el-form>
 
 </div>
@@ -48,6 +59,12 @@
       };
     },
     methods: {
+      async otherLogin(gitee){
+        await this.$store.dispatch("giteeLogin",{
+          'type':gitee
+        });
+
+      },
       async submitForm(formName) {
         this.$refs[formName].validate(async(valid) => {
           if (valid) {
@@ -62,27 +79,27 @@
                   //     console.log("登录日志",res)
                   //    return this.$store.dispatch("addUserLoginLogs")
                   // } 
-                  console.log(res);
-                  if (res.code === '20001') {
-                    alert("登录失败")
+                  
+                  if (res.code === 20001) {
+                    this.$alert("登录失败")
                     return;
                     
                   }
                   let toPath = this.$route.query.redirect||"/";
                   this.$router.push(toPath);
-                  alert("登录成功")
+                  this.$alert("登录成功")
               }).catch(res=>{
-                  alert("登录失败") 
+                this.$alert("登录失败") 
               }) )  
               // 登录成功跳转页面
               this.$router.push('/');
-        } catch (error) {
-            alert(error.message);
-            
-        }
+            } catch (error) {
+              this.$alert(error.message);
+                
+            }
           } else {
-            console.log('error submit!!');
-            return false;
+           
+            this.$alert("登录失败") 
           }
         });
       },
@@ -129,7 +146,6 @@
     border-radius: 12px;
     text-align: center;
 }
-
 .logon button {
     width: 200px;
     height: 40px;
@@ -151,5 +167,21 @@
     padding-left: 67px;
 
 }
+.icon {
+  width: 1.5em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.icon-login {
+  display: block;
+  margin-left: 100px;
+}
+
+
  </style>
  

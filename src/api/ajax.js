@@ -37,12 +37,12 @@ requests.interceptors.response.use(
     let data = res.data;
     //进度条结束
     nprogress.done();
-    if (data.code == '10000'){   
+    if (data.code === 10000){   
         //相应成功做的事情
         return data;
     } else {
       // token 校验失效
-      if (data.code == '20014') {
+      if (data.code === 500) {
         removeToken();
         this.$router.push({path:'/login'})
         // return alert(data.msg)
@@ -53,8 +53,10 @@ requests.interceptors.response.use(
    
   },
   (err) => {
+    removeToken();
     console.log("服务器响应数据失败",err)
-    this.$router.push({path:'/login'})
+    // this.$router.push({path:'/login'})
+    return false
   }
 );
 //最终需要对外暴露（不对外暴露外面模块没办法使用）

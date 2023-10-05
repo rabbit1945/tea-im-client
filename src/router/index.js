@@ -70,13 +70,9 @@ router.beforeEach(async (to, from, next) => {
   //  next();
   //获取仓库中的token-----可以确定用户是登录了
    let token  = store.state.user.token;
-   console.log(router.app.$options.store.state.user);
-   console.log("token:",
-   token
-   );
 
    //用户登录了
-   if(token && to.meta.requiresAuth ){
+   if(token != null && to.meta.requiresAuth ){
      //已经登录而且还想去登录------不行
         try {
           // 获取房间信息
@@ -106,7 +102,7 @@ router.beforeEach(async (to, from, next) => {
           
           next();
         } catch (error) {
-          console.log(error);
+          
           //token失效从新登录
           await store.dispatch('userLogout');
           next({ name: 'Login' })
