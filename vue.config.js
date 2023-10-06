@@ -7,18 +7,18 @@ module.exports = defineConfig({
     proxy: {
      
       "/api": {
-        target: "http://api.lightning.gzy:8078/",
+        target: "http://192.168.1.108:8078/",
         pathRewrite: {
           '^/api': '/home'
         }
       },
 
       "/static": {
-        target: "http://api.lightning.gzy:8078/",
+        target: "http://192.168.1.108:8078/",
       },
 
       "/audio": {
-        target: "http://api.lightning.gzy:8078/storage",
+        target: "http://192.168.1.108:8078/storage",
       },
       
 

@@ -73,7 +73,7 @@ const actions = {
 
             return result.data;
         } else {
-            return result;
+            return false;
         }
 
     },
