@@ -35,6 +35,7 @@ requests.interceptors.request.use(
 requests.interceptors.response.use(
   (res) => {
     let data = res.data;
+    console.log("回调",data);
     //进度条结束
     nprogress.done();
     if (data.code === 10000){   

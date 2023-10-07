@@ -63,9 +63,7 @@
         await this.$store.dispatch("giteeLogin",{
           'type':gitee
         }).then(res => {
-         
           if (res !== false) {
-            console.log("---",res.url)
             window.location.href = res.url
           }
         });
