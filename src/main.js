@@ -3,6 +3,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueAudio from 'vue-audio-better'
 import MetaInfo from 'vue-meta-info';
+import VueCookies from 'vue-cookies'
 
 import App from './App.vue';
 //引入路由相关文件
@@ -26,7 +27,9 @@ import * as API from '@/api';
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueAudio);
-Vue.use(MetaInfo)
+Vue.use(MetaInfo);
+Vue.use(VueCookies)
+
 new Vue({
   render: h => h(App),
   //全局事件总线$bus配置

@@ -58,6 +58,10 @@
         
       };
     },
+    created() {
+      const CheckId = this.$cookies.get("PHPSESSID")
+      console.log('PHPSESSID',CheckId);
+    },
     methods: {
       async otherLogin(gitee){
         await this.$store.dispatch("giteeLogin",{
