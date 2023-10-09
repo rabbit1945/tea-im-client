@@ -69,12 +69,9 @@
       methods:{
         getLocation(e){
           let div=this.$refs.returnBottom;
-          console.log("getLocation",this.page*this.limit-this.msgNum, this.totalNum);
           let location = this.keeps
           if (this.totalNum > this.msgNum) {
             location = this.totalNum-this.msgNum
-          } else {
-            location = this.msgNum -  this.totalNum
           }
         
           if (this.isBottom === true) {
