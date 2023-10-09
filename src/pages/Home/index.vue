@@ -1,10 +1,10 @@
 <template>
-    <div class="cen">
+    <div class="wrap">
       <!-- 路由组件出口的地方 -->
     
       <!--头部 -->
        <MsgTop/>
-        <div> 
+      
           <!--用户基本信息 -->
           <MsgBase :userStatus="userStatus"/>
           <!-- 聊天记录 -->
@@ -12,7 +12,7 @@
           <!-- 用户信息 -->
           <UserList :showUser="true" />
             
-        </div>
+    
         <router-view></router-view>
     </div>
     

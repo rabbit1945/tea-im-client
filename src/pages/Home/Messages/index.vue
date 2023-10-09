@@ -1,8 +1,7 @@
  <template>
     <!-- 聊天区域 -->   
-      <div class="message" v-bind="message"  >
+      <div v-bind="message" class="message" >
          <!-- 接收到的消息 -->
-         <span v-if = "isLoading === true" class='time-line'>历史消息</span>       
           <virtual-list
             ref = "returnBottom"
             class="msg-list"
@@ -20,7 +19,6 @@
             <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
           </el-badge>
           <el-badge  v-if = "msgNum > 0 && isBottom === true" :value=msgNum 
-           
             class="item msg-badge" 
             style="margin-top:-430px;">
             <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
@@ -47,9 +45,11 @@
           timer: 0,
           itemComponent: Item,
           estimateSize:50,
-          keeps:30,
-          msgNum:0,
-          isBottom:false
+          keeps:20,
+          msgNum:0, //最新消息树
+          isBottom:false,
+          totalNum:0
+
         }
       },
       props:['title'],
@@ -69,8 +69,14 @@
       methods:{
         getLocation(e){
           let div=this.$refs.returnBottom;
-          console.log("getLocation",this.page*this.limit-this.msgNum);
-          let location = this.page*this.limit-this.msgNum
+          console.log("getLocation",this.page*this.limit-this.msgNum, this.totalNum);
+          let location = this.keeps
+          if (this.totalNum > this.msgNum) {
+            location = this.totalNum-this.msgNum
+          } else {
+            location = this.msgNum -  this.totalNum
+          }
+        
           if (this.isBottom === true) {
             location =  location -10
           } 
@@ -87,10 +93,12 @@
           }
         },
         findNewMsg(val) {
+            console.log(this.totalNum)
             if (Object.keys(val).length > 0) {
               this.$nextTick(() => {
               if (val.sendUserId == val.userId ) {
                 let div=this.$refs.returnBottom;
+                console.log("数据",div);
                 div.reset()
                 div.scrollToBottom();
                 this.isBottom = true;
@@ -99,7 +107,7 @@
                 // 记录其他用户发送的消息数量
                 this.isBottom = false
                 this.msgNum ++
-                console.log(this.msgNum, this.isBottom);
+                
 
               }
               
@@ -169,6 +177,7 @@
             this.historyMessageList = historyMessageList;
             if (wsmessageList) {
               this.historyMessageList.push(wsmessageList);
+              this.totalNum = this.historyMessageList.length
             }  
             console.log(this.historyMessageList);  
           }
@@ -191,19 +200,18 @@
  
   
     .message {
-      position: relative;
-      width: 700px; 
-      height: 600px;
-      background-color: white;
-      border: 1px solid rgba(245,245,245,.7);
-      float: left;
-     
-      
+      position: relative;  
     }
     
     .msg-list {
-      overflow: scroll;  
-      height: 440px;
+    position: relative;
+    height: 800px;
+    min-height: 440px;
+    border-right: 1px solid #fff;
+    border-bottom-left-radius: 20px;
+    background-color: white;
+    overflow: auto;  
+    margin-right: 157px;
 
     }
 
@@ -224,7 +232,7 @@
       word-wrap: break-word;
       /*但在有些场景中，还需要加上下面这行代码*/
       white-space: normal;
-      overflow: scroll
+      overflow: auto
     }
 
     .my-userInfo  .msg-frame {
@@ -314,14 +322,16 @@
 
   }
   .time-line {    
-      display: inline-block;
-      width: 700px;
-      text-align: center;
-      vertical-align: middle;
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
   }
   .msg-badge {
     float: right;
-    margin-right: 10px;
+    margin-right: 190px;
     margin-top:-40px;
    
   }

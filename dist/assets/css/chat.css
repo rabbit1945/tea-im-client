@@ -30,27 +30,6 @@
 }
 
 
-.userList {
-    width: 150px;
-    height: 600px;
-    float: left;
-    border: 1px solid #fff;
-    /* border-top-right-radius: 20px; */
-    border-bottom-right-radius: 20px;
-    background-color: rgba(245,245,245,1.7);
-
-
-}
-.userList ul {
-    height: 590px;
-    list-style: none;
-    overflow: scroll
-}
-
-.userList ul li {
-    margin: 10px 1px;
-
-}
 
 
 

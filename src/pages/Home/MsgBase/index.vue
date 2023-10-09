@@ -58,7 +58,8 @@
   .base {
     position: relative;
     width: 100px;
-    height: 600px;
+    height: 800px;
+    min-height: 800px;
     float: left;
     border-right: 1px solid #fff;
     border-bottom-left-radius: 20px;
@@ -77,10 +78,13 @@
 
 
 .logout {
-  width: 40px;
-  height: 40px;
-  margin: 470px 0px 30px 30px;
-  cursor:pointer;
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+   
 }
 .userStatus{
   position: absolute; 

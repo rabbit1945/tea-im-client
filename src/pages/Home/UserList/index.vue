@@ -1,8 +1,6 @@
  <template>
 
-  <div class="userList" >
-    <div class="infinite-list-wrapper"  style="overflow:auto">
-
+  <div class="userList"  style="overflow:auto">
         <ul
           class="list"
           v-infinite-scroll="load"
@@ -21,7 +19,6 @@
             {{ val.nick_name }}
           </li>
         </ul>
-    </div>
   </div>
  </template>
   <script> 
@@ -108,6 +105,33 @@
   border-radius: 5px;
   background-color: grey;
 }
+
+.userList {
+    position: absolute;
+    top: 50px;
+    right: 0px;
+    width: 155px;
+    height: 800px;
+    min-height: 600px;
+    float: right;
+    border: 1px solid #fff;
+    /* border-top-right-radius: 20px; */
+    border-bottom-right-radius: 20px;
+    background-color: rgba(245,245,245,1.7);
+
+
+}
+.userList ul {
+    list-style: none;
+    overflow: auto;
+}
+
+
+
+.userList ul li {
+    margin: 10px 1px;
+}
+
 
     
   </style>

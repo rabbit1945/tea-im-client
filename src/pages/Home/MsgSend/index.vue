@@ -232,12 +232,16 @@
   }
   .world {
     position: absolute;
-    bottom: 0;
+    /* left: 99px; */
+    bottom: -220px;
     padding-top: 10px;
-    width: 700px;
-    height: 150px;
-    border-top: 1px  solid #fff;
-    
+    width: 100%;
+    min-width: 50%;
+    height: 107px;
+    border-top: 1px solid #fff;
+    background-color: white;
+    margin-bottom: 100px;
+    border-radius:20px 20px
   }
   .msg-button {
     height: 38px;
@@ -271,15 +275,18 @@
 
   }
   .msg-content {
-    margin-top: 13px;
-    height:107px;
+    margin-top: 1px;
     padding: 1px;
-    overflow:scroll;
+    overflow: auto;
+    outline: none;
+    max-height: 73px;
   }
 
   .msg-content:empty::before {
       content: attr(placeholder);
   }
+
+  
 
   .userList {
     min-width: 100px;
