@@ -26,7 +26,7 @@
             <el-button class = "but" type="primary" @click="submitForm('ruleForm')">提交</el-button>
         </el-form-item>
 
-          <span class="icon-login">
+          <!-- <span class="icon-login">
             <svg class="icon" aria-hidden="true" @click="otherLogin('gitee')">
               <use xlink:href="#icon-gitee"></use>
             </svg>
@@ -34,7 +34,7 @@
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-github-fill"></use>
             </svg>
-          </span>
+          </span> -->
         
     </el-form>
 
@@ -80,23 +80,23 @@
             try {
               //登录成功
               const { login, password } = this.ruleForm;
-              console.log(login, password)
-            
+              
               login&&password&&(await this.$store.dispatch("userLogin", { login, password }).then (res => {
                   // if (res === true) {
                   //     console.log("登录日志",res)
                   //    return this.$store.dispatch("addUserLoginLogs")
                   // } 
-                  
-                  if (res.code === 20001) {
-                    this.$alert("登录失败")
-                    return;
+                  if (res.code !== 10000) {
+                    console.log('登录失败1')
+                    removeToken()
+                    return this.$alert("登录失败")
+                     
                     
                   }
-                  let toPath = this.$route.query.redirect||"/";
-                  this.$router.push(toPath);
-                  this.$alert("登录成功")
+              // 登录成功跳转页面
+              this.$router.push('/');
               }).catch(res=>{
+                console.log('登录失败2')
                 this.$alert("登录失败") 
               }) )  
               // 登录成功跳转页面
@@ -106,7 +106,7 @@
                 
             }
           } else {
-           
+            console.log('登录失败3')
             this.$alert("登录失败") 
           }
         });

@@ -21,18 +21,18 @@ module.exports = defineConfig({
     proxy: {
      
       "/api": {
-        target: "http://192.168.1.108:8078/",
+        target: "http://127.0.0.1:8078/",
         pathRewrite: {
           '^/api': '/home'
         }
       },
 
       "/static": {
-        target: "http://192.168.1.108:8078/",
+        target: "http://127.0.0.1:8078/",
       },
 
       "/audio": {
-        target: "http://192.168.1.108:8078/storage",
+        target: "http://127.0.0.1:8078/storage",
       },
       
 

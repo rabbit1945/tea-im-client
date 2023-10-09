@@ -55,12 +55,8 @@ const actions = {
             commit("USERLOGIN", result.data.token);
             //持久化存储token
             setToken(result.data.token);
-
-            return result.data;
-
-        } else {
-            return result;
-        }
+        } 
+        return result;
     },
     async giteeLogin({ commit }, data) {
         let result = await reqGiteeLogin(data);
