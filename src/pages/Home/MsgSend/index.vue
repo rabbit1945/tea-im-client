@@ -3,7 +3,7 @@
       <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectMsg"/>     
       <div class="msg-button">       
         <el-button @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
-          <img class = "msg-img" src="/emoji/QQ/png/0fix@2x.png">
+          <img class = "msg-img" src="/assets/images/emoji.png">
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
       </div>
