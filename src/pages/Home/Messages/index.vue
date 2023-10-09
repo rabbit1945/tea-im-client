@@ -15,12 +15,11 @@
             @scroll = "onScroll"
             :start = 100  
           />  
-          <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge">
+          <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
             <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
           </el-badge>
           <el-badge  v-if = "msgNum > 0 && isBottom === true" :value=msgNum 
-            class="item msg-badge" 
-            style="margin-top:-430px;">
+            class="item msg-badge-up">
             <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
           </el-badge>
           <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg"/>     
@@ -84,7 +83,7 @@
         onScroll(e){
           let div=this.$refs.returnBottom;
           let getOffset = div.getOffset();
-          
+
           if (this.page >1 ) {
             this.msgNum = 0;
           }
@@ -95,7 +94,6 @@
               this.$nextTick(() => {
               if (val.sendUserId == val.userId ) {
                 let div=this.$refs.returnBottom;
-                console.log("数据",div);
                 div.reset()
                 div.scrollToBottom();
                 this.isBottom = true;
@@ -123,6 +121,8 @@
         let offTotal =  this.msgNum
         if (offTotal >= 10) {
           this.msgNum = offTotal
+        } else {
+          this.msgNum = 0
         }
         console.log("到底了");
       },
@@ -326,11 +326,20 @@
     text-align: center;
     vertical-align: middle;
   }
-  .msg-badge {
-    float: right;
-    margin-right: 190px;
-    margin-top:-40px;
+  .msg-badge-down {
+    position: absolute;
+    right: 190px;
+    bottom: 1px;
+   
    
   }
+
+  .msg-badge-up {
+    position: absolute;
+    top: 10px;
+    right: 190px;
+    
+  }
+
 </style>
     
