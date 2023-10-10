@@ -81,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
           // 注册 socket
           Vue.use(new VueSocketIO({
             debug: true,
-            connection: Manager.connect("http://127.0.0.1:9502", {
+            connection: Manager.connect("http://192.168.1.108:9502", {
               connectionStateRecovery: {
                 // the backup duration of the sessions and the packets
                 maxDisconnectionDuration: 2 * 60 * 1000,
