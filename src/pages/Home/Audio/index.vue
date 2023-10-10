@@ -405,6 +405,7 @@
     z-index: 1;
     background-color: rgba(245,245,245,1.7);
     height: 10vh;
+    border-collapse: collapse;
 }
  .msg-img {
     width: 25px;
