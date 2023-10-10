@@ -30,6 +30,7 @@
     "vue": "^2.6.14",
     "vue-at": "^2.5.1",
     "vue-audio-better": "^3.0.1",
+    "vue-audio-visual": "^2.5.0",
     "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-cookies": "^1.8.3",
     "vue-i18n": "^8.28.2",

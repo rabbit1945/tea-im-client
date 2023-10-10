@@ -29,16 +29,16 @@
   })
  
   // 绑定事件-打印的是当前录音数据
-  recorder.onprogress = function(params) {
-    console.log('--------------START---------------')
-    // console.log('录音时长(秒)', params.duration);
-    console.log('录音大小(字节)', params.fileSize);
-    console.log('录音音量百分比(%)', params.vol);
-    console.log('当前录音的当前部分', params.getNextData);
+  // recorder.onprogress = function(params) {
+  //   console.log('--------------START---------------')
+  //   // console.log('录音时长(秒)', params.duration);
+  //   console.log('录音大小(字节)', params.fileSize);
+  //   console.log('录音音量百分比(%)', params.vol);
+  //   console.log('当前录音的当前部分', params.getNextData);
 
-    console.log('当前录音的总数据([DataView, DataView...])', params.getWholeData);
-    console.log('--------------END---------------')
-  }
+  //   console.log('当前录音的总数据([DataView, DataView...])', params.getWholeData);
+  //   console.log('--------------END---------------')
+  // }
   
   export default {
     name: 'Audio',
@@ -63,6 +63,7 @@
     mounted(){     
       this.startCanvas();     
     },
+  
     methods: {
       /**
        * 波浪图配置
@@ -96,7 +97,8 @@
             this.drawRecord();//开始绘制图片
             }, (error) => {
               this.stopRecorder();
-              this.startEnd = false;
+                this.getRecorder();
+              this.startEnd = true;
              
               // 出错了
               console.log("error:",error);
@@ -110,7 +112,6 @@
           this.startEnd = false;
 
         }
-       
         
       },
       // 继续录音
@@ -127,6 +128,7 @@
       stopRecorder () {
         recorder.stop()
         this.drawRecordId && cancelAnimationFrame(this.drawRecordId);
+        
         this.drawRecordId = null;
       },
       // 录音播放
@@ -159,8 +161,9 @@
        *  获取录音文件
        * */
       getRecorder(){
-        let toltime = recorder.duration || 0;//录音总时长
-        let fileSize = recorder.fileSize || 0;//录音总大小
+        let toltime = parseInt(recorder.duration) ;//录音总时长
+        let fileSize = recorder.fileSize;//录音总大小
+        console.log(recorder.getWAV());
         //录音结束，获取取录音数据
         // let PCMBlob = recorder.getPCMBlob();//获取 PCM 数据
         // let wavBlob = recorder.getWAVBlob();//获取 WAV 数据
@@ -293,6 +296,7 @@
         // 实时获取音频大小数据
         let dataArray = recorder.getRecordAnalyseData(),
             bufferLength = dataArray.length;
+ 
         // 填充背景色
         this.ctx.fillStyle = 'rgb(200, 200, 200)';
         this.ctx.fillRect(0, 0, this.oCanvas.width, this.oCanvas.height);
@@ -393,10 +397,14 @@
 
 }
 .audio-tips {
-  width: 700px;
-  position:relative;
-  left: 30vw;
-  text-align: center;
+  width: 89vw;
+    position: relative;
+    top: 0vh;
+    /* left: 30vw; */
+    text-align: center;
+    z-index: 1;
+    background-color: rgba(245,245,245,1.7);
+    height: 10vh;
 }
  .msg-img {
     width: 25px;

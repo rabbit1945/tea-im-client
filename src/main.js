@@ -1,10 +1,11 @@
 import Vue from 'vue';
+
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueAudio from 'vue-audio-better'
 import MetaInfo from 'vue-meta-info';
 import VueCookies from 'vue-cookies'
-
+import AudioVisual from 'vue-audio-visual'
 import App from './App.vue';
 //引入路由相关文件
 import router from "@/router";
@@ -29,6 +30,8 @@ Vue.use(ElementUI);
 Vue.use(VueAudio);
 Vue.use(MetaInfo);
 Vue.use(VueCookies)
+Vue.use(AudioVisual)
+
 
 new Vue({
   render: h => h(App),

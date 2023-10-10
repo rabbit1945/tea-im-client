@@ -15,11 +15,18 @@
                         </div>
 
                         <div contenteditable = "false" class="text" v-if = "this.source.content_type === 1">
-                            <mini-audio
+                            <!-- <vue-audio
                                 :audio-source= this.source.msg
                                 @canplay="showLong"
-                                :volume="[leftVolume, rightVolume]"
-                            ></mini-audio>
+                                volume=[leftVolume,rightVolume]
+                            ></vue-audio> -->
+
+                            <av-bars
+                            :canv-height ="30"
+                            :audio-src=this.source.msg>
+                            </av-bars>
+
+
                         </div>
                     </div>
                 </div>
@@ -39,7 +46,7 @@
                 is_stop: true,
                 duration: 0,
                 curr: 0,
-                volume:0,
+                volume:50,
                 balance: 50,       
             }
         },
@@ -56,9 +63,11 @@
             },
          
         },
-        mounted(){
-            
+        created(){
+            this.volume = 50
+
         },
+        
         computed: {
             leftVolume() {
                 return this.balance < 50 ? 1 : 1 - ((this.balance - 50) / 50);
@@ -69,7 +78,7 @@
         },
         methods:{
             showLong() {//音频加载成功后获取时长
-                this.duration = parseInt(this.$refs.audio.duration)
+                this.duration = parseInt(this.$refs.audio.duration) ?  parseInt(this.$refs.audio.duration): 0
 
             } ,
             clickMsg() {

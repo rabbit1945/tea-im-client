@@ -280,7 +280,7 @@
     padding: 1px;
     overflow: auto;
     outline: none;
-    max-height: 73px;
+    height: 6vh;
   }
 
   .msg-content:empty::before {
