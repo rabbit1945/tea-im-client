@@ -5,13 +5,13 @@
           <img class="userLogo" :src= "userLogo" alt="">
           <span class="userStatus" v-if = "userStatus == 'online'" style="background-color: blue;"></span>
           <span class="name">{{ nickName }}</span> 
-          <img class="logout" @click = 'logout' src = "./images/logout.png" alt="">
+            
+          <img @click = 'logout' src = "./images/logout.png" alt="登出"  class="logout">
+      
     </div>
  </template>
   
   <script>
-  //引入router
-  import router from "@/router";
   export default {
     name: "MsgBase",
     data() {
@@ -27,8 +27,6 @@
     methods:{
     
       logout(){
-        
-        
         this.$confirm("请问是否退出账号？")
         .then(_ => {
         
@@ -64,6 +62,7 @@
     border-right: 1px solid #fff;
     border-bottom-left-radius: 20px;
     background-color: cadetblue;
+    z-index: 1;
 
 }
 
@@ -84,8 +83,8 @@
     width: 40px;
     height: 40px;
     cursor: pointer;
-   
 }
+
 .userStatus{
   position: absolute; 
   top: 65px;

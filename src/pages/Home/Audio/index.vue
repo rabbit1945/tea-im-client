@@ -394,10 +394,8 @@
 }
 .audio-tips {
   width: 700px;
-  height: 117px; 
   position:relative;
-  z-index: 1;
-  background-color: aliceblue;
+  left: 30vw;
   text-align: center;
 }
  .msg-img {

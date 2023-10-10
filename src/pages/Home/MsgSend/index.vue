@@ -258,7 +258,8 @@
 
   }
   .msg-emoji {
-    position:absolute;
+    position: absolute;
+     left: 110px;
     bottom: 161px;
 
 
