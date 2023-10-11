@@ -6,11 +6,13 @@ import {
     reqRoomInfo,
     reqRoomUserList,
     reqLogout,
+    reqAuth,
     reqGiteeLogin
 
 } from "@/api";
 
 import { setToken, getToken,removeToken} from "@/utils/token";
+import { setCache, getCache,removeCache} from "@/utils/cookie";
 //登录与注册的模块
 const state = {
   code: "",
@@ -19,8 +21,7 @@ const state = {
   userInfo: {},
   roomInfo:{},
   roomUserList:[],
-//   messageList:[],
-
+  isAuthLogin:false
 };
 // 
 const mutations = {
@@ -38,6 +39,9 @@ const mutations = {
     },  
     ROOMUSERLIST(state, data) {
         state.roomUserList = data
+    },
+    ISAUTHLOGIN(state, data) {
+        state.isAuthLogin = data
     }
 
 };
@@ -58,15 +62,40 @@ const actions = {
         } 
         return result;
     },
+
+    /**
+     * gitee 登录
+     * @param {*} param0 
+     * @param {*} data 
+     * @returns 
+     */
     async giteeLogin({ commit }, data) {
         let result = await reqGiteeLogin(data);
         if (result.code == 10000) {
             console.log(result);
             //用户已经登录成功且获取到token
-            // commit("USERLOGIN", result.data.token);
-            // //持久化存储token
-            // setToken(result.data.token);
+            commit("USERLOGIN", result.data.token);
+            //持久化存储token
+            setToken(result.data.token);
+            //删除auth
+            removeCache("isAuthLogin");
+           
+        } 
+        return result;
 
+    },
+
+    /**
+     * 授权
+     * @param {*} param0 
+     * @param {*} data 
+     * @returns 
+     */
+    async authLogin({ commit }, data) {
+        let result = await reqAuth(data);
+        if (result.code == 10000) {
+            // 设置 Auth 标识
+            setCache("isAuthLogin",true)
             return result.data;
         } else {
             return false;
@@ -91,10 +120,8 @@ const actions = {
         let result = await reqRoomInfo();
         
         let code = result?.code;
-        if (code === 10000) {
-            
+        if (code === 10000) {       
             let list = result?.data;
-        
             //  //提交用户信息
             commit("GETUSERINFO", list?.userInfo);
             // 提交 聊天室的基本信息
@@ -107,14 +134,18 @@ const actions = {
     async userLogout({commit}) {
         //只是向服务器发起一次请求，通知服务器清除token
         let result = await reqLogout();
-        
         //action里面不能操作state，提交mutation修改state
         if(result.code === 10000){
+            // 删除 token
             removeToken();
+            // 删除授权
+            removeCache('isAuthLogin')
             commit("USERLOGIN",false);
             return true;
         }
   },
+
+
 
 }
 

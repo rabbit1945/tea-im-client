@@ -26,15 +26,15 @@
             <el-button class = "but" type="primary" @click="submitForm('ruleForm')">提交</el-button>
         </el-form-item>
 
-          <!-- <span class="icon-login">
-            <svg class="icon" aria-hidden="true" @click="otherLogin('gitee')">
+          <span class="icon-login">
+            <svg class="icon" aria-hidden="true" @click="getAuthLogin('gitee')">
               <use xlink:href="#icon-gitee"></use>
             </svg>
 
-            <svg class="icon" aria-hidden="true">
+            <!-- <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-github-fill"></use>
-            </svg>
-          </span> -->
+            </svg> -->
+          </span>
         
     </el-form>
 
@@ -42,8 +42,8 @@
 </template>
  
  <script>
- import { setToken, getToken,removeToken} from "@/utils/token";
-
+ 
+ import { setCache, getCache,removeCache} from "@/utils/cookie";
  export default {
     data() {
     
@@ -54,25 +54,62 @@
         },
         rules:{
 
-        }
-        
+        },
+
+        oauthToken:getCache("oauthToken"),
+        isAuthLogin:getCache("isAuthLogin")
       };
     },
-    created() {
-      const CheckId = this.$cookies.get("PHPSESSID")
-      console.log('PHPSESSID',CheckId);
+    mounted() {
+      const oauthToken = this.oauthToken
+      const isAuthLogin = this.isAuthLogin
+
+      console.log('oauthToken',oauthToken,isAuthLogin);
+      if (oauthToken && isAuthLogin) {
+        
+        try {
+          // 登录
+          this.$store.dispatch("giteeLogin", {
+              'oauthToken': oauthToken 
+              }).then(res => {
+              if (res.code !== 10000) {
+                  return this.$alert("登录失败")
+              }
+              // 登录成功跳转页面
+              this.$router.push('/');
+            }).catch(res=>{
+                this.$alert("登录失败") 
+          })
+       
+        } catch (error) {
+            this.$alert(error.message);        
+        }
+
+      }
+
+     
     },
     methods: {
-      async otherLogin(gitee){
-        await this.$store.dispatch("giteeLogin",{
-          'type':gitee
-        }).then(res => {
-          if (res !== false) {
+      async getAuthLogin(name){
+        const oauthToken = this.oauthToken ?? ""
+
+        await this.$store.dispatch("authLogin",`?origin=${name}&oauthToken=${oauthToken}`).then(res => {
+          if (res.url && res.url.length > 0) {
+            
             window.location.href = res.url
+
+          } 
+          if (res.oauthToken && res.origin ) {
+            window.location.href = "https://"+ window.location.host 
+
           }
+          
+          
         });
 
       },
+
+      
       async submitForm(formName) {
         this.$refs[formName].validate(async(valid) => {
           if (valid) {
@@ -82,36 +119,25 @@
               const { login, password } = this.ruleForm;
               
               login&&password&&(await this.$store.dispatch("userLogin", { login, password }).then (res => {
-                  // if (res === true) {
-                  //     console.log("登录日志",res)
-                  //    return this.$store.dispatch("addUserLoginLogs")
-                  // } 
                   if (res.code !== 10000) {
-                    console.log('登录失败1')
-                    removeToken()
                     return this.$alert("登录失败")
-                     
-                    
                   }
-              // 登录成功跳转页面
-              this.$router.push('/');
-              }).catch(res=>{
-                console.log('登录失败2')
-                this.$alert("登录失败") 
-              }) )  
-              // 登录成功跳转页面
-              this.$router.push('/');
+                  // 登录成功跳转页面
+                  this.$router.push('/');
+                  }).catch(res=>{
+                    this.$alert("登录失败") 
+                  }) 
+              )  
+             
             } catch (error) {
               this.$alert(error.message);
                 
             }
           } else {
-            console.log('登录失败3')
             this.$alert("登录失败") 
           }
         });
       },
-      
     }
   }
  </script>
