@@ -149,36 +149,36 @@
          
         // 编辑框获得焦点
         input.focus() 
+        
         // 获取选定对象
         let range = []
         if (selection.rangeCount > 0) {
-          // 获取选定对象
-          range = selection.getRangeAt(0);       
-        // 判断是否有最后光标对象存在
-        if (lastEditRange) {
-            // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+            // 获取选定对象
+            range = selection.getRangeAt(0);       
+          // 判断是否有最后光标对象存在
+          if (lastEditRange) {
+              // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+              selection.removeAllRanges()
+              selection.addRange(lastEditRange)
+          } 
+          // 获取光标对象的范围界定对象，一般就是textNode对象
+          let textNode = range.startContainer;
+          let rangeStartOffset = range.startOffset
+          if (rangeStartOffset > 0) {
+            // 文本节点在光标位置处插入新的表情内容
+            textNode.insertData(rangeStartOffset, val.data)
+            // 光标移动到到原来的位置加上新内容的长度
+            range.setStart(textNode, rangeStartOffset + val.data.length)
+            // 光标开始和光标结束重叠
+            range.collapse(true)
+            // 清除选定对象的所有光标对象
             selection.removeAllRanges()
-            selection.addRange(lastEditRange)
-        } 
-        // 获取光标对象的范围界定对象，一般就是textNode对象
-        let textNode = range.startContainer;
-        let rangeStartOffset = range.startOffset
-        // 文本节点在光标位置处插入新的表情内容
-        
-        textNode.insertData(rangeStartOffset, val.data)
-
-        // 光标移动到到原来的位置加上新内容的长度
-        range.setStart(textNode, rangeStartOffset + val.data.length)
-        // 光标开始和光标结束重叠
-        range.collapse(true)
-        // 清除选定对象的所有光标对象
-        selection.removeAllRanges()
-        // 插入新的光标对象
-        selection.addRange(range)
-        // 无论如何都要记录最后光标对象
-        lastEditRange = selection.getRangeAt(0)
-      
-      }     
+            // 插入新的光标对象
+            selection.addRange(range)
+            // 无论如何都要记录最后光标对象
+            lastEditRange = selection.getRangeAt(0)
+          }
+        }
       },
       //打开表情弹窗
       toogleDialogEmoji () {
