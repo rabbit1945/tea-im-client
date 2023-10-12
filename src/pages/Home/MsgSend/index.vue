@@ -25,6 +25,7 @@
           @keyup.enter="msgSend"
           
           contenteditable>
+          &nbsp;
 
         </div>
 
