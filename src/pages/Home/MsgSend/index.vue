@@ -78,6 +78,7 @@
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
         this.$emit('findNewMsg',{"sendUserId":data.user_id,"userId":this.user_id});
+        this.contactList = []
         // 默认音频的大小
         this.audio.fileSize = 0
         // 动态设置title
