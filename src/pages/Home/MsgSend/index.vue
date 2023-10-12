@@ -26,7 +26,6 @@
           
           contenteditable>
           &nbsp;
-
         </div>
 
       </at>
