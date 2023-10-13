@@ -216,6 +216,7 @@
         };
         
         this.$socket.volatile.emit('room',msgData);     
+        this.$refs.input.innerHTML = "&nbsp;"
       },
   
     }
