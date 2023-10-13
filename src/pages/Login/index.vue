@@ -69,7 +69,7 @@
         
         try {
           // 登录
-          this.$store.dispatch("giteeLogin", {
+          this.$store.dispatch("authLogin", {
               'oauthToken': oauthToken 
               }).then(res => {
               if (res.code !== 10000) {

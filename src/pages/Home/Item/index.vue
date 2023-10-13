@@ -147,7 +147,7 @@
 .time-line {
     
     display: inline-block;
-    width: 700px;
+    width: 100%;
     text-align: center;
     vertical-align: middle;
 }

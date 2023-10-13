@@ -397,7 +397,7 @@
 
 }
 .audio-tips {
-  width: 89vw;
+  width: 89.3vw;
     position: relative;
     top: 0vh;
     /* left: 30vw; */

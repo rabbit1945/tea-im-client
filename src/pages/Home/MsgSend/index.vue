@@ -6,7 +6,10 @@
           <img class = "msg-img" src="/assets/images/emoji.png">
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
+        <button @click="btnClick()" style="margin-left: 5px">点击开始截图</button>
       </div>
+    
+
       <at
        :members="members" 
        :filter-match="filterMatch"
@@ -34,6 +37,7 @@
  </template>
   
   <script>  
+  import ScreenShort from 'js-web-screen-shot'
   import {VEmojiPicker} from 'v-emoji-picker';
   import Audio from '../Audio'
   import At from 'vue-at'
@@ -61,7 +65,8 @@
         sumNoticeOtherUser:0,
         countStr:0, // 统计字符的数量
         members: [], // @ 用户列表
-        contactList:[] // 需要通知的列表
+        contactList:[], // 需要通知的列表
+
       }
     },
     metaInfo() {
@@ -105,6 +110,45 @@
     },
   
     methods: {
+      // 按钮点击时间方法，构建插件对象
+  btnClick() {
+  // 更多参数 和使用可以看它包里面的README.md文件
+        const screenShotHandler = new ScreenShort({
+          // 是否启用webrtc，值为boolean类型，值为false则使用html2canvas来截图
+          enableWebRtc: false,
+          // 层级级别，这个要比你页面上其他元素的z-index的值大，不然截不了
+          level: 2001,
+          // saveCallback:(code, msg) => {
+          //   // 在此处根据实际业务需要通过参数做判断即可
+          //   console.log(code,msg);
+          // },
+          completeCallback: this.callback, // 截图成功完成的回调
+          closeCallback: this.closeFn, // 截图取消的回调
+          canvasWidth:  window.innerWidth,
+          canvasHeight:  window.innerHeight,
+        })
+  },
+  
+   callback(base64data,cutInfo) {
+    console.log(base64data)
+    let input = this.$refs.input
+    let innerHTML = input.innerHTML  
+    let val = innerHTML + "<img src=" + base64data.base64 + ">"
+    input.innerHTML = val
+
+  },
+convertImageToCanvas(image) {
+      var canvas = document.createElement('canvas')
+      canvas.width = image.width
+      canvas.height = image.height
+      canvas.getContext('2d').drawImage(image, 0, 0)
+      return canvas
+    },
+    closeFn() {
+      // 取消截图的回调
+    },
+
+   
      // 过滤联系人
       filterMatch(name, chunk) {
         return name.toLowerCase().indexOf(chunk.toLowerCase()) === 0;
@@ -187,14 +231,16 @@
       // 发送
       msgSend(){
         this.$socket.open();
-        let input = this.$refs.input.innerText
+        let input = this.$refs.input.innerHTML
         let messgae = input.trim();
         let content_type = 0; // 文本
         if (this.audio.fileSize > 0) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
-       
+
+     
+        
         if (messgae === ''|| messgae === null || messgae === undefined ) {
           
           this.$alert("你好，客官你还没有添写消息呢！！！");
@@ -226,6 +272,7 @@
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
+
   .audio {
     float: left;
     width: 25px;
@@ -277,17 +324,7 @@
     overflow: scroll;
 
   }
-  .msg-content {
-    margin-top: 1px;
-    padding: 1px;
-    overflow: auto;
-    outline: none;
-    height: 6vh;
-  }
 
-  .msg-content:empty::before {
-      content: attr(placeholder);
-  }
 
   
 

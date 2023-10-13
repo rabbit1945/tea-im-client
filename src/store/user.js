@@ -7,7 +7,7 @@ import {
     reqRoomUserList,
     reqLogout,
     reqAuth,
-    reqGiteeLogin
+    reqAuthLogin
 
 } from "@/api";
 
@@ -69,8 +69,8 @@ const actions = {
      * @param {*} data 
      * @returns 
      */
-    async giteeLogin({ commit }, data) {
-        let result = await reqGiteeLogin(data);
+    async authLogin({ commit }, data) {
+        let result = await reqAuthLogin(data);
         if (result.code == 10000) {
             console.log(result);
             //用户已经登录成功且获取到token

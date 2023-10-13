@@ -4,9 +4,9 @@ import mockRequests  from "./mockAjax";
 //URL:/api/v1/login  method:post phone password
 export const reqUserLogin = (data)=>requests({url:'/v1/login',data,method:'post'});
 // 授权
-export const reqAuth = (type)=>requests({url:`/v1/auth/gitee/${type}`,type,method:'get'});
+export const reqAuth = (type)=>requests({url:`/v1/get/auth/${type}`,type,method:'get'});
 // 第三方登录
-export const reqGiteeLogin = (data)=>requests({url:'/v1/gitee/login',data,method:'post'});
+export const reqAuthLogin = (data)=>requests({url:'/v1/auth/login',data,method:'post'});
 
 //聊天室的基本信息
 //URL:/api/v1/room/info  method:post phone password
