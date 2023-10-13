@@ -147,14 +147,9 @@
 .time-line {
     
     display: inline-block;
-    width: 100%;
+    width: 200;
     text-align: center;
     vertical-align: middle;
-}
-.msg-html {
-   
-    word-wrap: break-word;
-    max-width:  600px;
 }
 </style>
   

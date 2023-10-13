@@ -25,9 +25,22 @@ body {
   }
 
   .msg-content > img {
-    width: 100px;
-    height: 100px;
+    max-height:  100px;
+    max-width:  100px;
   }
+
+  
+.msg-html {
+   
+    word-wrap: break-word;
+    max-width:  600px;
+}
+
+.msg-html >img {
+   
+   max-height:  200px;
+   max-width:  200px;
+}
 
 /* ::-webkit-scrollbar{
     display:none;
