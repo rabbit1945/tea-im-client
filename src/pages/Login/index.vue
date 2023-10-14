@@ -98,7 +98,7 @@
       async getAuthLogin(name){
         const oauthToken = this.oauthToken ?? ""
 
-        await this.$store.dispatch("authLogin",`?origin=${name}&oauthToken=${oauthToken}`).then(res => {
+        await this.$store.dispatch("getAuthLogin",`?origin=${name}&oauthToken=${oauthToken}`).then(res => {
           if (res.url && res.url.length > 0) {
             
             window.location.href = res.url

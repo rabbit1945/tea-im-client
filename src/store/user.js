@@ -91,7 +91,7 @@ const actions = {
      * @param {*} data 
      * @returns 
      */
-    async authLogin({ commit }, data) {
+    async getAuthLogin({ commit }, data) {
         let result = await reqAuth(data);
         if (result.code == 10000) {
             // 设置 Auth 标识
