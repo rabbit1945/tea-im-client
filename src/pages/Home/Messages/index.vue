@@ -23,6 +23,9 @@
             <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
           </el-badge>
           <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg"/>     
+          <div id="myAlertBox"  class= "alertBox" style="display:none">
+            <button id="closeAlertBox">关闭</button>
+          </div>
       </div>
  </template>
   <script>
@@ -186,6 +189,8 @@
 
       }
     }
+
+  
   </script>
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -318,14 +323,7 @@
       background-color: aquamarine;
 
   }
-  .time-line {    
-    position: absolute;
-    display: inline-block;
-    width: 100%;
-    height: 20px;
-    text-align: center;
-    vertical-align: middle;
-  }
+
   .msg-badge-down {
     position: absolute;
     right: 190px;

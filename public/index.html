@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="/assets/css/public.css">
     <link rel="stylesheet" href="/assets/css/chat.css">
     <link rel="stylesheet" href="/assets/css/iconfont.css">
+  
     <script src="./assets/js/iconfont.js"></script>
+   
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>闪电</title>
   </head>
   <body scroll="no">
@@ -18,5 +21,27 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+   
   </body>
+
+  <script>
+  
+  function myBtn(params) {
+      $('#myAlertBox').fadeIn();
+      $('#myAlertBox').html( "<img onclick= 'closeAlertBox()' src=" + params.base64 + ">")
+
+  
+    console.log("=====================",params.base64)
+    // window.alert("<img onclick= 'myBtn("+ params +")' src=" + params.base64 + ">");
+
+    
+  }
+
+  function closeAlertBox()
+  {
+    $('#myAlertBox').fadeOut();
+  }
+
+  </script>
+ 
 </html>

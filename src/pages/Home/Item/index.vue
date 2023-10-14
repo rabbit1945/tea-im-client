@@ -144,12 +144,12 @@
     padding: 1em;
 }
  
-.time-line {
-    
+.time-line {    
     display: inline-block;
-    width: 200;
+    width: 100%;
+    height: 20px;
     text-align: center;
     vertical-align: middle;
-}
+  }
 </style>
   

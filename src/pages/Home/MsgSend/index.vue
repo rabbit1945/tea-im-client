@@ -6,7 +6,7 @@
           <img class = "msg-img" src="/assets/images/emoji.png">
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
-        <button @click="btnClick()" style="margin-left: 5px">点击开始截图</button>
+        <button @click="btnClick()" style="margin-left: 5px">  <img class = "msg-img" src="/assets/images/截图.png"></button>
       </div>
     
 
@@ -37,6 +37,7 @@
  </template>
   
   <script>  
+ 
   import ScreenShort from 'js-web-screen-shot'
   import {VEmojiPicker} from 'v-emoji-picker';
   import Audio from '../Audio'
@@ -109,7 +110,7 @@
       }
     },
   
-    methods: {
+methods: {
       // 按钮点击时间方法，构建插件对象
   btnClick() {
   // 更多参数 和使用可以看它包里面的README.md文件
@@ -133,10 +134,12 @@
     console.log(base64data)
     let input = this.$refs.input
     let innerHTML = input.innerHTML  
-    let val = innerHTML + "<img src=" + base64data.base64 + ">"
+    let data = JSON.stringify(base64data)
+    let val = innerHTML + "<img onclick= 'myBtn("+ data +")' src=" + base64data.base64 + ">"
     input.innerHTML = val
 
   },
+
 convertImageToCanvas(image) {
       var canvas = document.createElement('canvas')
       canvas.width = image.width
@@ -268,6 +271,7 @@ convertImageToCanvas(image) {
     }
 
   }
+
   </script>
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -304,6 +308,8 @@ convertImageToCanvas(image) {
   .msg-img {
     width: 25px;
     height: 25px; 
+    border: none;
+    background-color: white;
 
   }
   .msg-emoji {
