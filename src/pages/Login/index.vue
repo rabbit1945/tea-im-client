@@ -26,15 +26,20 @@
             <el-button class = "but" type="primary" @click="submitForm('ruleForm')">提交</el-button>
         </el-form-item>
 
-          <span class="icon-login">
-            <svg class="icon" aria-hidden="true" @click="getAuthLogin('gitee')">
-              <use xlink:href="#icon-gitee"></use>
-            </svg>
+          <div>
+           
+            <span class="icon-login">
+              第三方账号登录
+              <svg class="icon" aria-hidden="true" @click="getAuthLogin('gitee')">
+                <use xlink:href="#icon-gitee"></use>
+              </svg>
 
-            <svg class="icon" aria-hidden="true"  @click="getAuthLogin('github')">
-              <use xlink:href="#icon-github-fill"></use>
-            </svg>
-          </span>
+              <svg class="icon" aria-hidden="true"  @click="getAuthLogin('github')">
+                <use xlink:href="#icon-github-fill"></use>
+              </svg>  
+            </span>
+          </div>
+          
         
     </el-form>
 

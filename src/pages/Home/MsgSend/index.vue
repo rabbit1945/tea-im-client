@@ -6,7 +6,7 @@
           <img class = "msg-img" src="/assets/images/emoji.png">
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
-        <button @click="btnClick()" style="margin-left: 5px">  <img class = "msg-img" src="/assets/images/截图.png"></button>
+        <button @click="btnClick()" style="margin-left: 5px">  <img class = "msg-img" src="/assets/images/jietu.png"></button>
       </div>
     
 

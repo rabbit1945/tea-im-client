@@ -12,7 +12,7 @@ let requests = axios.create({
   //基础路径
   baseURL: "/api",
   //请求不能超过10s
-  timeout: 20000,
+  timeout: 120000, 
 });
 
 //请求拦截器----在项目中发请求（请求没有发出去）可以做一些事情
