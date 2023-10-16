@@ -7,8 +7,25 @@
         </el-button>
         <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
         <button @click="btnClick()" style="margin-left: 5px">  <img class = "msg-img" src="/assets/images/jietu.png"></button>
+        <button  @click="upload()" style="margin-left: 16px;margin-top: 6px;"><img class = "msg-img" src="/assets/images/file.png"></button>
       </div>
-    
+      <!-- <input type='file' ref='file' />  -->
+      <el-upload
+       
+        style="display: none;"
+        class="upload-demo"
+        action="/api/v1/upload/files"
+        show-file-list:false
+        :headers=headers
+        multiple
+        :limit="3"
+        :file-list="fileList"
+        :on-success="handleSuccess"
+        :on-error="handleError"
+        :before-upload="handleBeforeupload"
+        >
+        <el-button  ref='file'  size="small" type="primary">点击上传</el-button>
+      </el-upload>
 
       <at
        :members="members" 
@@ -32,7 +49,7 @@
         </div>
 
       </at>
-
+     
       </div>
  </template>
   
@@ -67,6 +84,20 @@
         countStr:0, // 统计字符的数量
         members: [], // @ 用户列表
         contactList:[], // 需要通知的列表
+        fileList:[],
+        headers:{
+          "Authorization":'Bearer'+' '+ this.$store.state.user.token
+        },
+        imagesExt:[
+        'png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'psd', 'svg', 'tiff'
+        ],
+        audioExt: [
+          'mp3'
+        ],
+        fileName:"",
+        fileSize:0
+
+
 
       }
     },
@@ -111,7 +142,81 @@
     },
   
 methods: {
-      // 按钮点击时间方法，构建插件对象
+
+  handleBeforeupload(file){
+    console.log("file",file)
+    this.fileName = file.name
+    this.fileSize = file.size
+  },
+  
+  /**
+   * 上传成功
+   * @param {*} err 
+   * @param {*} file 
+   * @param {*} fileLis 
+   */
+  handleError(err, file, fileLis){
+    this.$alert("文件上传失败，请重新上传！！！")
+  },
+
+  /**
+   * 上传成功
+   * @param {*} response 
+   * @param {*} file 
+   * @param {*} fileList 
+   */
+  handleSuccess(response) {
+      console.log(response)
+      if (response.code === 10000 ) {
+        let data = response.data
+        if (Object.keys(data).length > 0) {
+          let file = data.file
+          //获取最后一个.的位置
+          let index= file.lastIndexOf(".");
+          //获取后缀
+          let ext = file.substr(index+1);
+          // 获取文件类型 
+          let content_type = this.fileExt(ext)
+         
+          this.sendAudio({
+            "file_name":data.fileName,
+            "file_size":data.fileSize,
+            "file":file,
+            "content_type":content_type
+          })
+        }
+
+      } else {
+        this.$alert("文件上传失败，请重新上传！！！")
+      }
+      
+
+  },
+
+  fileExt(ext){
+    let content_type = 0
+    if (this.imagesExt.indexOf(ext.toLowerCase()) !== -1)
+    {
+      content_type = 2
+    } else if(this.audioExt.indexOf(ext.toLowerCase()) !== -1) {
+      content_type = 1
+    } else {
+      content_type = 3
+    }
+    return content_type;
+
+  },
+  
+ 
+  upload() {
+
+    let filebutton = this.$refs.file;
+    console.log(filebutton)
+    filebutton.$el.click()
+   
+     
+  },
+ 
   btnClick() {
   // 更多参数 和使用可以看它包里面的README.md文件
         const screenShotHandler = new ScreenShort({
@@ -170,17 +275,26 @@ convertImageToCanvas(image) {
          
       },
      
-      audioData(val) {
-        console.log("val",val);        
+      audioData(val) {   
         if (val) {
            this.$store.dispatch("uploadAudio", val.formData).then(res => {
-                   let path = res.file
-                   this.audio = {
+                  let path = res.file    
+                  //获取最后一个.的位置
+                  let index= path.lastIndexOf(".");
+                  //获取后缀
+                  let ext = path.substr(index+1);
+                  // 获取文件类型 
+                  let content_type = this.fileExt(ext)
+                  this.audio = {
                     'file':path,
-                    'toltime':val.toltime,
-                    'fileSize':val.fileSize
-                   }
-                   this.msgSend()
+                    'file_name':val.fileName,
+                    'file_size':val.fileSize,
+                    "content_type":content_type
+                  }
+                  this.sendAudio(this.audio)
+
+                   
+                 
           })
         } else {
            tihs.alert("语音出现问题，请重试！！！");
@@ -231,6 +345,7 @@ convertImageToCanvas(image) {
       toogleDialogEmoji () {
         this.showDialog = !this.showDialog
       },
+
       // 发送
       msgSend(){
         this.$socket.open();
@@ -241,14 +356,45 @@ convertImageToCanvas(image) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
-
-     
         
         if (messgae === ''|| messgae === null || messgae === undefined ) {
           
           this.$alert("你好，客官你还没有添写消息呢！！！");
           return false;
         }
+
+        let msgData = this.msgInfo()
+        msgData.msg = messgae
+        msgData.content_type = content_type
+        msgData.contactList = this.contactList
+       
+        this.$socket.volatile.emit('room',msgData);     
+        this.$refs.input.innerHTML = "&nbsp;"
+      },
+
+      /**
+       * 发送音频图片文本
+       */
+      sendAudio(data)
+      {
+        if (data.length <=0) {
+          this.$alert("参数为空，请重新参数")
+        }
+        let msgData = this.msgInfo()
+        let content_type =  data.content_type
+        msgData.msg = data.file
+        msgData.file_name = data.file_name
+        msgData.file_size = data.file_size
+        msgData.content_type = content_type
+        console.log("sendAudio",msgData)
+        this.$socket.volatile.emit('room',msgData);  
+      
+      },
+
+     
+
+      msgInfo(){
+
         const user_id = this.user_id;
         const nick_name = this.nick_name;
         const userLogo = this.userLogo;
@@ -256,17 +402,14 @@ convertImageToCanvas(image) {
         let msgData  = {
             "room_id": room_id,
             "user_id": user_id,
-            "nick_name": nick_name,
-            "msg": messgae,
-            "userLogo":userLogo,
-            "content_type": content_type,
-            "contactList":this.contactList, //@他人功能
-            
+            "nick_name": nick_name,     
+            "userLogo":userLogo,           
         };
+
+        return msgData;
         
-        this.$socket.volatile.emit('room',msgData);     
-        this.$refs.input.innerHTML = "&nbsp;"
-      },
+
+      }
   
     }
 

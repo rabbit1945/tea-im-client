@@ -2,7 +2,8 @@
 // 导入api
 import {
     reqGetMsg,
-    reqUploadAudio
+    reqUploadAudio,
+    reqUploadFiles
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
@@ -99,7 +100,8 @@ const actions = {
                             
                         }
                     }
-                    
+                    let file_size =  list[i].file_size/1000
+                    console.log(typeof file_size)
                     let messageList = {
                         "user_id": list[i].msg_form,
                         "tag":tag,
@@ -110,6 +112,8 @@ const actions = {
                         "send_time":list[i].send_time,
                         "userLogo":list[i].photo,
                         "content_type":list[i].content_type,
+                        "file_name":list[i].file_name,
+                        "file_size":file_size.toFixed(2)
                     }
                     
                     oldMsg.unshift(messageList)  
@@ -133,14 +137,20 @@ const actions = {
     },
     async uploadAudio({commit}, data) {
         let result = await reqUploadAudio(data);
-        console.log(result);
+        if (result.code === 10000) {
+            return result.data;
+        } 
+    },
+
+    async uploadFiles({commit}, data) {
+        let result = await reqUploadFiles(data);
         if (result.code === 10000) {
             return result.data;
         } 
     },
 
     async getMessage({commit}, data){
-        console.log("服务端发过来了一个数据:",data);
+       
         if ( Object.keys(data).length > 0) {
             if (data.code == 20014 ) {
                 next('/login');
@@ -164,7 +174,8 @@ const actions = {
                     
                 }
             }
-            
+            let file_size = data.file_size/1000
+            console.log(typeof file_size)
             let messageList = {
                 "user_id": data.user_id,
                 "tag":tag,
@@ -175,7 +186,11 @@ const actions = {
                 "send_time":data.send_time,
                 "userLogo":data.userLogo,
                 "content_type":data.content_type,
+                "file_name":data.file_name,
+                "file_size":file_size.toFixed(2)
             }
+
+            console.log("getMessage服务端发过来了一个数据:",messageList);
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 

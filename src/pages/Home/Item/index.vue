@@ -9,11 +9,12 @@
                 <div class = "body" @contextmenu.prevent.stop="clickMsg()">
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
                     <div class = "content">
+                        <!-- 文本 -->
                         <div contenteditable = "false" class="text"  v-if = "this.source.content_type === 0"  >
                             <div v-html="this.source.msg" class="msg-html"  ></div>
                             <!-- {{ this.source.msg }} -->
                         </div>
-
+                        <!-- 音频 -->
                         <div contenteditable = "false" class="text" v-if = "this.source.content_type === 1">
 
                             <av-bars
@@ -21,6 +22,23 @@
                             :audio-src=this.source.msg>
                             </av-bars>
 
+                        </div>
+                        <!-- 图片 -->
+                        <div contenteditable = "false" class="text" v-if = "this.source.content_type === 2">
+                            <img  style="max-width: 800px;max-height: 800px;" :src=this.source.msg>
+                            <!-- <img  @click="closeImagesClick()" :style=style :src=this.source.msg> -->
+                        </div>
+                        <!-- 文件 -->
+
+                        <div @click="down()" contenteditable = "false" class="text file" v-if = "this.source.content_type === 3">
+                          
+                           <div>
+                            {{ this.source.file_name }}
+                            <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
+                           </div>
+                           <div class="fileSize" contenteditable="false"> {{ this.source.file_size }}KB</div>
+
+                           <div class="fileImg"> <img src="/assets/images/文件.png"/></div>
 
                         </div>
                     </div>
@@ -42,7 +60,8 @@
                 duration: 0,
                 curr: 0,
                 volume:50,
-                balance: 50,       
+                balance: 50,  
+                style: "max-height: 100vh;max-width: 60vw; display:none;"
             }
         },
         props: {
@@ -57,10 +76,47 @@
                 }
             },
          
+        },
+        methods: {
+            openImagesClick()
+            {
+               this.display = "max-height: 100vh;max-width: 60vw; display:block;"
+                 
+            },
+
+            closeImagesClick()
+            {
+                this.display ="max-height: 100vh;max-width: 60vw; display:none;"
+            },
+
+            down(){
+      
+               let downFile =this.$refs.downFile;
+               downFile.click()    
+            },
+
         }
 }   
   </script>
   <style scoped>
+  .file {
+    cursor: pointer;
+  }
+  .fileImg {
+    position: absolute;
+    bottom:-15px;
+    right: 0px;
+  }
+  .file img  {
+   
+    width: 100px;
+    height: 100px;
+  }
+
+
+   .fileSize{
+   margin-top: 50px;
+  }
   .empty .stream-item.creator, .stream .stream-item.creator {
     flex-direction: row-reverse;
     }
@@ -88,7 +144,8 @@
     display: block;
     width: 40px;
     height: 40px;   
-    border-radius: 50%
+    border-radius: 50%;
+    caret-color: transparent;
     }
     .item.creator .body {
     transform: rotate(180deg)

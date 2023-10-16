@@ -34,6 +34,10 @@ module.exports = defineConfig({
       "/audio": {
         target: "http://127.0.0.1:8078/storage",
       },
+
+      "/files": {
+        target: "http://127.0.0.1:8078/storage",
+      },
       
 
     },

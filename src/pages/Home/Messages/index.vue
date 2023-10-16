@@ -24,7 +24,7 @@
           </el-badge>
           <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg"/>     
           <div id="myAlertBox"  class= "alertBox" style="display:none">
-            <button id="closeAlertBox">关闭</button>
+          
           </div>
       </div>
  </template>
@@ -179,7 +179,7 @@
               this.historyMessageList.push(wsmessageList);
               this.totalNum = this.historyMessageList.length
             }  
-            console.log(this.historyMessageList);  
+            console.log("historyMessageList:",this.historyMessageList);  
           }
         }
       },

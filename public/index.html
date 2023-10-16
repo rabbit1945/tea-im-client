@@ -27,14 +27,10 @@
   <script>
   
   function myBtn(params) {
-      $('#myAlertBox').fadeIn();
-      $('#myAlertBox').html( "<img onclick= 'closeAlertBox()' src=" + params.base64 + ">")
-
-  
-    console.log("=====================",params.base64)
-    // window.alert("<img onclick= 'myBtn("+ params +")' src=" + params.base64 + ">");
-
-    
+     
+    $('#myAlertBox').fadeIn();
+    $('#myAlertBox').html( "<img onclick= 'closeAlertBox()' src=" + params.base64 + ">")
+ 
   }
 
   function closeAlertBox()

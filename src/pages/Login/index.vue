@@ -34,9 +34,9 @@
                 <use xlink:href="#icon-gitee"></use>
               </svg>
 
-              <svg class="icon" aria-hidden="true"  @click="getAuthLogin('github')">
+              <!-- <svg class="icon" aria-hidden="true"  @click="getAuthLogin('github')">
                 <use xlink:href="#icon-github-fill"></use>
-              </svg>  
+              </svg>   -->
             </span>
           </div>
           

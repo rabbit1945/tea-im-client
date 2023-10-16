@@ -194,12 +194,14 @@
       // // 此处获取到blob对象后需要设置fileName满足当前项目上传需求，其它项目可直接传把blob作为file塞入formData
       // const newbolb = new Blob([wavBlob], { type: 'audio/wav' })
       // // 获取当时时间戳作为文件名
-      const fileOfBlob = new File([wavBlob], new Date().getTime() + '.mp3')
+      let fileName = new Date().getTime() + '.mp3';
+      const fileOfBlob = new File([wavBlob], fileName)
       formData.append("file",fileOfBlob)
       this.$emit('audioData',{
         "formData":formData,
         "toltime":toltime,
-        "fileSize":fileSize
+        "fileSize":fileSize,
+        "fileName":fileName
       });
 
     },
