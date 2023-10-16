@@ -26,6 +26,6 @@ export const reqGetMsg = (data)=>requests({url:'/v1/user/msg',data,method:'post'
 // 上传音频 /upload/audio
 export const reqUploadAudio =  (data)=>requests({url:'/v1/upload/audio',data,method:'post'});
 // 上传文件
-export const reqUploadFiles =  (data)=>requests({url:'/v1/upload/files',data,method:'post',headers: {
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-  }});
+export const reqUploadFiles =  (data)=>requests({url:'/v1/upload/files',data,method:'post'});
+// 上传base64 
+export const reqUploadBase64 =  (data)=>requests({url:'/v1/upload/base64',data,method:'post'});

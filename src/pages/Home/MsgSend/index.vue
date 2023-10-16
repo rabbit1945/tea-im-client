@@ -237,11 +237,16 @@ methods: {
   
    callback(base64data,cutInfo) {
     console.log(base64data)
-    let input = this.$refs.input
-    let innerHTML = input.innerHTML  
-    let data = JSON.stringify(base64data)
-    let val = innerHTML + "<img onclick= 'myBtn("+ data +")' src=" + base64data.base64 + ">"
-    input.innerHTML = val
+    this.$store.dispatch("uploadBase64", base64data).then(res => {
+      console.log("uploadFiles",res);
+      let path = res.file
+      let input = this.$refs.input
+      let innerHTML = input.innerHTML  
+      let data = JSON.stringify(base64data)
+      let val = innerHTML + "<img id = 'image' onclick= 'myBtn(" + JSON.stringify(path) + ")' src=" + path + ">"
+      input.innerHTML = val
+    })
+   
 
   },
 

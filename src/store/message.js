@@ -3,7 +3,8 @@
 import {
     reqGetMsg,
     reqUploadAudio,
-    reqUploadFiles
+    reqUploadFiles,
+    reqUploadBase64
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
@@ -135,12 +136,34 @@ const actions = {
         } 
 
     },
+    /**
+     * 上传音频
+     * @param {*} param0 
+     * @param {*} data 
+     * @returns 
+     */
     async uploadAudio({commit}, data) {
         let result = await reqUploadAudio(data);
         if (result.code === 10000) {
             return result.data;
         } 
     },
+
+    
+    /**
+     * 上传base64图片
+     * @param {*} param0 
+     * @param {*} data 
+     * @returns 
+     */
+    async uploadBase64({commit}, data) {
+        let result = await reqUploadBase64(data);
+        if (result.code === 10000) {
+            return result.data;
+        } 
+    },
+
+
 
     async uploadFiles({commit}, data) {
         let result = await reqUploadFiles(data);
