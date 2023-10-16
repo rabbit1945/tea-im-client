@@ -46,8 +46,8 @@ export default {
   },
   mounted() {
     this.$socket.open() 
-    window.addEventListener('visibilitychange',this.visibilitychange,true);
-    window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))  
+    // window.addEventListener('visibilitychange',this.visibilitychange,true);
+    // window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))  
     window.addEventListener("blur", this.onblur,true);
     window.addEventListener("focus", this.onfocus,true);   
 
@@ -55,8 +55,8 @@ export default {
   },
   beforeDestroy () {
     this.$socket.close()
-    window.removeEventListener('visibilitychange', this.visibilitychange,true)
-    window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
+    // window.removeEventListener('visibilitychange', this.visibilitychange,true)
+    // window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
     window.removeEventListener("focus", this.onfocus,true);   
     window.removeEventListener("blur", this.onblur,true);
 
