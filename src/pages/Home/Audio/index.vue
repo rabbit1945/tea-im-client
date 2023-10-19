@@ -1,18 +1,20 @@
 <template>
-  <div class="home">
-    <div @click="getPermission()">
-          <img class = "msg-img" src="./images/mic.png">
-    </div>
+  <div>
+    
     <!-- <Button type="info" @click="startRecorder()">开始录音</Button>  -->
-    <div tabindex="1" ref = 'keypressSpace'  v-show="isShowPermission" @keypress.space = "startRecorder()" class = " audio-tips"> 
-        <img class = "msg-img" src="./images/mic.png">
-        <span>按下空格开始录音，在按下空格录音结束。</span>
-        <el-button round size="mini" type="success" @click="outPlay()">退出</el-button>
+    <div tabindex="1" ref = 'keypressSpace'  class = "msg-audio"  v-show="isShowPermission" @keypress.space = "startRecorder()" > 
+      
+        <span>  
+          <img class = "msg-img" src="./images/mic.png">按空格开始/结束。  
+          <el-button round size="mini" type="success" @click="outPlay()">退出</el-button>
+        </span>
+        <span>
+          <div v-show="startEnd && countdownimes === 0" class = "times">{{satrtTime}}</div>
+          <div v-show="startEnd && countdownimes > 0" class = "times">{{countdownimes}} 10秒之后自动发送</div>
+          <canvas v-show="startEnd" id="canvas"  class = "canvas"></canvas>
+        </span>       
     </div>
-    <div v-show="startEnd && countdownimes === 0" class = "times">{{satrtTime}}</div>
-    <div v-show="startEnd && countdownimes > 0" class = "times">{{countdownimes}} 10秒之后自动发送</div>
-    <canvas v-show="startEnd" id="canvas"  class = "canvas" >
-    </canvas>
+   
     <!-- <canvas id="playChart" class = "canvas"></canvas> -->
     
   </div>
@@ -61,8 +63,9 @@
       }
     },
     mounted(){     
-      this.startCanvas();     
+        this.startCanvas();
     },
+  
   
     methods: {
       /**
@@ -82,6 +85,7 @@
         this.stopRecorder();
         this.startEnd = false;
         this.isShowPermission = false;
+        this.$emit('statusClass',{'status':false});
        
       },
  
@@ -95,6 +99,7 @@
            recorder.start().then(() => {
             this.startEnd = true;
             this.drawRecord();//开始绘制图片
+            
             }, (error) => {
               this.stopRecorder();
                 this.getRecorder();
@@ -107,7 +112,6 @@
         } else {
           this.stopRecorder();
           this.getRecorder();
-         
          
           this.startEnd = false;
 
@@ -161,14 +165,8 @@
        *  获取录音文件
        * */
       getRecorder(){
-        let toltime = parseInt(recorder.duration) ;//录音总时长
+        let toltime =parseInt(recorder.duration) ;//录音总时长
         let fileSize = recorder.fileSize;//录音总大小
-        console.log(recorder.getWAV());
-        //录音结束，获取取录音数据
-        // let PCMBlob = recorder.getPCMBlob();//获取 PCM 数据
-        // let wavBlob = recorder.getWAVBlob();//获取 WAV 数据
-          
-        // let channel = recorder.getChannelData();//获取左声道和右声道音频数据
         const mp3Blob = this.convertToMp3(recorder.getWAV());
         
         this.uploadWAVData(mp3Blob,toltime,fileSize)
@@ -213,13 +211,14 @@
           Recorder.getPermission().then(() => {
             console.log("获取权限成功")
             this.isShowPermission = true
+            this.$emit('statusClass',{'status':true});
           }, (error) => {
             console.log(`${error.name} : ${error.message}`);
-            this.$alert("请开启麦克风权限")
-            
+            this.$alert("请开启麦克风权限")           
           });
         } else {
           this.isShowPermission = false
+          this.$emit('statusClass',{'status':false});
         }
        
       },
@@ -275,12 +274,13 @@
        * */
       drawRecord () {
        
-        this.satrtTime = Math.ceil(recorder.duration);//开始计时
+        this.satrtTime = parseInt(recorder.duration);//开始计时
         //  剩余10秒倒计时
         let countdownime = this.endTime - this.satrtTime;
+     
         if (countdownime <=10 && countdownime > 0 ) {        
-            this.countdownimes = this.endTime - this.satrtTime-1;
-            
+            this.countdownimes = this.endTime - this.satrtTime;
+          
             if (this.countdownimes == 0 && this.startEnd) {
               this.stopRecorder();
               this.getRecorder();
@@ -377,37 +377,34 @@
 </script>
  
 <style  scoped>
-   
-.times {
-  width: 150px;
-  height: 30px; 
-  position:relative;
-  top: -73px;
-  left:270px;
+.msg-audio {
   text-align: center;
-  border-radius: 30px;
-  z-index: 1;
+  margin-top: -28px;
+  outline: none;
+}
+
+.times {
+ margin:5px 0;
 }
 .canvas {
   width: 150px;
   height: 30px; 
   position:relative;
-  top: -70px;
-  left:270px;
+  /* top: -70px;
+  left:270px; */
   border-radius: 30px;
   z-index: 1;
 
 }
 .audio-tips {
   width: 89.3vw;
-    position: relative;
-    top: 0vh;
-    /* left: 30vw; */
-    text-align: center;
-    z-index: 1;
-    background-color: rgba(245,245,245,1.7);
-    height: 10vh;
-    border-collapse: collapse;
+  position: absolute;
+  top: 0vh;
+  text-align: center;
+  z-index: 1;
+  background-color: rgba(245,245,245,1.7);
+  height: 10vh;
+  border-collapse: collapse;
 }
  .msg-img {
     width: 25px;

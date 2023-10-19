@@ -6,7 +6,7 @@
                 <div class="avatar">
                     <img :src=this.source.userLogo>
                 </div>
-                <div class = "body" @contextmenu.prevent.stop="clickMsg()">
+                <div class = "body">
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
                     <div class = "content">
                         <!-- 文本 -->

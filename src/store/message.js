@@ -70,9 +70,12 @@ const actions = {
      * @param {*} data 
      * @returns 
      */
+
     async getGetMsg({commit}, data) {
+
+        let parms = `${data.room_id}/${data.page}/${data.limit}`
         // 请求参数
-        let result = await reqGetMsg(data);
+        let result = await reqGetMsg(parms);
         if (result.code === 10000) {
             
             let list = result.data.list;

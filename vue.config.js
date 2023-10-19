@@ -22,9 +22,7 @@ module.exports = defineConfig({
      
       "/api": {
         target: "http://127.0.0.1:8078/",
-        pathRewrite: {
-          '^/api': '/home'
-        }
+       
       },
 
       "/static": {

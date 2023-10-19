@@ -2,19 +2,22 @@
      <div class="world">
       <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectMsg"/>     
       <div class="msg-button">       
-        <el-button @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
+        <el-button style="margin-left: 10px" @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
           <img class = "msg-img" src="/assets/images/emoji.png">
         </el-button>
-        <div class="audio"><Audio v-on:audioData = 'audioData'/> </div>
-        <button @click="btnClick()" style="margin-left: 5px">  <img class = "msg-img" src="/assets/images/jietu.png"></button>
-        <button  @click="upload()" style="margin-left: 16px;margin-top: 6px;"><img class = "msg-img" src="/assets/images/file.png"></button>
+        <div @click="audioPermission">
+          <img  class = "msg-img" src="/assets/images/mic.png">
+        </div>
+        <div class="audio"><Audio v-on:audioData = 'audioData' v-on:statusClass = 'statusClass' ref = 'permission'/> </div>
+        <button @click="btnClick()" style="margin-left: 60px">  <img class = "msg-img" src="/assets/images/jietu.png"></button>
+        <button  @click="upload()" style="margin-left: 25px;margin-top: 6px;"><img class = "msg-img" src="/assets/images/file.png"></button>
       </div>
       <!-- <input type='file' ref='file' />  -->
       <el-upload
        
         style="display: none;"
         class="upload-demo"
-        action="/api/v1/upload/files"
+        action="/api/upload/v1/files"
         show-file-list:false
         :headers=headers
         multiple
@@ -28,6 +31,7 @@
       </el-upload>
 
       <at
+       :style= stateStatus
        :members="members" 
        :filter-match="filterMatch"
        :delete-match="deleteMatch"
@@ -95,7 +99,8 @@
           'mp3'
         ],
         fileName:"",
-        fileSize:0
+        fileSize:0,
+        stateStatus:"display: block;"
 
 
 
@@ -142,7 +147,10 @@
     },
   
 methods: {
+  audioPermission() {
+    this.$refs.permission.getPermission();
 
+  },
   handleBeforeupload(file){
     console.log("file",file)
     this.fileName = file.name
@@ -307,6 +315,16 @@ convertImageToCanvas(image) {
         }
         
       },
+
+      statusClass(val) {
+        console.log(val)
+        let style = "display: block;"
+        if (val.status === true) {
+          style = "display: none;"
+        }
+        this.stateStatus = style
+
+      },
       selectMsg(val) {// 选择emoji后调用的函数
          // 定义最后光标对象
         var lastEditRange;
@@ -426,10 +444,9 @@ convertImageToCanvas(image) {
   <style scoped>
 
   .audio {
-    float: left;
-    width: 25px;
-    height: 25px; 
-
+    position: relative;
+    top: 0px;
+    text-align: center;
   }
   .world {
     position: absolute;
@@ -445,6 +462,7 @@ convertImageToCanvas(image) {
     border-radius:20px 20px
   }
   .msg-button {
+    position: relative;
     height: 38px;
     margin-top: -9px;
   }
@@ -454,6 +472,8 @@ convertImageToCanvas(image) {
     background:white;
   }
   .msg-img {
+    position:absolute;
+    top:1px;
     width: 25px;
     height: 25px; 
     border: none;

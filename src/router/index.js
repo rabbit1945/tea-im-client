@@ -76,7 +76,7 @@ router.beforeEach(async (to, from, next) => {
      //已经登录而且还想去登录------不行
         try {
           // 获取房间信息
-          await store.dispatch('getRoomInfo');
+          await store.dispatch('getRoomInfo',1);
           let room_id = store.state.user.roomInfo.room_id
           // 注册 socket
           Vue.use(new VueSocketIO({

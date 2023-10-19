@@ -30,7 +30,6 @@ const mutations = {
     },
     GETUSERINFO(state, userInfo) {
         state.userInfo = userInfo
-        console.log(userInfo.is_online);
         state.userIsOnLine = userInfo.is_online
     },  
    
@@ -105,8 +104,12 @@ const actions = {
     
 
     // 获取聊天室中用户列表
-    async getRoomUserList({commit}, data) {
+    async getRoomUserList({commit}, datas) {
         // 请求参数
+        console.log( "ssss",state.roomInfo)
+
+        let data = `${state.roomInfo.room_id}/${datas.pages}/${datas.size}`
+        
         let result = await reqRoomUserList(data);
         if (result.code == 10000) {
             commit("ROOMUSERLIST",result.data);
@@ -116,8 +119,8 @@ const actions = {
 
     },
     //获取聊天室信息
-    async getRoomInfo({ commit }) {
-        let result = await reqRoomInfo();
+    async getRoomInfo({ commit },id) {
+        let result = await reqRoomInfo(id);
         
         let code = result?.code;
         if (code === 10000) {       

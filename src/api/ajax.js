@@ -42,12 +42,12 @@ requests.interceptors.response.use(
         //相应成功做的事情
         return data;
     } else {
-      // token 校验失效
-      if (data.code === 500) {
-        removeToken();
-        this.$router.push({path:'/login'})
-        // return alert(data.msg)
-      }
+      // // token 校验失效
+      // if (data.code === 500) {
+      //   removeToken();
+      //   this.$router.push({path:'/login'})
+      //   // return alert(data.msg)
+      // }
       return data;
     }
      
@@ -57,7 +57,7 @@ requests.interceptors.response.use(
     removeToken();
     console.log("服务器响应数据失败",err)
     // this.$router.push({path:'/login'})
-    document.location.href = '/login'
+    // document.location.href = '/login'
     return false
   }
 );

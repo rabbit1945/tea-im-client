@@ -58,8 +58,6 @@
           //派发一个action||获取聊天室的用户列表
           this.$store.dispatch("getRoomUserList",datas).then (res => {
             let list = res.userList;
-            
-           
             for (let i = 0; i < list.length; i++) {             
               this.data.push(list[i]);
             }
