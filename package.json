@@ -19,6 +19,7 @@
     "js-audio-recorder": "^1.0.7",
     "js-cookie": "^3.0.5",
     "js-web-screen-shot": "^1.9.9-rc.5",
+    "keymaster": "^1.6.2",
     "lamejs": "^1.2.1",
     "lamejstmp": "^1.0.1",
     "mockjs": "^1.1.0",

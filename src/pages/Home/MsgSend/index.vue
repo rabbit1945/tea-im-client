@@ -372,24 +372,25 @@ convertImageToCanvas(image) {
       // 发送
       msgSend(){
         this.$socket.open();
-        let input = this.$refs.input.innerHTML
-        let messgae = input.trim();
+        let text = this.$refs.input.textContent.trim()
+        if (text.length === 0 ) {  
+          this.$alert("你好，客官你还没有添写消息呢！！！");
+          return false;
+        }
+        let innerHTML = this.$refs.input.innerHTML
+        let messgae = innerHTML.trim();
+        let contactList =  this.contactList
         let content_type = 0; // 文本
         if (this.audio.fileSize > 0) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
-        
-        if (messgae === ''|| messgae === null || messgae === undefined ) {
-          
-          this.$alert("你好，客官你还没有添写消息呢！！！");
-          return false;
-        }
+      
 
         let msgData = this.msgInfo()
         msgData.msg = messgae
         msgData.content_type = content_type
-        msgData.contactList = this.contactList
+        msgData.contactList = contactList
        
         this.$socket.volatile.emit('room',msgData);     
         this.$refs.input.innerHTML = "&nbsp;"
