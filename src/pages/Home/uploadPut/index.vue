@@ -55,11 +55,7 @@ export default {
                     "fileName":File.name
 
                 }).then(res => {
-                      console.log("uploadPush::",res)
-
-                     this.sendMsg(fileMd5,File.name,res.newFileName,1,fileSize,res.path,0,3)
-
-
+                     this.sendMsg(fileMd5,File.name,res.newFileName,1,fileSize,res.path,3)
                 })
 
               }
@@ -89,7 +85,7 @@ export default {
          
       },
 
-    sendMsg(fileMd5,filename,newFileName,totalChunks,totalSize,mergePath,upload_status) {
+    sendMsg(fileMd5,filename,newFileName,totalChunks,totalSize,mergePath,uploadStatus) {
       
       this.$emit('fileSuccess',{
           "room_id":this.room_id,
@@ -99,7 +95,7 @@ export default {
           "totalChunks":totalChunks,
           "totalSize":totalSize,
           "mergePath":mergePath,
-          "upload_status":upload_status
+          "uploadStatus":uploadStatus
       });
 
     },          
@@ -117,9 +113,14 @@ export default {
          this.$store.dispatch("checkChunkExis", initUploadParams).then (res => {
 
               console.log("checkChunkExis",res)
-              this.sendMsg(fileMd5,File.name,res.newFileName,chunkCount,fileSize,res.mergePath,0)
-                    
-              // 定义分片开始上传的序号
+              let uploadStatus = 0
+              if (res.type === 1) {         
+                uploadStatus = 3;                
+              } 
+              this.sendMsg(fileMd5,File.name,res.newFileName,chunkCount,fileSize,res.mergePath,uploadStatus)
+
+              if (res.type === 0) {
+                // 定义分片开始上传的序号
               // 由于是顺序上传，可以判断后端返回的分片数组的长度，为0则说明文件是第一次上传，分片开始序号从0开始
               // 如果分片数组的长度不为0，我们取最后一个序号作为开始序号
         
@@ -162,7 +163,13 @@ export default {
                    
                   }         
 
-              }       
+              } 
+
+
+              }
+              
+              
+                    
              
           })
 

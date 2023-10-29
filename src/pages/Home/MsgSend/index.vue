@@ -256,21 +256,21 @@ methods: {
   },
  
   btnClick() {
-  // 更多参数 和使用可以看它包里面的README.md文件
-        const screenShotHandler = new ScreenShort({
-          // 是否启用webrtc，值为boolean类型，值为false则使用html2canvas来截图
-          enableWebRtc: false,
-          // 层级级别，这个要比你页面上其他元素的z-index的值大，不然截不了
-          level: 2001,
-          // saveCallback:(code, msg) => {
-          //   // 在此处根据实际业务需要通过参数做判断即可
-          //   console.log(code,msg);
-          // },
-          completeCallback: this.callback, // 截图成功完成的回调
-          closeCallback: this.closeFn, // 截图取消的回调
-          canvasWidth:  window.innerWidth,
-          canvasHeight:  window.innerHeight,
-        })
+      // 更多参数 和使用可以看它包里面的README.md文件
+      const screenShotHandler = new ScreenShort({
+        // 是否启用webrtc，值为boolean类型，值为false则使用html2canvas来截图
+        enableWebRtc: false,
+        // 层级级别，这个要比你页面上其他元素的z-index的值大，不然截不了
+        level: 2001,
+        // saveCallback:(code, msg) => {
+        //   // 在此处根据实际业务需要通过参数做判断即可
+        //   console.log(code,msg);
+        // },
+        completeCallback: this.callback, // 截图成功完成的回调
+        closeCallback: this.closeFn, // 截图取消的回调
+        canvasWidth:  window.innerWidth,
+        canvasHeight:  window.innerHeight,
+      })
   },
   
    callback(base64data,cutInfo) {
@@ -463,6 +463,7 @@ convertImageToCanvas(image) {
         msgData.file_path = data.path
         msgData.total_chunks =data.totalChunks
         msgData.original_file_name = data.original_file_name
+        msgData.upload_status = data.uploadStatus
         this.$socket.volatile.emit('room',msgData);  
       
       },

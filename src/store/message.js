@@ -219,7 +219,7 @@ const actions = {
                 "fileSize":file_size.toFixed(2),
                 "md5":data.md5,
                 "total_chunks":data.total_chunks,
-                "upload_status":0,
+                "upload_status":data.upload_status,
                 "location":data.location
 
             }
