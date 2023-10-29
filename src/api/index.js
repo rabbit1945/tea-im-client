@@ -29,3 +29,16 @@ export const reqUploadAudio =  (data)=>requests({url:'upload/v1/audio',data,meth
 export const reqUploadFiles =  (data)=>requests({url:'upload/v1/files',data,method:'post'});
 // 上传base64 
 export const reqUploadBase64 =  (data)=>requests({url:'upload/v1/base64',data,method:'post'});
+
+// 上传大文件 
+export const reqUploadPut =  (data)=>requests({url:'upload/v1/put',data,method:'post'});
+// 检测文件状态
+export const reqcheckChunkExis =  (data)=>requests({url:'upload/v1/checkChunkExist',data,method:'post'});
+
+// 上传分片
+export const reqUploadChunk =  (data)=>requests({url:'upload/v1/chunk',data,method:'post'});
+
+// 合并分片
+export const reqUploadMerge =  (data)=>requests({url:'upload/v1/merge',data,method:'post'});
+
+

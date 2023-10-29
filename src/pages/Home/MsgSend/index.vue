@@ -12,6 +12,8 @@
         <button @click="btnClick()" style="margin-left: 60px">  <img class = "msg-img" src="/assets/images/jietu.png"></button>
         <button  @click="upload()" style="margin-left: 25px;margin-top: 6px;"><img class = "msg-img" src="/assets/images/file.png"></button>
       </div>
+      
+      <uploadPut ref="uploadFile" v-on:fileSuccess="fileSuccess"/> 
       <!-- <input type='file' ref='file' />  -->
       <el-upload
        
@@ -42,23 +44,24 @@
           <!-- <img :src="s.item.avatar"> -->
           <span v-text="s.item.nick_name"></span>
         </template>
+    
         <div
           ref="input"
           class="msg-content" 
-          placeholder="说点什么…"
-          @keyup.enter="msgSend"
-          
+          placeholder="ctrl + enter 发送消息"
+        
           contenteditable>
-          &nbsp;
+             
         </div>
-
+        <!-- <el-button class= "sendButton" type="success">发送</el-button> -->
+       
       </at>
-     
+
       </div>
  </template>
   
   <script>  
- 
+  import uploadPut from '../uploadPut';
   import ScreenShort from 'js-web-screen-shot'
   import {VEmojiPicker} from 'v-emoji-picker';
   import Audio from '../Audio'
@@ -68,7 +71,8 @@
     components: {
       VEmojiPicker,
       Audio,
-      At
+      At,
+      uploadPut
     
     },
     data(){
@@ -96,7 +100,11 @@
         'png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'psd', 'svg', 'tiff'
         ],
         audioExt: [
-          'mp3'
+          'mp3','wav','wma','flac','midi','ra','aac','cda','mov','wavpack','ape'
+        ],
+        videoExt:[
+          'avi','wmv','mpg','mov','rm','ram','swf','flv','mp4'
+
         ],
         fileName:"",
         fileSize:0,
@@ -115,7 +123,8 @@
       
     sockets: {
       async roomCallback (data) {
-        // console.log("客户端发过来了一个请求",data);
+      
+        this.$refs.uploadFile.getMsg(data);
         // 获取服务端发来的数据
         await this.$store.dispatch("getMessage", data);
          // 定位最新数据的位置
@@ -134,9 +143,17 @@
       }
     },
     mounted(){ 
-      
+      window.addEventListener("keydown",this.send,true);
     },
     destroyed() {
+      // window.removeEventListener("keydown", function (event) {
+
+      // if (event.ctrlKey&& event.code=='Enter')
+      // {
+      //   this.msgSend();
+      // }       
+      // });
+      
     },
     computed:{
       userList:{
@@ -147,6 +164,19 @@
     },
   
 methods: {
+
+
+  
+  send() {
+    console.log(window.event)
+
+    if (window.event.ctrlKey&& window.event.code=='Enter')
+        {
+          this.msgSend();
+        }   
+
+  },
+
   audioPermission() {
     this.$refs.permission.getPermission();
 
@@ -189,7 +219,7 @@ methods: {
           this.sendAudio({
             "file_name":data.fileName,
             "file_size":data.fileSize,
-            "file":file,
+            "path":file,
             "content_type":content_type
           })
         }
@@ -208,6 +238,8 @@ methods: {
       content_type = 2
     } else if(this.audioExt.indexOf(ext.toLowerCase()) !== -1) {
       content_type = 1
+    } else if(this.videoExt.indexOf(ext.toLowerCase()) !== -1) {
+      content_type = 4
     } else {
       content_type = 3
     }
@@ -218,7 +250,7 @@ methods: {
  
   upload() {
 
-    let filebutton = this.$refs.file;
+    let filebutton = this.$refs.uploadFile.$refs.uploadfileBut;
     console.log(filebutton)
     filebutton.$el.click()
    
@@ -299,21 +331,39 @@ convertImageToCanvas(image) {
                   // 获取文件类型 
                   let content_type = this.fileExt(ext)
                   this.audio = {
-                    'file':path,
+                    'path':path,
                     'file_name':val.fileName,
                     'file_size':val.fileSize,
                     "content_type":content_type
                   }
-                  this.sendAudio(this.audio)
-
-                   
-                 
+                  this.sendAudio(this.audio)           
           })
         } else {
            tihs.alert("语音出现问题，请重试！！！");
            return false;
         }
         
+      },
+
+      fileSuccess(val) {
+        if (val) {
+             let path = val.mergePath    
+            //获取最后一个.的位置
+            let index= path.lastIndexOf(".");
+            //获取后缀
+            let ext = path.substr(index+1);
+            // 获取文件类型 
+            val.content_type =  this.fileExt(ext)
+            val.file_name =  val.newFileName
+            val.original_file_name = val.filename
+            val.file_size = val.totalSize
+            val.md5 = val.identifier
+            val.path = path
+
+            this.sendAudio(val)
+
+        }
+
       },
 
       statusClass(val) {
@@ -401,16 +451,21 @@ convertImageToCanvas(image) {
        */
       sendAudio(data)
       {
+        
         if (data.length <=0) {
           this.$alert("参数为空，请重新参数")
         }
         let msgData = this.msgInfo()
         let content_type =  data.content_type
-        msgData.msg = data.file
+        msgData.msg = data.path
         msgData.file_name = data.file_name
         msgData.file_size = data.file_size
         msgData.content_type = content_type
-        console.log("sendAudio",msgData)
+        msgData.md5 = data.md5
+        msgData.file_path = data.path
+        msgData.total_chunks =data.totalChunks
+        msgData.original_file_name = data.original_file_name
+        msgData.location =  data.location
         this.$socket.volatile.emit('room',msgData);  
       
       },
@@ -443,7 +498,11 @@ convertImageToCanvas(image) {
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
-
+   .sendButton {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+   }
   .audio {
     position: relative;
     top: 0px;

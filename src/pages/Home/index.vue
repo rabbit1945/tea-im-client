@@ -4,15 +4,14 @@
     
       <!--头部 -->
        <MsgTop/>
-      
-          <!--用户基本信息 -->
-          <MsgBase :userStatus="userStatus"/>
-          <!-- 聊天记录 -->
-          <Messages/>
-          <!-- 用户信息 -->
-          <UserList :showUser="true" />
-            
-    
+     
+        <!--用户基本信息 -->
+        <MsgBase :userStatus="userStatus"/>
+        <!-- 聊天记录 -->
+        <Messages/>
+        <!-- 用户信息 -->
+        <UserList :showUser="true" />
+
         <router-view></router-view>
     </div>
     
@@ -28,14 +27,17 @@ import UserList from './UserList';
 
 
 
+
+
 export default {
   name: "",
   components: {
     MsgTop,
-    MsgBase, 
-    Messages,  
+    MsgBase,
+    Messages,
     UserList,
-  },
+
+},
   data() {
     return {
       "user_id":this.$store.state.user.userInfo.user_id,

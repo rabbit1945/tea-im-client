@@ -104,8 +104,9 @@ const actions = {
                             
                         }
                     }
-                    let file_size =  list[i].file_size/1000
-                    console.log(typeof file_size)
+                    let totalSize = list[i].file_size
+                    let file_size =  totalSize/1024
+                    
                     let messageList = {
                         "user_id": list[i].msg_form,
                         "tag":tag,
@@ -117,7 +118,13 @@ const actions = {
                         "userLogo":list[i].photo,
                         "content_type":list[i].content_type,
                         "file_name":list[i].file_name,
-                        "file_size":file_size.toFixed(2)
+                        "original_file_name":list[i].original_file_name,
+                        "fileSize":file_size.toFixed(2),
+                        "totalSize":totalSize,
+                        "md5":list[i].md5,
+                        "total_chunks":list[i].total_chunks,
+                        "upload_status":list[i].upload_status,
+                        "location":list[i].seq,
                     }
                     
                     oldMsg.unshift(messageList)  
@@ -200,8 +207,9 @@ const actions = {
                     
                 }
             }
-            let file_size = data.file_size/1000
-            console.log(typeof file_size)
+            let totalSize  =  data.file_size
+            let file_size = totalSize/1024
+           
             let messageList = {
                 "user_id": data.user_id,
                 "tag":tag,
@@ -213,10 +221,17 @@ const actions = {
                 "userLogo":data.userLogo,
                 "content_type":data.content_type,
                 "file_name":data.file_name,
-                "file_size":file_size.toFixed(2)
+                "totalSize":totalSize,
+                "original_file_name":data.original_file_name,
+                "fileSize":file_size.toFixed(2),
+                "md5":data.md5,
+                "total_chunks":data.total_chunks,
+                "upload_status":0,
+                "location":data.location
+
             }
 
-            console.log("getMessage服务端发过来了一个数据:",messageList);
+            console.log("getMessage服务端发过来了一个数据:",data);
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 
