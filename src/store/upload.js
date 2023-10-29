@@ -3,7 +3,9 @@
 import {
     reqUploadMerge,
     reqcheckChunkExis,
-    reqUploadChunk
+    reqUploadChunk,
+    reqUploadFiles,
+    reqUploadPut
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
@@ -66,6 +68,23 @@ const actions = {
 
         return false;
     },
+
+    
+    async uploadFiles({commit}, data) {
+        let result = await reqUploadFiles(data);
+        if (result.code === 10000) {
+            return result.data;
+        } 
+    },
+    async uploadPut({commit}, data) {
+        let result = await reqUploadPut(data);
+        if (result.code === 10000) {
+            return result.data;
+        } 
+    },
+
+
+    
 
 
 

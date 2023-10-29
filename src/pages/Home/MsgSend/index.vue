@@ -251,10 +251,8 @@ methods: {
   upload() {
 
     let filebutton = this.$refs.uploadFile.$refs.uploadfileBut;
-    console.log(filebutton)
-    filebutton.$el.click()
-   
-     
+    console.log("filebutton",filebutton)
+    filebutton.$el.click() 
   },
  
   btnClick() {
@@ -465,7 +463,6 @@ convertImageToCanvas(image) {
         msgData.file_path = data.path
         msgData.total_chunks =data.totalChunks
         msgData.original_file_name = data.original_file_name
-        msgData.location =  data.location
         this.$socket.volatile.emit('room',msgData);  
       
       },

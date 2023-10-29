@@ -44,45 +44,81 @@ export default {
           this.fileList = [{ "name": File.name }]
           // 可以设置大于多少兆可以分片上传，否则走普通上传
           if (fileSize <= chunkSize) {
-              console.log("上传的文件大于2m才能分片上传")
+              const fileMd5 = await this.getFileMd5(file, 1);
+              console.log("上传的文件大于3m才能分片上传")   
+              var reader=new FileReader();
+              reader.readAsDataURL(file)
+              reader.onload = e => {
+                // 普通上传 
+                this.$store.dispatch("uploadPut", {
+                    "file":e.target.result,
+                    "fileName":File.name
+
+                }).then(res => {
+                      console.log("uploadPush::",res)
+
+                     this.sendMsg(fileMd5,File.name,res.newFileName,1,fileSize,res.path,0,3)
+
+
+                })
+
+              }
+
+          } else {
+
+            //计算当前选择文件需要的分片数量
+            const chunkCount = Math.ceil(fileSize / chunkSize)
+            console.log("文件大小：", (File.size / 1024 / 1024) + "Mb", "分片数：", chunkCount)
+            //获取文件md5
+            const fileMd5 = await this.getFileMd5(file, chunkCount);
+            console.log("文件md5:", fileMd5)
+
+            console.log("向后端请求本次分片上传初始化")
+
+            const initUploadParams = {
+                "identifier": fileMd5, //文件的md5
+                "filename": File.name, //文件名
+                "totalChunks": chunkCount, //分片的总数量
+            }
+    
+            // 上传大文件
+            this.checkChunkExis(initUploadParams,fileMd5,File,chunkCount,fileSize);
+
           }
-          //计算当前选择文件需要的分片数量
-          const chunkCount = Math.ceil(fileSize / chunkSize)
-          console.log("文件大小：", (File.size / 1024 / 1024) + "Mb", "分片数：", chunkCount)
-          //获取文件md5
-          const fileMd5 = await this.getFileMd5(file, chunkCount);
-          console.log("文件md5：", fileMd5)
-
-          console.log("向后端请求本次分片上传初始化")
-
-          const initUploadParams = {
-              "identifier": fileMd5, //文件的md5
-              "filename": File.name, //文件名
-              "totalChunks": chunkCount, //分片的总数量
-          }
-
+             
          
-          // 调用后端检查文件上传情况接口
-          this.$store.dispatch("checkChunkExis", initUploadParams).then (res => {
-              console.log("checkChunkExis",res)
-              
-              // if (res.allUploadSuccess == 1) {
-              //   upload_status = 1
-              // }
+      },
 
-              this.$emit('fileSuccess',{
-                    "room_id":this.room_id,
-                    "identifier":fileMd5,
-                    "filename":File.name,
-                    "newFileName":res.newFileName,
-                    "totalChunks":chunkCount,
-                    "totalSize":fileSize,
-                    "mergePath":res.mergePath,
-                    "location":res.location,
-                    "upload_status":0
-              });
-            
-            
+    sendMsg(fileMd5,filename,newFileName,totalChunks,totalSize,mergePath,upload_status) {
+      
+      this.$emit('fileSuccess',{
+          "room_id":this.room_id,
+          "identifier":fileMd5,
+          "filename":filename,
+          "newFileName":newFileName,
+          "totalChunks":totalChunks,
+          "totalSize":totalSize,
+          "mergePath":mergePath,
+          "upload_status":upload_status
+      });
+
+    },          
+
+    /**
+     * 上传大文件
+     * @param {*} initUploadParams 
+     * @param {*} fileMd5 
+     * @param {*} File 
+     * @param {*} chunkCount 
+     * @param {*} fileSize 
+     */
+    checkChunkExis(initUploadParams,fileMd5,File,chunkCount,fileSize) {
+         // 调用后端检查文件上传情况接口
+         this.$store.dispatch("checkChunkExis", initUploadParams).then (res => {
+
+              console.log("checkChunkExis",res)
+              this.sendMsg(fileMd5,File.name,res.newFileName,chunkCount,fileSize,res.mergePath,0)
+                    
               // 定义分片开始上传的序号
               // 由于是顺序上传，可以判断后端返回的分片数组的长度，为0则说明文件是第一次上传，分片开始序号从0开始
               // 如果分片数组的长度不为0，我们取最后一个序号作为开始序号
@@ -102,7 +138,8 @@ export default {
               
                   var reader=new FileReader();
                   reader.readAsDataURL(_chunkFile)
-                  let uploadProgress = (chunkNumber * chunkSize)/chunkCount*100
+
+                  let uploadProgress = (chunkNumber+1)/chunkCount*100
                   reader.onload = e => {
                     // console.log('e----', e)             
                     let data = {
@@ -117,24 +154,19 @@ export default {
                       "file":e.target.result,
                       "seq":this.msgInfo.seq,
                       "chunkSize":chunkSize,
-                      "location":res.location,
                       "uploadProgress":uploadProgress.toFixed(2) + '%'
                     }
                     
-                    console.log(' this.$socket',  data)
+                    console.log('this.$socket',  data)
                     this.$socket.emit('chunkFile',data);  
                    
-                  }
+                  }         
 
-                
-               
-
-              }
-              
-            
+              }       
              
           })
-      },
+
+    },
 
    
       /**
@@ -187,7 +219,8 @@ export default {
      
   },
   sockets: {
-   
+
+    
 
   },
   created() { },

@@ -3,7 +3,6 @@
 import {
     reqGetMsg,
     reqUploadAudio,
-    reqUploadFiles,
     reqUploadBase64
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
@@ -175,12 +174,6 @@ const actions = {
 
 
 
-    async uploadFiles({commit}, data) {
-        let result = await reqUploadFiles(data);
-        if (result.code === 10000) {
-            return result.data;
-        } 
-    },
 
     async getMessage({commit}, data){
        

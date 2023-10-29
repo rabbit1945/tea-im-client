@@ -38,7 +38,7 @@
                             <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
                            </div>
                            <div class="fileSize" contenteditable="false"> {{ this.source.fileSize }}KB</div>
-                           <div class="upload_status" ref="msgLocation" :data-loction="this.source.location">
+                           <div class="upload_status" ref="msgLocation">
                             <span v-if=" this.source.upload_status === 0">上传中</span>
                             <span v-if=" this.source.upload_status === 1">上传成功</span>
                             <span v-if=" this.source.upload_status === 2">发送中</span>
@@ -106,121 +106,21 @@
                
                 let idDown= JSON.parse (this.$refs.idDown.innerHTML);
                 
-                this.composeFile(idDown)
+                // this.composeFile(idDown)
             //    let downFile =this.$refs.downFile;
             //    downFile.click()    
             },
-             /**
-             * 请求后端合并文件
-             * @param fileMd5 文件md5
-             * @param fileName 文件名称
-             * @param count 文件分片总数
-             */
-            composeFile(data) {
-                       
-                console.log("composeFile:::",data);
-                this.$socket.emit('mergeFile',{
-                    "room_id":this.room_id,
-                    "user_id":this.user_id,
-                    "identifier":data.md5,
-                    "newFileName":data.file_name,
-                    "totalChunks":data.total_chunks,
-                    "totalSize":data.totalSize,
-                    "chunksSize":Math.ceil(data.totalSize / data.total_chunks)       
-                }); 
-            
-            },
+             
 
-            sleep(time) {
-                return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve();
-                }, time);
-                });
-            },
-
-            updateStatus(data)
-            {
-                this.$socket.emit('updateMsgStatus',{
-                    "room_id":this.room_id,
-                    "user_id":this.user_id,
-                    "identifier":data.identifier,
-                    "newFileName":data.newFileName,
-                    "uploadStatus":data.uploadStatus,
-                    "totalChunks":data.totalChunks,
-                    "chunkNumber":data.chunkNumber
-                                         
-                }); 
-            },
-
-            updateHtml(data)
-            {
-                console.log("updateStatus",data)
-               
-                let  loction  = data.location
-                let vals =  this.$refs.msgLocation 
-                if (vals){
-                    let dataLoction = vals.getAttribute('data-loction');
-                
-                    if (loction == dataLoction) {
-                        let html = `<span>上传中</span>`
-                        if (data.uploadStatus == 1) {
-                            html = `<span>上传成功</span>` 
-                           
-                        } else if (data.uploadStatus == 2) {
-                            html = `<span>发送中</span>`
-                        } else if (data.uploadStatus == 3) {
-                            html = `<span>发送成功</span>`
-                        } 
-
-                        vals.innerHTML = html
-                    
-                        console.log("innerHTML", vals);
-
-                    }
-
-                }
-
-            }
-
+           
+          
+           
         },
         sockets: {
 
-            // 分块回调
-            async chunkFileCallback (data) {
-
-               
-                this.updateStatus(data) 
-                
-            },
-
+           
           
-            async mergeFileCallback (data)  {
-              
-                this.updateStatus(data) 
-
-            },
-
-            async updateMsgStatusCallback(val) {
-
-               
-                if (val.data.totalChunks === val.data.chunkNumber) {
-                   
-                   
-                    console.log("updateMsgStatusCallback::",val);
-                    if (val.code === 20018 || val.code === 20017) {
-                        await this.sleep(3000);    // 睡眠 1 秒
-                        this.updateStatus(val.data);
-
-                    } else if (val.code === 10000) {
-                            // this.down()
-                            return;
-                    }
-
-
-                }
-               
-            }
+           
         }
 
 }   

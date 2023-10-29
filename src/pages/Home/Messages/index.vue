@@ -38,7 +38,9 @@
       data() {
         return {  
           historyMessageList:[],//获取在线消息
+          wsmessageList: [],
           tabshow: false,//是否进行某种操作
+          user_id:this.$store.state.user.userInfo.user_id, // 用户ID
           room_id:this.$store.state.user.roomInfo.room_id,
           isLoading :false,
           isEnd :false,
@@ -55,6 +57,58 @@
         }
       },
       props:['title'],
+      sockets: {
+          // 分块回调
+          async chunkFileCallback (data) {
+            if (data.totalChunks == data.chunkNumber) {
+                // 返回变成上传成功状态
+                let wsmessageList = this.wsmessageList     
+                wsmessageList.upload_status = 1
+                this.wsmessageList = wsmessageList
+
+                this.updateStatus(data) 
+            }
+          },
+          async updateMsgStatusCallback(val) {  
+            let list = val.data     
+            if (list.totalChunks === list.chunkNumber) {  
+                console.log("updateMsgStatusCallback::",val);
+                
+                if (val.code === 20018 || val.code === 20017) {
+           
+                  this.updateStatus(val.data);
+
+                } else if (val.code === 10000 && list.uploadStatus === 1) {
+                        this.composeFile(val.data)
+                        // this.$alert("更新成功")                      
+                        return true;
+                }
+
+                return true;
+
+            }
+
+          },
+          async mergeFileCallback (data)  {
+              console.log("mergeFileCallback",data)
+              let wsmessageList = this.wsmessageList     
+              wsmessageList.upload_status = 3
+              this.wsmessageList = wsmessageList
+              let list = {
+                "room_id":this.room_id,
+                "identifier":data.identifier,
+                "newFileName":data.newFileName,
+                "totalChunks":data.totalChunks,
+                'chunkNumber':data.chunkNumber,
+                "totalSize":data.totalSize,    
+                "uploadStatus":3
+            }
+              this.updateStatus(list);
+
+          },
+
+
+      },
     
       mounted(){
 
@@ -69,6 +123,50 @@
       },
     
       methods:{
+
+        /**
+         * 请求后端合并文件
+         * @param fileMd5 文件md5
+         * @param fileName 文件名称
+         * @param count 文件分片总数
+         */
+        composeFile(data) {              
+            console.log("composeFile:::",data);
+            let list = {
+                "room_id":this.room_id,
+                "user_id":this.user_id,
+                "identifier":data.identifier,
+                "newFileName":data.newFileName,
+                "totalChunks":data.totalChunks,
+                'chunkNumber':data.chunkNumber,
+                "totalSize":data.totalSize,
+                "chunkSize":Math.ceil(data.totalSize / data.totalChunks)       
+            }
+            let wsmessageList = this.wsmessageList     
+            let uploadStatus  = 2
+            wsmessageList.upload_status = uploadStatus
+            this.wsmessageList = wsmessageList
+            list.uploadStatus = uploadStatus
+            this.updateStatus(list);
+            this.$socket.emit('mergeFile',list); 
+              
+        },
+
+        updateStatus(data)
+        {
+            this.$socket.emit('updateMsgStatus',{
+                "room_id":this.room_id,
+                "user_id":this.user_id,
+                "identifier":data.identifier,
+                "newFileName":data.newFileName,
+                "uploadStatus":data.uploadStatus,
+                "totalChunks":data.totalChunks,
+                "chunkNumber":data.chunkNumber,
+                "totalSize":data.totalSize
+                                      
+            }); 
+        },
+      
         getLocation(e){
           let div=this.$refs.returnBottom;
           let location = this.keeps
@@ -112,57 +210,57 @@
             })
           }
           
-      },
+        },
       
-      totop(){
-        console.log("到顶了");
-        this.getdata()
+        totop(){
+          console.log("到顶了");
+          this.getdata()
 
-      },
-      bottom(){
-        this.isBottom = true
-        let offTotal =  this.msgNum
-        if (offTotal >= 10) {
-          this.msgNum = offTotal
-        } else {
-          this.msgNum = 0
-        }
-        console.log("到底了");
-      },
+        },
+        bottom(){
+          this.isBottom = true
+          let offTotal =  this.msgNum
+          if (offTotal >= 10) {
+            this.msgNum = offTotal
+          } else {
+            this.msgNum = 0
+          }
+          console.log("到底了");
+        },
       
-      getdata() {
-        if (!this.isEnd  && !this.isLoading ) {
-          this.initLoadMsg();
-        }  
-      },
+        getdata() {
+          if (!this.isEnd  && !this.isLoading ) {
+            this.initLoadMsg();
+          }  
+        },
 
         initLoadMsg() {
-            this.page++;
-            this.isLoading = true;
-            let div = this.$refs.returnBottom;
-            
-            this.$store.dispatch('getGetMsg',{
-                  room_id:this.room_id,
-                  page:this.page,
-                  limit:this.limit
-                }).then(res => {
-                  this.$nextTick(()=>{
-                    this.isLoading = false;
-                    if(!res.msg) {
-                      this.isEnd = true;
-                    }
-                    if (this.page == 1) {
-                      //刷新滚动条到最近一页
-                      div.reset()
-                      div.scrollToBottom();
-                      this.isBottom = true
-                      this.msgNum = res.offTotal
-                    } 
-                   
+          this.page++;
+          this.isLoading = true;
+          let div = this.$refs.returnBottom;
+          
+          this.$store.dispatch('getGetMsg',{
+                room_id:this.room_id,
+                page:this.page,
+                limit:this.limit
+              }).then(res => {
+                this.$nextTick(()=>{
+                  this.isLoading = false;
+                  if(!res.msg) {
+                    this.isEnd = true;
+                  }
+                  if (this.page == 1) {
+                    //刷新滚动条到最近一页
+                    div.reset()
+                    div.scrollToBottom();
+                    this.isBottom = true
+                    this.msgNum = res.offTotal
+                  } 
+                
 
-                  })
-                  
-                });
+              })
+                
+          });
         }
       },
      
@@ -173,9 +271,10 @@
           get() {
         
             let historyMessageList = this.$store.state.message.historyMessageList || [];
-            let wsmessageList = this.$store.state.message.messageList; 
+            let wsmessageList = this.$store.state.message.messageList;
             this.historyMessageList = historyMessageList;
             if (wsmessageList) {
+              this.wsmessageList = wsmessageList
               this.historyMessageList.push(wsmessageList);
               this.totalNum = this.historyMessageList.length
             }  

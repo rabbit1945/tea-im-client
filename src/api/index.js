@@ -30,7 +30,7 @@ export const reqUploadFiles =  (data)=>requests({url:'upload/v1/files',data,meth
 // 上传base64 
 export const reqUploadBase64 =  (data)=>requests({url:'upload/v1/base64',data,method:'post'});
 
-// 上传大文件 
+// 上传二進制
 export const reqUploadPut =  (data)=>requests({url:'upload/v1/put',data,method:'post'});
 // 检测文件状态
 export const reqcheckChunkExis =  (data)=>requests({url:'upload/v1/checkChunkExist',data,method:'post'});
