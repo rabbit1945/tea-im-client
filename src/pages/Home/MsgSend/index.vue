@@ -251,7 +251,6 @@ methods: {
   upload() {
 
     let filebutton = this.$refs.uploadFile.$refs.uploadfileBut;
-    console.log("filebutton",filebutton)
     filebutton.$el.click() 
   },
  

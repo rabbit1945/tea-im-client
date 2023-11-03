@@ -123,7 +123,9 @@ const actions = {
                         "md5":list[i].md5,
                         "total_chunks":list[i].total_chunks,
                         "upload_status":list[i].upload_status,
-                        "location":list[i].seq,
+                        "chunk_number":list[i].chunk_number,
+                        "merge_number":list[i].merge_number,
+
                     }
                     
                     oldMsg.unshift(messageList)  
@@ -143,6 +145,10 @@ const actions = {
             //用户已经登录成功且获取到token 
             return {msg:oldMsg,offTotal:total};
         } 
+
+        return false;
+
+
 
     },
     /**
@@ -220,8 +226,8 @@ const actions = {
                 "md5":data.md5,
                 "total_chunks":data.total_chunks,
                 "upload_status":data.upload_status,
-                "location":data.location
-
+                "chunk_number":data.chunk_number,
+                "merge_number":data.merge_number,
             }
 
             console.log("getMessage服务端发过来了一个数据:",data);

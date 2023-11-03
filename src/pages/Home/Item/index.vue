@@ -29,26 +29,24 @@
                             <!-- <img  @click="closeImagesClick()" :style=style :src=this.source.msg> -->
                         </div>
                         <!-- 文件 -->
+                       
 
                         <div @click="down()"   contenteditable = "false" class="text file" v-if = "this.source.content_type === 3">
-                            <div ref="idDown" style="display: none;">{{ this.source }}</div>
-
+                             <div ref="msgList" style="display: none;">{{ this.source }}</div>
                            <div>
                             {{ this.source.original_file_name }}
                             <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
                            </div>
                            <div class="fileSize" contenteditable="false"> {{ this.source.fileSize }}KB</div>
-                           <div class="upload_status" ref="msgLocation">
+                           <div class="upload_status" ref="msgLocation" :data-merge-number = this.source.merge_number>
                             <span v-if=" this.source.upload_status === 0">上传中</span>
                             <span v-if=" this.source.upload_status === 1">上传成功</span>
                             <span v-if=" this.source.upload_status === 2">发送中</span>
-                            <span v-if=" this.source.upload_status === 3">发送成功</span>
-                            
+                            <span v-if=" this.source.upload_status === 3">发送成功</span>  
+                            <span v-if=" this.source.upload_status === 4">发送失败</span>                               
                            </div>
                            <div class="fileImg"> <img src="/assets/images/文件.png"/></div>
                            
-                          
-
                         </div>
                     </div>
                 </div>
@@ -59,6 +57,8 @@
   </template>
   
   <script>
+   import { setCache, getCache,removeCache} from "@/utils/cache";
+   const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
     export default {
         name: 'Item',
         data(){
@@ -73,6 +73,8 @@
                 style: "max-height: 100vh;max-width: 60vw; display:none;",
                 user_id:this.$store.state.user.userInfo.user_id, // 用户ID
                 room_id:this.$store.state.user.roomInfo.room_id, // 房间ID
+                isloading:false,
+                list:[]
                
         
             }
@@ -103,21 +105,103 @@
             },
 
             down(){
-               
-                let idDown= JSON.parse (this.$refs.idDown.innerHTML);
-                
-                // this.composeFile(idDown)
-            //    let downFile =this.$refs.downFile;
-            //    downFile.click()    
-            },
-             
 
+               
+                if (this.isloading == true) {
+                   return this.$alert("正在上传！！！");
+
+                }    
+                let mergeNumber   = this.$refs.msgLocation.getAttribute('data-merge-number');
+                let msgList= this.source; 
+                this.list =   msgList;   
+                let md5 = msgList.md5
+                let seq = msgList.seq
+                let totalChunks = msgList.total_chunks
+                let totalSize = msgList.totalSize
+                let newFileName = msgList.file_name
+                let chunkNumber = msgList.chunk_number
+                let uploadStatus =  msgList.upload_status
+                
+                let composeData = {
+                    "identifier":md5,
+                    "newFileName":newFileName,
+                    "totalChunks":totalChunks,
+                    'mergeNumber':mergeNumber,
+                    "chunkNumber":chunkNumber,
+                    "totalSize":totalSize,
+                    "seq":seq,
+                   
+                }
+                
+                if (uploadStatus == 0){ // 上传中
+                    this.isloading == false
+                    // this.source.upload_status = 4
+
+                } else if (uploadStatus == 1) { // 上传成功
+                    this.isloading == false
+                    console.log("msgList::",msgList)
+                    // 上传成功
+                    this.composeFile(composeData)
+ 
+                } else if (uploadStatus == 2) { // 运行中
+                    this.isloading == false
+                    this.composeFile(composeData)
+                    
+
+                }else if (uploadStatus == 3) { // 运行成功
+
+                    // 发送成功
+                    this.$refs.downFile.click()    
+
+                }       
+        
+            },
            
-          
-           
+            /**
+             * 请求后端合并文件
+             * @param fileMd5 文件md5
+             * @param fileName 文件名称
+             * @param count 文件分片总数
+             */
+            composeFile(data) {              
+                this.isloading = true
+                let list = {
+                    "seq":data.seq,
+                    "room_id":this.room_id,
+                    "user_id":this.user_id,
+                    "identifier":data.identifier,
+                    "newFileName":data.newFileName,
+                    "totalChunks":data.totalChunks,
+                    "mergeNumber":data.mergeNumber,
+                    "totalSize":data.totalSize,
+                    "chunkSize":Math.ceil(data.totalSize / data.totalChunks)       
+                }
+    
+                list.uploadStatus = 2
+                console.log("composeFile_item::::",list);
+                this.$socket.emit('mergeFile',list); 
+                
+              
+            }
+                 
         },
         sockets: {
 
+            async updateMsgStatusCallback(val) {
+                console.log("updateMsgStatusCallback_item:",val);
+                console.log("source::", this.list)
+                console.log("index::",this.index)
+                let list = val.data  
+               
+                if (val.code === 10000 ) {
+
+            
+
+                    // 返回变成上传成功状态
+                    this.list.upload_status = list.uploadStatus
+                }
+
+            }
            
           
            

@@ -13,7 +13,8 @@
             @totop = "totop"
             @tobottom = "bottom"
             @scroll = "onScroll"
-            :start = 100  
+            :start = 100 
+            v-on:composeFile = 'composeFile' 
           />  
           <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
             <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
@@ -52,58 +53,87 @@
           keeps:20,
           msgNum:0, //最新消息树
           isBottom:false,
-          totalNum:0
+          totalNum:0,
+      
+        
 
         }
       },
       props:['title'],
       sockets: {
           // 分块回调
-          async chunkFileCallback (data) {
-            if (data.totalChunks == data.chunkNumber) {
-                // 返回变成上传成功状态
-                let wsmessageList = this.wsmessageList     
-                wsmessageList.upload_status = 1
-                this.wsmessageList = wsmessageList
+          async chunkFileCallback (res) {
+          
+             
+            if (res.code == 10000) {
+                
+              let data = res.data
+              data.isChunk = true
+              if (data.uploadStatus == 1) {
+             
+              
+                this.updateStatus(data);
+              } 
+     
+            } else {
 
-                this.updateStatus(data) 
+              return this.$alert(res.msg)
             }
+           
           },
           async updateMsgStatusCallback(val) {  
-            let list = val.data     
-            if (list.totalChunks === list.chunkNumber) {  
-                console.log("updateMsgStatusCallback::",val);
-                
-                if (val.code === 20018 || val.code === 20017) {
            
-                  this.updateStatus(val.data);
+            let list = val.data     
+          
+            if (val.code !== 10000 ) {
+              this.updateStatus(val.data);
+             
+            } else {
+              let wsmessageList = this.wsmessageList     
+              
+              if (list.uploadStatus == 1){
+                  // 返回变成上传成功状态
+                  wsmessageList.upload_status = 1       
+                  console.log("updateMsgStatusCallback::",val);   
+                  // this.composeFile(list);   
+              } else {
+                wsmessageList.upload_status = list.uploadStatus
+              }
 
-                } else if (val.code === 10000 && list.uploadStatus === 1) {
-                        this.composeFile(val.data)
-                        // this.$alert("更新成功")                      
-                        return true;
-                }
 
-                return true;
+              console.log("wsmessageList::",wsmessageList)
+
+              
+              // this.wsmessageList = wsmessageList
 
             }
+
+            return true;
 
           },
-          async mergeFileCallback (data)  {
-              console.log("mergeFileCallback",data)
-              let wsmessageList = this.wsmessageList     
-              wsmessageList.upload_status = 3
-              this.wsmessageList = wsmessageList
-              let list = {
-                "room_id":this.room_id,
-                "identifier":data.identifier,
-                "newFileName":data.newFileName,
-                "totalChunks":data.totalChunks,
-                'chunkNumber':data.chunkNumber,
-                "totalSize":data.totalSize,    
-                "uploadStatus":3
-            }
-              this.updateStatus(list);
+          async mergeFileCallback (res)  {
+              let data = res.data
+              let list =  {
+                    "room_id":this.room_id,
+                    "identifier":data.identifier,
+                    "newFileName":data.newFileName,
+                    "totalChunks":data.totalChunks,
+                    'mergeNumber':data.mergeNumber,
+                    "totalSize":data.totalSize,    
+                    "uploadStatus":data.uploadStatus,
+                    "seq":data.seq
+              } 
+             
+              if (res.code !== 10000 ) {
+                
+                list.uploadStatus = 4
+                
+              } 
+
+              console.log("mergeFileCallback:::",list);
+
+              this.updateStatus(list);   
+              return true
 
           },
 
@@ -130,30 +160,34 @@
          * @param fileName 文件名称
          * @param count 文件分片总数
          */
-        composeFile(data) {              
-            console.log("composeFile:::",data);
-            let list = {
-                "room_id":this.room_id,
-                "user_id":this.user_id,
-                "identifier":data.identifier,
-                "newFileName":data.newFileName,
-                "totalChunks":data.totalChunks,
-                'chunkNumber':data.chunkNumber,
-                "totalSize":data.totalSize,
-                "chunkSize":Math.ceil(data.totalSize / data.totalChunks)       
-            }
-            let wsmessageList = this.wsmessageList     
-            let uploadStatus  = 2
-            wsmessageList.upload_status = uploadStatus
-            this.wsmessageList = wsmessageList
-            list.uploadStatus = uploadStatus
-            this.updateStatus(list);
-            this.$socket.emit('mergeFile',list); 
+       async composeFile(data) {                
+          let list = {
+              "seq":data.seq,
+              "room_id":this.room_id,
+              "user_id":this.user_id,
+              "identifier":data.identifier,
+              "newFileName":data.newFileName,
+              "totalChunks":data.totalChunks,
+              'mergeNumber':0,
+              "totalSize":data.totalSize,
+              "chunkSize":Math.ceil(data.totalSize / data.totalChunks) 
+          }
+         
+
+          list.uploadStatus = 2
+
+          await  this.$socket.emit('mergeFile',list);   
+
               
         },
+        /**
+         * 更新状态
+         * @param {*} data 
+         */
 
         updateStatus(data)
         {
+
             this.$socket.emit('updateMsgStatus',{
                 "room_id":this.room_id,
                 "user_id":this.user_id,
@@ -162,9 +196,13 @@
                 "uploadStatus":data.uploadStatus,
                 "totalChunks":data.totalChunks,
                 "chunkNumber":data.chunkNumber,
-                "totalSize":data.totalSize
+                "totalSize":data.totalSize,
+                "seq":data.seq,
+                "isChunk":data.isChunk
                                       
             }); 
+
+           
         },
       
         getLocation(e){
@@ -244,21 +282,24 @@
                 page:this.page,
                 limit:this.limit
               }).then(res => {
-                this.$nextTick(()=>{
-                  this.isLoading = false;
-                  if(!res.msg) {
+                if(!res) {
                     this.isEnd = true;
-                  }
-                  if (this.page == 1) {
-                    //刷新滚动条到最近一页
-                    div.reset()
-                    div.scrollToBottom();
-                    this.isBottom = true
-                    this.msgNum = res.offTotal
-                  } 
-                
+                } else {
 
-              })
+                  this.$nextTick(()=>{
+                      this.isLoading = false;
+                      
+                      if (this.page == 1) {
+                        //刷新滚动条到最近一页
+                        div.reset()
+                        div.scrollToBottom();
+                        this.isBottom = true
+                        this.msgNum = res.offTotal
+                      } 
+                
+                  })
+                }
+                
                 
           });
         }

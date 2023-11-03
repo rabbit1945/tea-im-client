@@ -30,12 +30,11 @@ const actions = {
      */
     async checkChunkExis({commit}, data) {
         let result = await reqcheckChunkExis(data);
-        if (result.code === 10000) {
-           
+        if (result.code === 10000) {          
             return result.data;
-        } 
-
-        return false;
+        } else {
+            return result;
+        }     
     },
 
 
@@ -81,6 +80,8 @@ const actions = {
         if (result.code === 10000) {
             return result.data;
         } 
+
+        return false;
     },
 
 
