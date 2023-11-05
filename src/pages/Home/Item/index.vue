@@ -25,8 +25,18 @@
                         </div>
                         <!-- 图片 -->
                         <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 2">
-                            <img  style="max-width: 800px;max-height: 800px;" :src=this.source.msg>
-                            <!-- <img  @click="closeImagesClick()" :style=style :src=this.source.msg> -->
+                           
+                            <el-popover
+                            placement="left"
+                           
+                            class="vedio"
+                            trigger="click">
+                            <img  :src=this.source.msg>
+                            <!-- <img src="/assets/images/文件.png" slot="reference"/> -->
+                           <img  slot="reference" style="max-width: 800px;max-height: 800px;" :src=this.source.msg>
+                            </el-popover>
+
+                            
                         </div>
                         <!-- 文件 -->
                        
@@ -48,6 +58,25 @@
                            <div class="fileImg"> <img src="/assets/images/文件.png"/></div>
                            
                         </div>
+
+                         <!-- 视频 -->
+                         <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 4">
+                             
+                            <el-popover
+                            placement="left"
+                           
+                            class="vedio"
+                            trigger="click">
+                            <video controls class="popover-vedio">
+                             
+                                <source :src="this.source.msg" />
+                            </video>
+                            <img src="/assets/images/vedio.png" style="max-width: 400px;max-height: 400px;" slot="reference"/>
+                            <!-- <el-button slot="reference">{{ this.source.original_file_name }}</el-button> -->
+                            </el-popover>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -58,6 +87,7 @@
   
   <script>
    import { setCache, getCache,removeCache} from "@/utils/cache";
+   import videoww from "../video";
    const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
     export default {
         name: 'Item',
@@ -205,11 +235,20 @@
            
           
            
+        },
+        components: {
+            videoww
         }
 
 }   
   </script>
   <style scoped>
+  img {
+    cursor: pointer;
+  }
+  .popover-vedio {
+    width: 600px;
+  }
   .file {
     cursor: pointer;
   }

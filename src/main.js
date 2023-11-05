@@ -8,6 +8,7 @@ import VueCookies from 'vue-cookies'
 import AudioVisual from 'vue-audio-visual'
 import uploader from 'vue-simple-uploader'
 import App from './App.vue';
+
 //引入路由相关文件
 import router from "@/router";
 //引入仓库进行注册
