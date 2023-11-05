@@ -95,7 +95,7 @@
                   // 返回变成上传成功状态
                   wsmessageList.upload_status = 1       
                   console.log("updateMsgStatusCallback::",val);   
-                  // this.composeFile(list);   
+                  this.composeFile(list);   
               } else {
                 wsmessageList.upload_status = list.uploadStatus
               }
