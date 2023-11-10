@@ -8,11 +8,9 @@
                     <img :src=this.source.userLogo>
                 </div>
                 <div class = "body" >
-                    
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
                     <div class = "content" ref = "content" :data-isRevokeHidden=isRevokeHidden>
-                       
-                        <!-- 文本 -->
+                                        
                         <div contenteditable = "false" class="text"  v-if = "this.source.content_type === 0"  >
                         
                             <div  @contextmenu.prevent="onContextmenu"  >
@@ -98,6 +96,9 @@
     import Vue from 'vue'
     import Contextmenu from "vue-contextmenujs"
     Vue.use(Contextmenu);
+    import Clipboard from 'clipboard';
+
+
     import { setCache, getCache,removeCache} from "@/utils/cache";
     const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
     export default {
@@ -150,17 +151,25 @@
             }
         },
         methods: {
+
+            copyOrderId2() {
+                var input = document.createElement("input"); // 创建input对象
+                input.value = this.source.msg; // 设置复制内容
+                document.body.appendChild(input); // 添加临时实例
+                input.select(); // 选择实例内容
+                document.execCommand("Copy"); // 执行复制
+                document.body.removeChild(input); // 删除临时实例
+                this.$message.success('复制成功！');
+            },
+          
             onContextmenu(event) {
-                console.log("event::", this.$refs.content.getAttribute('data-isRevokeHidden'))
-               
-               
+                            
                 this.$contextmenu({
                     items: [
                     {
                         label: "复制",
                         onClick: () => {
-                        this.message = "复制";
-                        console.log("复制");
+                            this.copyOrderId2()
                         }
                     },
                     {
@@ -179,7 +188,7 @@
                     
                     ],
                     event, // 鼠标事件信息
-                    customClass: "custom-class", // 自定义菜单 class
+                    customClass: "custom-class tag-read", // 自定义菜单 class
                     zIndex: 1, // 菜单样式 z-index
                     minWidth: 230 // 主菜单最小宽度
                 });
@@ -296,7 +305,7 @@
            
         },
         components: {
-        
+            Clipboard
             
         }
 

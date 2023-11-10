@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^1.4.0",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
+    "clipboard": "^2.0.11",
     "compression-webpack-plugin": "^1.1.11",
     "core-js": "^3.8.3",
     "electron": "^25.5.0",
@@ -39,6 +40,7 @@
     "vue-audio-better": "^3.0.1",
     "vue-audio-visual": "^2.5.0",
     "vue-cli-plugin-electron-builder": "^2.1.1",
+    "vue-clipboard2": "^0.3.3",
     "vue-contextmenu": "^1.5.11",
     "vue-contextmenujs": "^1.4.11",
     "vue-cookies": "^1.8.3",
