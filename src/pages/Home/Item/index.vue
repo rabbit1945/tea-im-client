@@ -1,94 +1,105 @@
 <template>
-    <div :index = index >
+    <div :index = index  >
         <span class='time-line'>{{ this.source.send_time }} </span>
-        <div  :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator' ">
+      
+        <div  :class = "this.source.tag == 1 ? 'stream-item' : 'stream-item creator'" v-if = "this.source.is_revoke == 0">
             <div :class = "this.source.tag == 1 ? 'item' : 'item creator'">
                 <div class="avatar">
                     <img :src=this.source.userLogo>
                 </div>
-                <div class = "body">
+                <div class = "body" >
+                    
                     <div :class = "this.source.tag == 1 ? 'name' :'name transform' ">{{ this.source.nick_name }}</div>
-                    <div class = "content">
+                    <div class = "content" ref = "content" :data-isRevokeHidden=isRevokeHidden>
+                       
                         <!-- 文本 -->
                         <div contenteditable = "false" class="text"  v-if = "this.source.content_type === 0"  >
-                            <div v-html="this.source.msg" class="msg-html"  ></div>
-                            <!-- {{ this.source.msg }} -->
+                        
+                            <div  @contextmenu.prevent="onContextmenu"  >
+                                <div v-html="this.source.msg" class="msg-html" ></div>
+                            </div>    
                         </div>
                         <!-- 音频 -->
                         <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 1">
-
-                            <av-bars
-                            :canv-height ="30"
-                            :audio-src=this.source.msg>
-                            </av-bars>
-
+                            <div  @contextmenu.prevent="onContextmenu"   >
+                                <av-bars
+                            
+                                :canv-height ="30"
+                                :audio-src=this.source.msg>
+                                </av-bars>
+                            </div>
                         </div>
                         <!-- 图片 -->
                         <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 2">
-                           
-                            <el-popover
-                            placement="left"
-                           
-                            class="vedio"
-                            trigger="click">
-                            <img  :src=this.source.msg>
-                            <!-- <img src="/assets/images/文件.png" slot="reference"/> -->
-                           <img  slot="reference" style="max-width: 800px;max-height: 800px;" :src=this.source.msg>
-                            </el-popover>
-
+                            <div  @contextmenu.prevent="onContextmenu"   >
+                                <el-popover
                             
+                                placement="left"  
+                                class="vedio"
+                                trigger="click">
+                                <img  :src=this.source.msg>
+                                <img  slot="reference" style="max-width: 800px;max-height: 800px;" :src=this.source.msg>
+                                </el-popover>
+                            </div>                
                         </div>
                         <!-- 文件 -->
-                       
-
                         <div @click="down()"   contenteditable = "false" class="text file" v-if = "this.source.content_type === 3">
-                             <div ref="msgList" style="display: none;">{{ this.source }}</div>
-                           <div>
-                            {{ this.source.original_file_name }}
-                            <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
-                           </div>
-                           <div class="fileSize" contenteditable="false"> {{ this.source.fileSize }}KB</div>
-                           <div class="upload_status" ref="msgLocation" :data-merge-number = this.source.merge_number>
-                            <span v-if=" this.source.upload_status === 0">上传中</span>
-                            <span v-if=" this.source.upload_status === 1">上传成功</span>
-                            <span v-if=" this.source.upload_status === 2">发送中</span>
-                            <span v-if=" this.source.upload_status === 3">发送成功</span>  
-                            <span v-if=" this.source.upload_status === 4">发送失败</span>                               
-                           </div>
-                           <div class="fileImg"> <img src="/assets/images/文件.png"/></div>
-                           
+                            <div  @contextmenu.prevent="onContextmenu">
+                                <div>
+                                    {{ this.source.original_file_name }}
+                                    <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
+                                </div>
+                                <div class="fileSize" contenteditable="false"> {{ this.source.fileSize }}KB</div>
+                                <div class="upload_status" ref="msgLocation">
+                                    <span v-if=" this.source.upload_status === 0">上传中</span>
+                                    <span v-if=" this.source.upload_status === 1">上传成功</span>
+                                    <span v-if=" this.source.upload_status === 2">发送中</span>
+                                    <span v-if=" this.source.upload_status === 3">发送成功</span>  
+                                    <span v-if=" this.source.upload_status === 4">发送失败</span>                               
+                                </div>
+                                <div class="fileImg"> <img src="/assets/images/文件.png"/></div>
+                            </div>   
                         </div>
 
                          <!-- 视频 -->
                          <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 4">
-                             
-                            <el-popover
-                            placement="left"
-                           
-                            class="vedio"
-                            trigger="click">
-                            <video controls class="popover-vedio">
-                             
-                                <source :src="this.source.msg" />
-                            </video>
-                            <img src="/assets/images/vedio.png" style="max-width: 400px;max-height: 400px;" slot="reference"/>
-                            <!-- <el-button slot="reference">{{ this.source.original_file_name }}</el-button> -->
-                            </el-popover>
-
-                        </div>
+                            <div  @contextmenu.prevent="onContextmenu"  >
+                                <el-popover
+                               
+                                placement="left"   
+                                class="vedio"
+                                trigger="click">
+                                <video controls class="popover-vedio">
+                                    <source :src="this.source.msg" />
+                                </video>
+                                <img src="/assets/images/vedio.png" style="max-width: 400px;max-height: 400px;" slot="reference"/>
+                                <!-- <el-button slot="reference">{{ this.source.original_file_name }}</el-button> -->
+                                </el-popover>
+                            </div> 
+                              
+                         </div>    
 
                     </div>
+
                 </div>
             </div>
+
+        </div>
+        <div class='time-line' style="margin: 20px 10px;" v-if = "this.source.is_revoke === 1" >
+            <span >你撤回了一条消息</span>
         </div>
     </div>
+
+
    
   </template>
   
   <script>
-   import { setCache, getCache,removeCache} from "@/utils/cache";
-   import videoww from "../video";
-   const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
+    import Vue from 'vue'
+    import Contextmenu from "vue-contextmenujs"
+    Vue.use(Contextmenu);
+    import { setCache, getCache,removeCache} from "@/utils/cache";
+    const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
     export default {
         name: 'Item',
         data(){
@@ -103,9 +114,10 @@
                 style: "max-height: 100vh;max-width: 60vw; display:none;",
                 user_id:this.$store.state.user.userInfo.user_id, // 用户ID
                 room_id:this.$store.state.user.roomInfo.room_id, // 房间ID
+                token:this.$store.state.user.token,
                 isloading:false,
-                list:[]
-               
+                list:[],
+             
         
             }
         },
@@ -122,7 +134,58 @@
             },
          
         },
+        computed:{
+            isRevokeHidden (){
+                
+                let time =  Date.parse(this.source.send_time) + 1000*60*5
+                let nowTime = new Date().getTime();   
+                let status = true;   
+                if (this.source.tag == 0 && time >= nowTime) {
+                    status = false
+                    
+                }
+               
+                return status;
+                
+            }
+        },
         methods: {
+            onContextmenu(event) {
+                console.log("event::", this.$refs.content.getAttribute('data-isRevokeHidden'))
+               
+               
+                this.$contextmenu({
+                    items: [
+                    {
+                        label: "复制",
+                        onClick: () => {
+                        this.message = "复制";
+                        console.log("复制");
+                        }
+                    },
+                    {
+                        label: "撤回",
+                        hidden:this.$refs.content.getAttribute('data-isRevokeHidden'),
+                        onClick: () => {        
+                           this.$socket.emit('revokeMsg',{
+                                "token":this.token,
+                                "room_id":this.room_id,
+                                "seq": this.source.seq,
+                                "index":this.index
+                            });  
+                            
+                        }
+                    },
+                    
+                    ],
+                    event, // 鼠标事件信息
+                    customClass: "custom-class", // 自定义菜单 class
+                    zIndex: 1, // 菜单样式 z-index
+                    minWidth: 230 // 主菜单最小宽度
+                });
+                return false;
+            },
+           
             openImagesClick()
             {
                this.display = "max-height: 100vh;max-width: 60vw; display:block;"
@@ -218,26 +281,23 @@
         sockets: {
 
             async updateMsgStatusCallback(val) {
-                console.log("updateMsgStatusCallback_item:",val);
-                console.log("source::", this.list)
-                console.log("index::",this.index)
+            
                 let list = val.data  
                
                 if (val.code === 10000 ) {
-
-            
-
                     // 返回变成上传成功状态
                     this.list.upload_status = list.uploadStatus
                 }
 
             }
            
+           
           
            
         },
         components: {
-            videoww
+        
+            
         }
 
 }   

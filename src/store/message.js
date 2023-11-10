@@ -24,9 +24,8 @@ const mutations = {
         state.messageList = data
     },
     GETHISTORYMESSAGELIST(state,data) {   
-        // console.log(getCache('historyMessageList'));
-        if(Object.keys(data).length > 0){
-            
+        if(Object.keys(data).length > 0)
+        {
             state.historyMessageList = data
         }
         
@@ -71,7 +70,7 @@ const actions = {
      */
 
     async getGetMsg({commit}, data) {
-
+       
         let parms = `${data.room_id}/${data.page}/${data.limit}`
         // 请求参数
         let result = await reqGetMsg(parms);
@@ -125,6 +124,7 @@ const actions = {
                         "upload_status":list[i].upload_status,
                         "chunk_number":list[i].chunk_number,
                         "merge_number":list[i].merge_number,
+                        "is_revoke":list[i].is_revoke ? list[i].is_revoke :0,
 
                     }
                     
@@ -135,10 +135,6 @@ const actions = {
             }
 
             let total = result.data.offTotal
-            // if (total >= 0) {
-            //     commit("GETOFFMSGTOTAL",total);
-            // }
-           
 
             commit("GETHISTORYMESSAGELIST",oldMsg);
 
@@ -181,16 +177,14 @@ const actions = {
 
 
 
-    async getMessage({commit}, data){
+    async getMessage({commit}, data) {
        
         if ( Object.keys(data).length > 0) {
             if (data.code == 20014 ) {
                 next('/login');
 
-            }
-           
-            const user_id = store.state.user.userInfo.user_id;
-            
+            }        
+            const user_id = store.state.user.userInfo.user_id;           
             var tag = 0; // 0 自己发的  1 被人发的
             if (user_id !== data.user_id ) {
               tag = 1;
@@ -228,9 +222,12 @@ const actions = {
                 "upload_status":data.upload_status,
                 "chunk_number":data.chunk_number,
                 "merge_number":data.merge_number,
+                "is_revoke":data.is_revoke ? data.is_revoke : 0,
             }
 
             console.log("getMessage服务端发过来了一个数据:",data);
+            let oldMsg = state.historyMessageList || []; 
+            oldMsg.push(messageList)
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 

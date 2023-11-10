@@ -31,6 +31,9 @@ export default {
     }
   },
   mounted () {
+    document.oncontextmenu = function (e) {
+            return false;
+        }
    },
 
   destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug

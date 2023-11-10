@@ -38,7 +38,7 @@
       name: "Message",
       data() {
         return {  
-          historyMessageList:[],//获取在线消息
+          historyMessageList:[],//获取消息
           wsmessageList: [],
           tabshow: false,//是否进行某种操作
           user_id:this.$store.state.user.userInfo.user_id, // 用户ID
@@ -51,20 +51,15 @@
           itemComponent: Item,
           estimateSize:50,
           keeps:20,
-          msgNum:0, //最新消息树
+          msgNum:0, 
           isBottom:false,
           totalNum:0,
-      
-        
-
         }
       },
       props:['title'],
       sockets: {
           // 分块回调
           async chunkFileCallback (res) {
-          
-             
             if (res.code == 10000) {
                 
               let data = res.data
@@ -81,16 +76,13 @@
             }
            
           },
-          async updateMsgStatusCallback(val) {  
-           
+          // 更新状态
+          async updateMsgStatusCallback(val) {      
             let list = val.data     
-          
             if (val.code !== 10000 ) {
               this.updateStatus(val.data);
-             
             } else {
-              let wsmessageList = this.wsmessageList     
-              
+              let wsmessageList = this.wsmessageList  
               if (list.uploadStatus == 1){
                   // 返回变成上传成功状态
                   wsmessageList.upload_status = 1       
@@ -100,17 +92,12 @@
                 wsmessageList.upload_status = list.uploadStatus
               }
 
-
-              console.log("wsmessageList::",wsmessageList)
-
-              
-              // this.wsmessageList = wsmessageList
-
             }
-
             return true;
-
           },
+          /**
+           * 合并
+           */
           async mergeFileCallback (res)  {
               let data = res.data
               let list =  {
@@ -136,6 +123,24 @@
               return true
 
           },
+          /**
+           * 撤回消息
+           * @param {*} val 
+           */
+          async revokeMsgCallback(val) {     
+              let list = val.data  
+              if (val.code === 10000 ) {
+                
+                console.log("source::", list)
+                let data = this.historyMessageList[list.index]
+                data.is_revoke = 1
+                this.historyMessageList[list.index] = data
+                console.log("historyMessageList:",data);  
+                
+              } else {
+                this.$alert("请稍后重试")
+              }
+          }
 
 
       },
@@ -187,7 +192,6 @@
 
         updateStatus(data)
         {
-
             this.$socket.emit('updateMsgStatus',{
                 "room_id":this.room_id,
                 "user_id":this.user_id,
@@ -198,8 +202,7 @@
                 "chunkNumber":data.chunkNumber,
                 "totalSize":data.totalSize,
                 "seq":data.seq,
-                "isChunk":data.isChunk
-                                      
+                "isChunk":data.isChunk                                  
             }); 
 
            
@@ -241,8 +244,6 @@
                 // 记录其他用户发送的消息数量
                 this.isBottom = false
                 this.msgNum ++
-                
-
               }
               
             })
@@ -275,8 +276,7 @@
         initLoadMsg() {
           this.page++;
           this.isLoading = true;
-          let div = this.$refs.returnBottom;
-          
+          let div = this.$refs.returnBottom;  
           this.$store.dispatch('getGetMsg',{
                 room_id:this.room_id,
                 page:this.page,
@@ -305,21 +305,17 @@
         }
       },
      
-      computed: {
-       
-        message: {
-          
+      computed: {    
+        message: {      
           get() {
-        
             let historyMessageList = this.$store.state.message.historyMessageList || [];
             let wsmessageList = this.$store.state.message.messageList;
             this.historyMessageList = historyMessageList;
+            console.log("wsmessageList::",historyMessageList)
             if (wsmessageList) {
               this.wsmessageList = wsmessageList
-              this.historyMessageList.push(wsmessageList);
               this.totalNum = this.historyMessageList.length
             }  
-            console.log("historyMessageList:",this.historyMessageList);  
           }
         }
       },
