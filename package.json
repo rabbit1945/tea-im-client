@@ -13,7 +13,7 @@
     "clipboard": "^2.0.11",
     "compression-webpack-plugin": "^1.1.11",
     "core-js": "^3.8.3",
-    "electron": "^25.5.0",
+    "electron": "^27.0.4",
     "element-ui": "^2.15.13",
     "express": "^4.18.2",
     "html2canvas": "^1.4.1",
@@ -86,5 +86,14 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "description": "lightning-client 1.0\r ===============",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:gongzhiyang/lightning-client.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": []
 }
