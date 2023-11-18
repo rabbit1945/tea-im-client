@@ -7,11 +7,15 @@
           <span class="name">{{ nickName }}</span> 
             
           <img @click = 'logout' src = "./images/logout.png" alt="登出"  class="logout">
-      
+        <!-- 房间管理 -->
+    <Room></Room>
     </div>
+  
  </template>
   
   <script>
+  import Room from '../Room';
+
   export default {
     name: "MsgBase",
     data() {
@@ -23,7 +27,10 @@
       }
     },
     props:['userStatus'],
-   
+    components: {
+      Room
+
+    },
     methods:{
     
       logout(){
@@ -55,7 +62,6 @@
   <style scoped>
   .base {
     position: relative;
-    width: 100px;
     height: 800px;
     min-height: 800px;
     float: left;

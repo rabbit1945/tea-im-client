@@ -313,7 +313,16 @@ convertImageToCanvas(image) {
       },
       // 获取联系人
       getValue(val) {
-         return this.contactList.push(val);
+         console.log("contactListval:", val);
+         return this.contactList.push({
+          "nick_name":val.nick_name,
+          "is_robot":val.is_robot,
+          "photo":val.photo,
+          "room_id":val.photo,
+          "user_id":val.user_id,
+          "content_type":val.content_type,
+          "room_id":val.room_id,
+         });
          
       },
      
@@ -438,7 +447,7 @@ convertImageToCanvas(image) {
         msgData.msg = messgae
         msgData.content_type = content_type
         msgData.contactList = contactList
-       
+        console.log("msgData",msgData)
         this.$socket.volatile.emit('room',msgData);     
         this.$refs.input.innerHTML = "&nbsp;"
       },

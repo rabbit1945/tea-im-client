@@ -2,11 +2,11 @@
     <div class="wrap">
       <!-- 路由组件出口的地方 -->
     
-      <!--头部 -->
-       <MsgTop/>
-     
+        <!--头部 -->
+        <MsgTop/>
         <!--用户基本信息 -->
         <MsgBase :userStatus="userStatus"/>
+        
         <!-- 聊天记录 -->
         <Messages/>
         <!-- 用户信息 -->
@@ -24,7 +24,6 @@ import MsgTop from './MsgTop';
 import MsgBase from './MsgBase';
 import Messages from './Messages';
 import UserList from './UserList';
-
 
 
 

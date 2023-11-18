@@ -14,7 +14,7 @@
                         <div contenteditable = "false" class="text"  v-if = "this.source.content_type === 0"  >
                         
                             <div  @contextmenu.prevent="onContextmenu"  >
-                                <div v-html="this.source.msg" class="msg-html" ></div>
+                                <div ref="textMsg" v-html="this.source.msg" class="msg-html" ></div>
                             </div>    
                         </div>
                         <!-- 音频 -->
@@ -101,6 +101,9 @@
 
     import { setCache, getCache,removeCache} from "@/utils/cache";
     const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
+    const synth = window.speechSynthesis;
+    const speech = new SpeechSynthesisUtterance();
+    const voices = speechSynthesis.getVoices()
     export default {
         name: 'Item',
         data(){
@@ -173,6 +176,13 @@
                         }
                     },
                     {
+                        label: "语音",
+                        hidden: this.source.content_type != 0,
+                        onClick: () => {
+                            this.handleSpeak()
+                        }
+                    },
+                    {
                         label: "撤回",
                         hidden:this.$refs.content.getAttribute('data-isRevokeHidden'),
                         onClick: () => {        
@@ -193,6 +203,20 @@
                     minWidth: 230 // 主菜单最小宽度
                 });
                 return false;
+            },
+
+            handleSpeak(){
+   ;
+                let textMsg = this.$refs.textMsg.textContent;
+                console.log(textMsg);
+                speech.text = textMsg; // 文字内容: 如果能播放出声音 那可真是泰裤辣！
+                speech.lang = "zh-CN"; // 使用的语言:中文
+                speech.voice = voices[20]
+                speech.volume = 1; // 声音音量：1
+                speech.rate = 1; // 语速：1
+                speech.pitch = 1; // 音高：1
+                synth.speak(speech); // 播放
+
             },
            
             openImagesClick()
