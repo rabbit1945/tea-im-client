@@ -76,9 +76,9 @@ router.beforeEach(async (to, from, next) => {
      //已经登录而且还想去登录------不行
         try {
           // 获取房间信息
-          await store.dispatch('getRoomInfo',1);
-          let room_id = store.state.user.roomInfo.room_id
-          // 注册 socket
+          let room_id = store.state.user.roomInfo.room_id ? store.state.user.roomInfo.room_id:1
+          await store.dispatch('getRoomInfo',room_id);
+         
           Vue.use(new VueSocketIO({
             debug: true,
             // 正式 https://xiaogongtx.com
@@ -95,7 +95,7 @@ router.beforeEach(async (to, from, next) => {
               
                 query: {
                   "token":store.state.user.token,
-                  "room": room_id
+                    
                },
                 autoConnect: false,//是否自动连接 
               })

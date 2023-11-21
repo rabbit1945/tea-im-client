@@ -1,21 +1,23 @@
 <template>
+  <el-container style="display: flex;justify-content: center;">
     <div class="wrap">
       <!-- 路由组件出口的地方 -->
-    
+      
         <!--头部 -->
-        <MsgTop/>
+        <MsgTop :room = "roomInfo" />
         <!--用户基本信息 -->
         <MsgBase :userStatus="userStatus"/>
         
         <!-- 聊天记录 -->
-        <Messages/>
+        <Messages  :key="timer"/>
+       
         <!-- 用户信息 -->
-        <UserList :showUser="true" />
-
+        <UserList :showUser="true" :data = "userList" />
+        <!-- 房间管理 -->
+        <Room @roomUserList="roomUserList"></Room>
         <router-view></router-view>
     </div>
-    
-
+  </el-container>
 </template>
 
 <script>
@@ -24,10 +26,7 @@ import MsgTop from './MsgTop';
 import MsgBase from './MsgBase';
 import Messages from './Messages';
 import UserList from './UserList';
-
-
-
-
+import Room from './Room';
 
 export default {
   name: "",
@@ -36,20 +35,22 @@ export default {
     MsgBase,
     Messages,
     UserList,
-
+    Room
 },
   data() {
     return {
       "user_id":this.$store.state.user.userInfo.user_id,
       "room_id":this.$store.state.user.roomInfo.room_id,
-      "userStatus":"offline"
+      "userList":this.$store.state.user.roomUserList,
+      "roomInfo":this.$store.state.user.roomInfo,
+      "msgList":this.$store.state.message.historyMessageList,
+      "userStatus":"offline",
+      "timer":""
 
     }
   },
   mounted() {
     this.$socket.open() 
-    // window.addEventListener('visibilitychange',this.visibilitychange,true);
-    // window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))  
     window.addEventListener("blur", this.onblur,true);
     window.addEventListener("focus", this.onfocus,true);   
 
@@ -57,8 +58,6 @@ export default {
   },
   beforeDestroy () {
     this.$socket.close()
-    // window.removeEventListener('visibilitychange', this.visibilitychange,true)
-    // window.removeEventListener('beforeunload', e => this.beforeunloadHandler(e))
     window.removeEventListener("focus", this.onfocus,true);   
     window.removeEventListener("blur", this.onblur,true);
 
@@ -76,10 +75,6 @@ export default {
     },
     async connect_error (error) {
       console.log("Socket 连接失败",error);
-      // alert("通信连接失败，请尝试刷新页面！！！")
-      
-      // this.handleClose("服务器连接失败！！！");
-      // this.$socket.close()
       console.log("connect_error是否连接服务端：",this.$socket.connected); // false
       if (this.$socket.connected === false) {
           this.userStatus = "offline"
@@ -89,13 +84,12 @@ export default {
     },
     async connect () {
       console.log("Socket 连接成功");
-      console.log("connect是否连接服务端：",this.$socket.connected); // false
       if (this.$socket.connected === true) {
           this.userStatus = "online"
-
       }
 
     },
+
     async error (error) {
         console.log("Socket错误:",error);
         this.handleClose("服务器出错，请联系管理员！！！");
@@ -103,8 +97,18 @@ export default {
        
 },
 methods: {
+  roomUserList(val) {
+   
+    // 用户列表
+    this.userList = val.userList
+    // 聊天室详情
+    this.roomInfo = this.$store.state.user.roomInfo
+    this.timer = this.roomInfo.room_id
+    console.log(" this.timer", this.timer);
+    // 聊天列表
+    // this.msgList = this.$store.state.message.historyMessageList
+  },
   handleClose(error){
-  
       this.$confirm(error,'错误',{
         confirmButtonText: '确定',
           type: 'error'

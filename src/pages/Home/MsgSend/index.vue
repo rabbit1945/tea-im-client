@@ -47,10 +47,10 @@
     
         <div
           ref="input"
+          id = "sendMsg"
           class="msg-content" 
           placeholder="ctrl + enter 发送消息"
-        
-          contenteditable>
+                  contenteditable>
              
         </div>
         <!-- <el-button class= "sendButton" type="success">发送</el-button> -->
@@ -123,12 +123,13 @@
       
     sockets: {
       async roomCallback (data) {
-      
+        console.log("roomCallback::",data)
         this.$refs.uploadFile.getMsg(data);
         // 获取服务端发来的数据
-        await this.$store.dispatch("getMessage", data);
-         // 定位最新数据的位置
-        this.$emit('findNewMsg',{"sendUserId":data.user_id,"userId":this.user_id});
+        await this.$store.dispatch("getMessage", data); 
+        // 定位最新数据的位置
+        this.$emit('findNewMsg',{"sendUserId":data.user_id,"userId":this.user_id,"room_id":data.room_id})
+       
         this.contactList = []
         // 默认音频的大小
         this.audio.fileSize = 0
@@ -146,14 +147,7 @@
       window.addEventListener("keydown",this.send,true);
     },
     destroyed() {
-      // window.removeEventListener("keydown", function (event) {
-
-      // if (event.ctrlKey&& event.code=='Enter')
-      // {
-      //   this.msgSend();
-      // }       
-      // });
-      
+      window.removeEventListener("keydown",this.send,true);
     },
     computed:{
       userList:{
@@ -164,12 +158,8 @@
     },
   
 methods: {
-
-
-  
   send() {
-    console.log(window.event)
-
+    
     if (window.event.ctrlKey&& window.event.code=='Enter')
         {
           this.msgSend();
@@ -329,20 +319,20 @@ convertImageToCanvas(image) {
       audioData(val) {   
         if (val) {
            this.$store.dispatch("uploadAudio", val.formData).then(res => {
-                  let path = res.file    
-                  //获取最后一个.的位置
-                  let index= path.lastIndexOf(".");
-                  //获取后缀
-                  let ext = path.substr(index+1);
-                  // 获取文件类型 
-                  let content_type = this.fileExt(ext)
-                  this.audio = {
-                    'path':path,
-                    'file_name':val.fileName,
-                    'file_size':val.fileSize,
-                    "content_type":content_type
-                  }
-                  this.sendAudio(this.audio)           
+              let path = res.file    
+              //获取最后一个.的位置
+              let index= path.lastIndexOf(".");
+              //获取后缀
+              let ext = path.substr(index+1);
+              // 获取文件类型 
+              let content_type = this.fileExt(ext)
+              this.audio = {
+                'path':path,
+                'file_name':val.fileName,
+                'file_size':val.fileSize,
+                "content_type":content_type
+              }
+              this.sendAudio(this.audio)           
           })
         } else {
            tihs.alert("语音出现问题，请重试！！！");
@@ -428,13 +418,15 @@ convertImageToCanvas(image) {
       // 发送
       msgSend(){
         this.$socket.open();
-        let text = this.$refs.input.textContent.trim()
-        if (text.length === 0 ) {  
+        
+        let html = document.getElementById('sendMsg');
+        console.log( html )
+        if (html.textContent == ""  ) {  
           this.$alert("你好，客官你还没有添写消息呢！！！");
-          return false;
+          
         }
-        let innerHTML = this.$refs.input.innerHTML
-        let messgae = innerHTML.trim();
+        
+        let messgae = html.innerHTML;
         let contactList =  this.contactList
         let content_type = 0; // 文本
         if (this.audio.fileSize > 0) {
@@ -442,14 +434,14 @@ convertImageToCanvas(image) {
            content_type = 1; // 音频
         } 
       
-
         let msgData = this.msgInfo()
         msgData.msg = messgae
         msgData.content_type = content_type
         msgData.contactList = contactList
-        console.log("msgData",msgData)
+        console.log("room_id",this.room_id)
+        console.log("发送msgData",msgData)
         this.$socket.volatile.emit('room',msgData);     
-        this.$refs.input.innerHTML = "&nbsp;"
+        
       },
 
       /**
@@ -516,17 +508,13 @@ convertImageToCanvas(image) {
   }
   .world {
     position: absolute;
-    /* left: 99px; */
-    bottom: -220px;
+    left: 0px;
+    right: 0px;
     padding-top: 10px;
-    width: 100%;
-    min-width: 50%;
-    height: 107px;
+        height: 107px;
     border-top: 1px solid #fff;
     background-color: white;
-    margin-bottom: 100px;
-    border-radius:20px 20px
-  }
+      }
   .msg-button {
     position: relative;
     height: 38px;
@@ -548,10 +536,9 @@ convertImageToCanvas(image) {
   }
   .msg-emoji {
     position: absolute;
-     left: 110px;
-    bottom: 161px;
-
-
+     left: 70px;
+    bottom: 124px;
+z-index: 2;
   }
 
   .send {

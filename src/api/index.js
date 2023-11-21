@@ -15,7 +15,7 @@ export const reqRoomInfo = (id)=>requests({url:`room/v1/room/info/${id}`,method:
 // 聊天室的用户列表
 //URL:/api/v1/login  method:post phone password
 export const reqRoomUserList = (data)=>requests({url:`room/v1/room/user/list/${data}`,method:'get'});
-
+export const reqRoomList = ()=>requests({url:`room/v1/room/index`,method:'get'});
 
 //添加登录日志
 // export const reqUerLoginLogs = ()=>requests({url:'/v1/add/login/logs',method:'post'});

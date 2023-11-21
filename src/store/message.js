@@ -41,13 +41,18 @@ const actions = {
      * 获取title 状态
      */
     async getTitle({commit}, data){
+
+        if (data.contactList.length > 0) {
         let contactList = data.contactList.split(',')     
+        if (contactList.length > 0 && contactList.includes(user_id.toString()) === true) {
+                context = "有人@我"
+            } 
+        }
+       
         let title = "闪电"
         let context = "新消息"    
         let user_id = store.state.user.userInfo.user_id;
-        if (contactList.length > 0 && contactList.includes(user_id.toString()) === true) {
-            context = "有人@我"
-        }
+        
         if (user_id == data.user_id) {
             commit("GETTITLE",title);
             return title;
@@ -70,26 +75,30 @@ const actions = {
      */
 
     async getGetMsg({commit}, data) {
+        let room_id = data.room_id
+        let parms = `${room_id}`
+        if (data.page) {
+            parms = `${room_id}/${data.page}/${data.limit}`
+        } 
        
-        let parms = `${data.room_id}/${data.page}/${data.limit}`
-        // 请求参数
+                // 请求参数
         let result = await reqGetMsg(parms);
         if (result.code === 10000) {
             
             let list = result.data.list;
-
-            const user_id = store.state.user.userInfo.user_id;
+            let msg = [];
+            let user_id = store.state.user.userInfo.user_id;
             let oldMsg = state.historyMessageList || []; 
             
-            var tag = 0; // 0 自己发的  1 被人发的
+            
             for (var i = 0; i < list.length; i++) {
                 
-                if (list[i].msg_form) {
+                if (list[i].msg_form && room_id == list[i].room_id ) {
+
+                    var tag = 0; // 0 自己发的  1 被人发的
                     if (user_id != list[i].msg_form) {
                         tag = 1;
-                    } else {
-                        tag = 0;
-                    }
+                                        }
                     // url的处理
                     let msg = list[i].msg_content;
                     let pattern = /\b(https?:\/\/[^\s]+)/g;
@@ -125,18 +134,19 @@ const actions = {
                         "chunk_number":list[i].chunk_number,
                         "merge_number":list[i].merge_number,
                         "is_revoke":list[i].is_revoke ? list[i].is_revoke :0,
+                        "delivered":list[i].delivered
 
                     }
                     
                     oldMsg.unshift(messageList)  
-                                 
-                }
+                                                 }
 
             }
 
-            let total = result.data.offTotal
 
-            commit("GETHISTORYMESSAGELIST",oldMsg);
+            console.log("服务端发过来了一个数据:",oldMsg);
+            let total = result.data.offTotal
+            commit("GETHISTORYMESSAGELIST", oldMsg);
 
             //用户已经登录成功且获取到token 
             return {msg:oldMsg,offTotal:total};
@@ -189,6 +199,7 @@ const actions = {
             if (user_id !== data.user_id ) {
               tag = 1;
             }
+            let messages = [];
             let msg = data.sensitiveMsg;
             let pattern = /\b(https?:\/\/[^\s]+)/g;
             let matches = msg.match(pattern); 
@@ -202,32 +213,39 @@ const actions = {
             }
             let totalSize  =  data.file_size
             let file_size = totalSize/1024
-           
-            let messageList = {
-                "user_id": data.user_id,
-                "tag":tag,
-                "nick_name":data.nick_name,
-                "msg":msg,
-                "room_id":data.room_id,
-                "seq":data.seq,
-                "send_time":data.send_time,
-                "userLogo":data.userLogo,
-                "content_type":data.content_type,
-                "file_name":data.file_name,
-                "totalSize":totalSize,
-                "original_file_name":data.original_file_name,
-                "fileSize":file_size.toFixed(2),
-                "md5":data.md5,
-                "total_chunks":data.total_chunks,
-                "upload_status":data.upload_status,
-                "chunk_number":data.chunk_number,
-                "merge_number":data.merge_number,
-                "is_revoke":data.is_revoke ? data.is_revoke : 0,
+            let room_id = store.state.user.roomInfo.room_id
+            let messageList = []
+            if (room_id == data.room_id) {
+                messageList = {
+                    "user_id": data.user_id,
+                    "tag":tag,
+                    "nick_name":data.nick_name,
+                    "msg":msg,
+                    "room_id":data.room_id,
+                    "seq":data.seq,
+                    "send_time":data.send_time,
+                    "userLogo":data.userLogo,
+                    "content_type":data.content_type,
+                    "file_name":data.file_name,
+                    "totalSize":totalSize,
+                    "original_file_name":data.original_file_name,
+                    "fileSize":file_size.toFixed(2),
+                    "md5":data.md5,
+                    "total_chunks":data.total_chunks,
+                    "upload_status":data.upload_status,
+                    "chunk_number":data.chunk_number,
+                    "merge_number":data.merge_number,
+                    "is_revoke":data.is_revoke ? data.is_revoke : 0,
+                    "delivered":0
+                }
+               
+                let oldMsg = state.historyMessageList || []; 
+                oldMsg.push(messageList)
             }
+            
 
-            console.log("getMessage服务端发过来了一个数据:",data);
-            let oldMsg = state.historyMessageList || []; 
-            oldMsg.push(messageList)
+            console.log("getMessage服务端发过来了一个数据:",messageList);
+           
             // 聊天记录
             commit("GETMESSAGELIST", messageList)
 

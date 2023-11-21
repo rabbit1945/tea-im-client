@@ -1,7 +1,7 @@
  <template>
+<el-aside class="userList" style=" width: 158px;">
 
-  <div class="userList"  style="overflow:auto">
-        <ul
+          <ul
           class="list"
           v-infinite-scroll="load"
           infinite-scroll-disabled="disabled">
@@ -19,13 +19,15 @@
             {{ val.nick_name }}
           </li>
         </ul>
-  </div>
+  
+
+ </el-aside>
+  
  </template>
   <script> 
     export default {
       data () {
         return {
-          data :[],
           count: 1,
           noMore:false, //控制滚动禁用 
           loading: false, //控制滚动条禁用
@@ -34,7 +36,20 @@
 
         }
       },
-      props:['showUser'],
+      
+      props: {
+        // index of current item
+            showUser: { 
+                type:Boolean 
+            },
+            data: {   
+               type:Array ,           
+                default () {
+                    return this.$store.state.user.roomUserList
+                }
+            },
+         
+        },
       computed: {
        
         disabled () {
@@ -42,6 +57,7 @@
         }
       },
       mounted(){
+
           this.load();
       },
       methods: {
@@ -106,17 +122,13 @@
 
 .userList {
     position: absolute;
-    top: 50px;
+    top: 60px;
     right: 0px;
-    width: 155px;
-    height: 800px;
-    min-height: 600px;
-    float: right;
-    border: 1px solid #fff;
-    /* border-top-right-radius: 20px; */
-    border-bottom-right-radius: 20px;
-    background-color: rgba(245,245,245,1.7);
-
+    width: 158px;
+    height:800px;
+        border: 1px solid #fff;
+        background-color: rgba(245,245,245,1.7);
+overflow:auto;
 
 }
 .userList ul {

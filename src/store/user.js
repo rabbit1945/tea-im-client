@@ -7,7 +7,8 @@ import {
     reqRoomUserList,
     reqLogout,
     reqAuth,
-    reqAuthLogin
+    reqAuthLogin,
+    reqRoomList
 
 } from "@/api";
 
@@ -20,6 +21,7 @@ const state = {
   token: getToken(),
   userInfo: {},
   roomInfo:{},
+
   roomUserList:[],
   isAuthLogin:false
 };
@@ -35,6 +37,7 @@ const mutations = {
    
     GETROOMINFO(state, roomInfo) {
         state.roomInfo = roomInfo;
+
     },  
     ROOMUSERLIST(state, data) {
         state.roomUserList = data
@@ -104,35 +107,45 @@ const actions = {
     
 
     // 获取聊天室中用户列表
-    async getRoomUserList({commit}, datas) {
+    async getRoomUserList({commit}, data) {
         // 请求参数
-        console.log( "ssss",state.roomInfo)
-
-        let data = `${state.roomInfo.room_id}/${datas.pages}/${datas.size}`
+        let where = `${state.roomInfo.room_id}/${data.pages}/${data.size}`
         
-        let result = await reqRoomUserList(data);
+        let result = await reqRoomUserList(where);
         if (result.code == 10000) {
             commit("ROOMUSERLIST",result.data);
+
             return result.data;
-
         } 
-
+return false;
     },
+
     //获取聊天室信息
     async getRoomInfo({ commit },id) {
         let result = await reqRoomInfo(id);
-        
-        let code = result?.code;
+                let code = result?.code;
         if (code === 10000) {       
             let list = result?.data;
-            //  //提交用户信息
+            //提交用户信息
             commit("GETUSERINFO", list?.userInfo);
             // 提交 聊天室的基本信息
             commit("GETROOMINFO", list?.roomInfo);
             
             return true;
         }
+    return false;
     },
+
+    async getRoomList({ commit }){
+        let result = await reqRoomList();
+        let code = result?.code;
+        if (code === 10000) {    
+             
+            return result.data.list;
+        }
+        return false;    
+    },
+
     //退出登录
     async userLogout({commit}) {
         //只是向服务器发起一次请求，通知服务器清除token

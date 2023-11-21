@@ -1,6 +1,7 @@
  <template>
-    <!-- 聊天区域 -->   
-      <div v-bind="message" class="message" >
+    <div>
+  <el-main class="message el-main " v-bind="message" >
+
          <!-- 接收到的消息 -->
           <virtual-list
             ref = "returnBottom"
@@ -16,6 +17,8 @@
             :start = 100 
             v-on:composeFile = 'composeFile' 
           />  
+  </el-main>
+  <el-footer style="margin-top:2px;">
           <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
             <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
           </el-badge>
@@ -23,10 +26,11 @@
             class="item msg-badge-up">
             <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
           </el-badge>
-          <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg"/>     
-          <div id="myAlertBox"  class= "alertBox" style="display:none">
-          
-          </div>
+          <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg" />     
+          <div id="myAlertBox"  class= "alertBox" style="display:none"></div>
+</el-footer>
+
+    
       </div>
  </template>
   <script>
@@ -61,21 +65,15 @@
           // 分块回调
           async chunkFileCallback (res) {
             if (res.code == 10000) {
-                
               let data = res.data
               data.isChunk = true
               if (data.uploadStatus == 1) {
-             
-              
                 this.updateStatus(data);
               } 
-     
-            } else {
-
+                 } else {
               return this.$alert(res.msg)
             }
-           
-          },
+                     },
           // 更新状态
           async updateMsgStatusCallback(val) {      
             let list = val.data     
@@ -144,8 +142,7 @@
 
 
       },
-    
-      mounted(){
+          mounted(){
 
         this.$store.state.message.historyMessageList= null
         // window.addEventListener("scroll", this.onScroll, true);
@@ -153,6 +150,7 @@
         this.initLoadMsg()
        
       },
+
       destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug
         // window.removeEventListener('scroll', this.onScroll,true)
       },
@@ -177,13 +175,8 @@
               "totalSize":data.totalSize,
               "chunkSize":Math.ceil(data.totalSize / data.totalChunks) 
           }
-         
-
           list.uploadStatus = 2
-
           await  this.$socket.emit('mergeFile',list);   
-
-              
         },
         /**
          * 更新状态
@@ -221,32 +214,35 @@
           div.scrollToIndex(location);
           this.msgNum = 0
           this.isBottom = false
+          console.log("isBottom:",this.isBottom,this.msgNum);
         },
         onScroll(e){
-          let div=this.$refs.returnBottom;
-          let getOffset = div.getOffset();
-
           if (this.page >1 ) {
             this.msgNum = 0;
           }
         },
         findNewMsg(val) {
-            console.log(this.totalNum)
-            if (Object.keys(val).length > 0) {
-              this.$nextTick(() => {
-              if (val.sendUserId == val.userId ) {
-                let div=this.$refs.returnBottom;
-                div.reset()
-                div.scrollToBottom();
-                this.isBottom = true;
-                this.msgNum = 0;
-              } else {
-                // 记录其他用户发送的消息数量
-                this.isBottom = false
-                this.msgNum ++
-              }
-              
-            })
+             console.log("findNewMsg:",val,this.room_id);
+            if (val.room_id === this.room_id) {
+              if (Object.keys(val).length > 0) {
+                this.$nextTick(() => {
+                if (val.sendUserId == val.userId ) {
+                  let div=this.$refs.returnBottom;
+                  div.reset()
+                  div.scrollToBottom();
+                  this.isBottom = true;
+                  this.msgNum = 0;
+                } else {
+                  // 记录其他用户发送的消息数量
+                  this.isBottom = false
+                  this.msgNum ++
+                  console.log(" this.msgNum::", this.msgNum)
+                }
+                
+              })
+
+            }
+           
           }
           
         },
@@ -288,8 +284,7 @@
 
                   this.$nextTick(()=>{
                       this.isLoading = false;
-                      
-                      if (this.page == 1) {
+                     if (this.page == 1) {
                         //刷新滚动条到最近一页
                         div.reset()
                         div.scrollToBottom();
@@ -339,23 +334,22 @@
   
     .message {
       position: relative;  
+      background-color: white;
+      height: 800px;
+      overflow: hidden;
     }
     
     .msg-list {
     position: relative;
     height: 800px;
-    min-height: 440px;
-    border-right: 1px solid #fff;
-    border-bottom-left-radius: 20px;
-    background-color: white;
-    overflow: auto;  
-    margin-right: 157px;
-
+    width: 800px;
+        overflow: auto;  
+    
     }
 
-    /* .msg {
-      position:relative;
-    } */
+    .el-main {
+      padding: 2px;
+    }
 
     
     .msg-frame {
@@ -463,9 +457,8 @@
   .msg-badge-down {
     position: absolute;
     right: 190px;
-    bottom: 1px;
-   
-   
+    bottom: 65px;
+      
   }
 
   .msg-badge-up {

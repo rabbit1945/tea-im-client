@@ -1,20 +1,23 @@
  <template>
+<el-aside class="base right_box" width="260px">
      <!-- 基础信息 -->
-     <div class="base">
+     <div >
           <!-- 用户头像 -->
           <img class="userLogo" :src= "userLogo" alt="">
           <span class="userStatus" v-if = "userStatus == 'online'" style="background-color: blue;"></span>
           <span class="name">{{ nickName }}</span> 
             
           <img @click = 'logout' src = "./images/logout.png" alt="登出"  class="logout">
-        <!-- 房间管理 -->
-    <Room></Room>
+        
     </div>
+<!-- el-aside -->
+  </el-aside>
+  
   
  </template>
   
   <script>
-  import Room from '../Room';
+  
 
   export default {
     name: "MsgBase",
@@ -28,7 +31,7 @@
     },
     props:['userStatus'],
     components: {
-      Room
+      
 
     },
     methods:{
@@ -60,6 +63,9 @@
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
+
+
+
   .base {
     position: relative;
     height: 800px;
@@ -69,9 +75,13 @@
     border-bottom-left-radius: 20px;
     background-color: cadetblue;
     z-index: 1;
+   overflow: hidden;
 
 }
 
+.right_box {
+  flex: 1;
+}
 .userLogo {
     width: 40px;
     height: 40px;

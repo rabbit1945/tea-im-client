@@ -1,51 +1,75 @@
  <template>
-  <div>nihao  <button  @click="playVoice()">点击进行播报</button></div>
+  <el-footer class="footer" direction = "vertical" width="100px" height="800px">
+  
+    <ul  class="list">
+      <li v-for="val in list" class="list-line"  @click="selectRoom(val.room_id)"  >
+       
+        <div v-if="selectRoomId === val.room_id" style = "color: cadetblue;">
+          {{ val.name }}
+        </div>
+        <div v-if="selectRoomId != val.room_id">
+          {{ val.name }}
+        </div>
+      
+      </li>
+    
+    </ul>
+   
+  </el-footer>
  
  </template>
   <script> 
+import { setCache, getCache,removeCache} from "@/utils/cookie";
+
   const synth = window.speechSynthesis;
   const speech = new SpeechSynthesisUtterance();
   const voices = speechSynthesis.getVoices();
  
- // 打印voices可以看到有很多数组     但是只有值localService 的值为 true的才能使用，我的浏览器只有前三个位true
-      console.log(voices);
-
-    export default {
+     export default {
       name:"Room",
       data () {
         return {
-         
+          list:[],  
+          selectRoomId: 1
 
         }
       },
+
       props:[],
       computed: {
        
         
       },
-      mounted(){
+      mounted(){    
+        this.$store.dispatch('getRoomList').then(res => {
+          if (res) {
+              this.list = res
+          } else {
+            this.$alert('没有获取到房间列表')
+          }
+
+        });
          
       },
       methods: {
-        playVoice() {
-          this.handleSpeak("如果能播放出声音 那可真是泰裤辣！hello"); // 传入需要播放的文字
-        },
-        handleSpeak(text){
-          speech.text = text; // 文字内容: 如果能播放出声音 那可真是泰裤辣！
-          speech.lang = "zh-CN"; // 使用的语言:中文
-          speech.voice = voices[20]
-          speech.volume = 1; // 声音音量：1
-          speech.rate = 1; // 语速：1
-          speech.pitch = 1; // 音高：1
-          synth.speak(speech); // 播放
-
-        },
-        handleStop(e) {
-          speech.text = e;
-          speech.lang = "zh-CN";
-          synth.cancel(speech);
-      }
-    
+        async selectRoom(room_id){
+          this.$store.dispatch('getRoomInfo',room_id).then(res => {          
+            if (res) {       
+                this.$store.dispatch('getRoomUserList',{'pages':1,'size':100}).then(res => {
+                  if (res === false) {
+                    this.$alert("用户列表请求失败")
+                  }
+                  console.log("room_id",room_id)
+                 
+                  this.$emit('roomUserList',res);  
+                })   
+                this.selectRoomId = room_id
+            } else {
+              this.$alert("聊天室信息请求失败")
+            }
+          })
+          
+        }
 
       }
     }
@@ -53,7 +77,31 @@
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
+.footer{
+    width: 170px;
+    background: aliceblue;
+    position: absolute;
+    left: 89px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    top: 60px;
+    z-index: 1;
+  }
 
+
+  
+  .list {
+    position:relative;
+    cursor: pointer;
+    margin: 10px;
+  }
+  .list-line {
+    margin: 15px;
+    list-style-type:none;
+  }
+  .list-line:hover {
+    color: #409eff;
+  }
     
   </style>
   

@@ -1,11 +1,11 @@
  <template>
-     <div class="top">
-            <span class="chatRoomName">{{ roomName }}</span>
+     <el-header  class="top" style="height: 60px;width:1221px;">
+      
+            <span class="chatRoomName">{{ room.roomName }}</span>
             <span class="peopleNumber">
-               在线 {{ isOnlineNum }} 人
+               在线 {{ room.countOnline }} 人
             </span>
-
-        </div>
+</el-header>
  </template>
   
   <script>
@@ -15,10 +15,11 @@
     name: "MsgTop",
     data() {
       return {
-        "roomName":this.$store.state.user.roomInfo.roomName,
-        "isOnlineNum":this.$store.state.user.roomInfo.countOnline
+        
        }
-    }
+    },
+props: ['room']
+  
   }
   </script>
   
