@@ -12,7 +12,8 @@ const state = {
     title: "闪电",
     messageList:null,
     historyMessageList:null,
-    offTotal:0
+    offTotal:0,
+    offMessageList:null
 };
 // 
 const mutations = {
@@ -23,16 +24,21 @@ const mutations = {
     GETMESSAGELIST(state, data) {      
         state.messageList = data
     },
+
     GETHISTORYMESSAGELIST(state,data) {   
         if(Object.keys(data).length > 0)
         {
             state.historyMessageList = data
-        }
-        
+        } 
     },
+    
     GETTITLE(state,data) {
         state.title = data
+    },
+    GETOFFMESSAGELIST(state,data) {
+        state.offMessageList = data
     }
+
 
 };
 
@@ -139,7 +145,7 @@ const actions = {
                     }
                     
                     oldMsg.unshift(messageList)  
-                                                 }
+                }
 
             }
 
@@ -211,11 +217,12 @@ const actions = {
                     
                 }
             }
+           
             let totalSize  =  data.file_size
             let file_size = totalSize/1024
             let room_id = store.state.user.roomInfo.room_id
             let messageList = []
-            if (room_id == data.room_id) {
+           
                 messageList = {
                     "user_id": data.user_id,
                     "tag":tag,
@@ -238,17 +245,16 @@ const actions = {
                     "is_revoke":data.is_revoke ? data.is_revoke : 0,
                     "delivered":0
                 }
-               
+            if (room_id == data.room_id) {
                 let oldMsg = state.historyMessageList || []; 
                 oldMsg.push(messageList)
+                // 聊天记录
+                commit("GETMESSAGELIST", messageList)
+            } else {
+              
+                commit("GETOFFMESSAGELIST", messageList)
             }
-            
-
             console.log("getMessage服务端发过来了一个数据:",messageList);
-           
-            // 聊天记录
-            commit("GETMESSAGELIST", messageList)
-
             return true;
         } 
     

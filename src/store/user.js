@@ -21,9 +21,9 @@ const state = {
   token: getToken(),
   userInfo: {},
   roomInfo:{},
-
   roomUserList:[],
-  isAuthLogin:false
+  isAuthLogin:false,
+  roomList:{}
 };
 // 
 const mutations = {
@@ -44,6 +44,9 @@ const mutations = {
     },
     ISAUTHLOGIN(state, data) {
         state.isAuthLogin = data
+    },
+    GETROOMList(state, data) {
+        state.roomList = data
     }
 
 };
@@ -139,9 +142,10 @@ return false;
     async getRoomList({ commit }){
         let result = await reqRoomList();
         let code = result?.code;
-        if (code === 10000) {    
-             
-            return result.data.list;
+        if (code === 10000) {  
+            let list = result?.data;  
+            commit("GETROOMList", list?.list);
+            return list?.list;
         }
         return false;    
     },

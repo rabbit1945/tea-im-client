@@ -208,7 +208,7 @@
             handleSpeak(){
    ;
                 let textMsg = this.$refs.textMsg.textContent;
-                console.log(textMsg);
+               
                 speech.text = textMsg; // 文字内容: 如果能播放出声音 那可真是泰裤辣！
                 speech.lang = "zh-CN"; // 使用的语言:中文
                 speech.voice = voices[20]
@@ -265,7 +265,7 @@
 
                 } else if (uploadStatus == 1) { // 上传成功
                     this.isloading == false
-                    console.log("msgList::",msgList)
+                  
                     // 上传成功
                     this.composeFile(composeData)
  
@@ -304,7 +304,7 @@
                 }
     
                 list.uploadStatus = 2
-                console.log("composeFile_item::::",list);
+              
                 this.$socket.emit('mergeFile',list); 
                 
               

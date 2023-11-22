@@ -68,14 +68,12 @@ export default {
     },
     async disconnect (reason) {
       console.log("Socket 断开",reason);
-      console.log("disconnect是否连接服务端：",this.$socket.connected); // false
       if (this.$socket.connected === false) {
           this.userStatus = "offline"  
       }         
     },
     async connect_error (error) {
       console.log("Socket 连接失败",error);
-      console.log("connect_error是否连接服务端：",this.$socket.connected); // false
       if (this.$socket.connected === false) {
           this.userStatus = "offline"
 

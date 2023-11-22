@@ -18,6 +18,7 @@
             v-on:composeFile = 'composeFile' 
           />  
   </el-main>
+  {{msgNum  }} {{  isBottom}}
   <el-footer style="margin-top:2px;">
           <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
             <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
@@ -35,7 +36,8 @@
  </template>
   <script>
   import virtualList from 'vue-virtual-scroll-list'
-
+  import { setCache, getCache,removeCache} from "@/utils/cookie";
+  let roomNum = getCache('roomNum')?JSON.parse(getCache('roomNum')):[]
   import MsgSend from '../MsgSend';
   import Item from '../Item';
     export default {
@@ -200,9 +202,12 @@
 
            
         },
-      
+        /**
+         * 未读消息定位
+         * @param {*} e 
+         */
         getLocation(e){
-          let div=this.$refs.returnBottom;
+          let returnBottom =this.$refs.returnBottom;
           let location = this.keeps
           if (this.totalNum > this.msgNum) {
             location = this.totalNum-this.msgNum
@@ -211,39 +216,44 @@
           if (this.isBottom === true) {
             location =  location -10
           } 
-          div.scrollToIndex(location);
+          returnBottom.scrollToIndex(location);
           this.msgNum = 0
           this.isBottom = false
-          console.log("isBottom:",this.isBottom,this.msgNum);
+          // 删除未读消息参数
+          roomNum[this.room_id] = 0
+          setCache('roomNum',JSON.stringify(roomNum))
         },
+
         onScroll(e){
           if (this.page >1 ) {
             this.msgNum = 0;
           }
         },
         findNewMsg(val) {
-             console.log("findNewMsg:",val,this.room_id);
+           
             if (val.room_id === this.room_id) {
               if (Object.keys(val).length > 0) {
                 this.$nextTick(() => {
-                if (val.sendUserId == val.userId ) {
-                  let div=this.$refs.returnBottom;
-                  div.reset()
-                  div.scrollToBottom();
-                  this.isBottom = true;
-                  this.msgNum = 0;
-                } else {
-                  // 记录其他用户发送的消息数量
-                  this.isBottom = false
-                  this.msgNum ++
-                  console.log(" this.msgNum::", this.msgNum)
-                }
+                    if (val.sendUserId == val.userId ) {
+                      let div=this.$refs.returnBottom;
+                      div.reset()
+                      div.scrollToBottom();
+                      this.msgNum = 0;
+                      this.isBottom = true;
+                    } else {
+                      // 记录其他用户发送的消息数量
+                      this.isBottom = false
+                      this.msgNum ++
+                   
+                    }
                 
-              })
+                 })
 
-            }
+                 return this.msgNum;
+
+              }
            
-          }
+            } 
           
         },
       
@@ -257,9 +267,7 @@
           let offTotal =  this.msgNum
           if (offTotal >= 10) {
             this.msgNum = offTotal
-          } else {
-            this.msgNum = 0
-          }
+          } 
           console.log("到底了");
         },
       
@@ -273,6 +281,7 @@
           this.page++;
           this.isLoading = true;
           let div = this.$refs.returnBottom;  
+        
           this.$store.dispatch('getGetMsg',{
                 room_id:this.room_id,
                 page:this.page,
@@ -289,7 +298,8 @@
                         div.reset()
                         div.scrollToBottom();
                         this.isBottom = true
-                        this.msgNum = res.offTotal
+                        this.msgNum = res.offTotal + roomNum[this.room_id]
+                        console.log("this.msgNum::",this.msgNum)
                       } 
                 
                   })
@@ -306,7 +316,7 @@
             let historyMessageList = this.$store.state.message.historyMessageList || [];
             let wsmessageList = this.$store.state.message.messageList;
             this.historyMessageList = historyMessageList;
-            console.log("wsmessageList::",historyMessageList)
+            console.log("historyMessageList::",historyMessageList)
             if (wsmessageList) {
               this.wsmessageList = wsmessageList
               this.totalNum = this.historyMessageList.length
@@ -463,7 +473,7 @@
 
   .msg-badge-up {
     position: absolute;
-    top: 10px;
+    top: 70px;
     right: 190px;
     
   }
