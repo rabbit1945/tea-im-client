@@ -206,7 +206,7 @@
             },
 
             handleSpeak(){
-   ;
+
                 let textMsg = this.$refs.textMsg.textContent;
                
                 speech.text = textMsg; // 文字内容: 如果能播放出声音 那可真是泰裤辣！
