@@ -18,7 +18,6 @@
             v-on:composeFile = 'composeFile' 
           />  
   </el-main>
-  {{msgNum  }} {{  isBottom}}
   <el-footer style="margin-top:2px;">
           <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
             <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
