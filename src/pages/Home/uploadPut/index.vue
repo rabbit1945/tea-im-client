@@ -75,7 +75,6 @@ export default {
             //获取文件md5
             const fileMd5 = await this.getFileMd5(file, chunkCount);
             setCache(fileMd5,JSON.stringify(file))
-            console.log("ssdds:", file);
             console.log("向后端请求本次分片上传初始化")
 
             const initUploadParams = {
@@ -122,7 +121,8 @@ export default {
          this.$store.dispatch("checkChunkExis", initUploadParams).then (res => {
               let uploadStatus = 0
               if (res.type === 1) {         
-                uploadStatus = 3;                
+                uploadStatus = 3;   
+                console.log("上传成功",res)             
               } 
               this.sendMsg(fileMd5,File.name,res.newFileName,chunkCount,fileSize,res.mergePath,uploadStatus)
               this.type = res.type
@@ -176,7 +176,6 @@ export default {
      async getMsg(data) {
       
         if (data.content_type != 0) {
-          console.log("获取消息::",data);
           this.msgInfo = data
           let chunkCount = data.total_chunks
           let fileSize   = data.file_size

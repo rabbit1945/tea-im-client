@@ -74,22 +74,30 @@
                  } else {
               return this.$alert(res.msg)
             }
-                     },
+          },
           // 更新状态
           async updateMsgStatusCallback(val) {      
-            let list = val.data     
+            let list = val.data  
+            let seq = list.seq
+            console.log("上传状态::",[list.newFileName,list.uploadStatus,val.code]); 
+            console.log("消息::",this.historyMessageList)
+            var targetObject = this.historyMessageList.find(function(obj) {
+              return obj.seq === seq;
+            });
+
             if (val.code !== 10000 ) {
               this.updateStatus(val.data);
             } else {
-              let wsmessageList = this.wsmessageList  
+
               if (list.uploadStatus == 1){
                   // 返回变成上传成功状态
-                  wsmessageList.upload_status = 1       
-                  console.log("updateMsgStatusCallback::",val);   
+                  targetObject.upload_status = 1       
+                  
                   this.composeFile(list);   
               } else {
-                wsmessageList.upload_status = list.uploadStatus
+                targetObject.upload_status = list.uploadStatus
               }
+              
 
             }
             return true;
@@ -114,11 +122,15 @@
                 
                 list.uploadStatus = 4
                 
-              } 
+              } else {
+                  console.log("mergeFileCallback:::",list);
+                  if (list.uploadStatus == 3) {
+                    this.updateStatus(list);   
+                  }     
+                  
+              }
 
-              console.log("mergeFileCallback:::",list);
-
-              this.updateStatus(list);   
+             
               return true
 
           },
@@ -177,6 +189,8 @@
               "chunkSize":Math.ceil(data.totalSize / data.totalChunks) 
           }
           list.uploadStatus = 2
+          console.log("合并文件::",list);  
+          this.updateStatus(list);   
           await  this.$socket.emit('mergeFile',list);   
         },
         /**
@@ -184,9 +198,9 @@
          * @param {*} data 
          */
 
-        updateStatus(data)
+        async updateStatus(data)
         {
-            this.$socket.emit('updateMsgStatus',{
+          await this.$socket.emit('updateMsgStatus',{
                 "room_id":this.room_id,
                 "user_id":this.user_id,
                 "identifier":data.identifier,

@@ -18,7 +18,7 @@
                             </div>    
                         </div>
                         <!-- 音频 -->
-                        <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 1">
+                        <div contenteditable = "false" class="text" v-if = "this.source.content_type === 1">
                             <div  @contextmenu.prevent="onContextmenu"   >
                                 <av-bars
                             
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                         <!-- 图片 -->
-                        <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 2">
+                        <div contenteditable = "false" class="text" v-if = "this.source.content_type === 2">
                             <div  @contextmenu.prevent="onContextmenu"   >
                                 <el-popover
                             
@@ -42,13 +42,14 @@
                         </div>
                         <!-- 文件 -->
                         <div @click="down()"   contenteditable = "false" class="text file" v-if = "this.source.content_type === 3">
+                            {{  this.source.upload_status }}
                             <div  @contextmenu.prevent="onContextmenu">
                                 <div>
                                     {{ this.source.original_file_name }}
                                     <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
                                 </div>
                                 <div class="fileSize" contenteditable="false"> {{ this.source.fileSize }}KB</div>
-                                <div class="upload_status" ref="msgLocation">
+                                <div class="upload_status">
                                     <span v-if=" this.source.upload_status === 0">上传中</span>
                                     <span v-if=" this.source.upload_status === 1">上传成功</span>
                                     <span v-if=" this.source.upload_status === 2">发送中</span>
@@ -60,10 +61,9 @@
                         </div>
 
                          <!-- 视频 -->
-                         <div contenteditable = "false" ref="msgLocation" class="text" v-if = "this.source.content_type === 4">
+                         <div contenteditable = "false"  class="text" v-if = "this.source.content_type === 4">
                             <div  @contextmenu.prevent="onContextmenu"  >
                                 <el-popover
-                               
                                 placement="left"   
                                 class="vedio"
                                 trigger="click">
@@ -236,9 +236,9 @@
                 if (this.isloading == true) {
                    return this.$alert("正在上传！！！");
 
-                }    
-                let mergeNumber   = this.$refs.msgLocation.getAttribute('data-merge-number');
+                }        
                 let msgList= this.source; 
+                let mergeNumber   = msgList.merge_number;
                 this.list =   msgList;   
                 let md5 = msgList.md5
                 let seq = msgList.seq
