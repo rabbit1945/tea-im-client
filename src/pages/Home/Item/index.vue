@@ -42,7 +42,6 @@
                         </div>
                         <!-- 文件 -->
                         <div @click="down()"   contenteditable = "false" class="text file" v-if = "this.source.content_type === 3">
-                            {{  this.source.upload_status }}
                             <div  @contextmenu.prevent="onContextmenu">
                                 <div>
                                     {{ this.source.original_file_name }}
