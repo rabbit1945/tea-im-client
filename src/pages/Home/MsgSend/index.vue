@@ -51,7 +51,7 @@
           class="msg-content" 
           placeholder="ctrl + enter 发送消息"
                   contenteditable>
-             
+             {{ emo }} 
         </div>
         <!-- <el-button class= "sendButton" type="success">发送</el-button> -->
        
@@ -108,7 +108,8 @@
         ],
         fileName:"",
         fileSize:0,
-        stateStatus:"display: block;"
+        stateStatus:"display: block;",
+        emo:""
 
 
 
@@ -129,20 +130,20 @@
         console.log("roomCallback::",data)
         // 获取服务端发来的数据
         await this.$store.dispatch("getMessage", data).then(res =>{
-        this.$refs.uploadFile.getMsg(data);
-           // 定位最新数据的位置
-        this.$emit('findNewMsg',{"sendUserId":user_id,"userId":this.user_id,"room_id":room_id})
- 
-        this.contactList = []
-        // 默认音频的大小
-        this.audio.fileSize = 0
-        // 动态设置title
-        this.$store.dispatch("getTitle", {
-          "user_id":data.user_id,
-          "contactList":data.contactList
-        }).then(res =>{
-          this.title = this.$store.state.message.title;
-        })
+            this.$refs.uploadFile.getMsg(data);
+              // 定位最新数据的位置
+            this.$emit('findNewMsg',{"sendUserId":user_id,"userId":this.user_id,"room_id":room_id})
+    
+            this.contactList = []
+            // 默认音频的大小
+            this.audio.fileSize = 0
+            // 动态设置title
+            this.$store.dispatch("getTitle", {
+              "user_id":user_id,
+              "contactList":contactList
+            }).then(res =>{
+              this.title = this.$store.state.message.title;
+            })
 
         }); 
        
@@ -381,39 +382,42 @@ convertImageToCanvas(image) {
          // 定义最后光标对象
         var lastEditRange;
         let input = this.$refs.input
+        console.log(val)
         let selection = getSelection()
-         
         // 编辑框获得焦点
         input.focus() 
-        
         // 获取选定对象
         let range = []
         if (selection.rangeCount > 0) {
             // 获取选定对象
-            range = selection.getRangeAt(0);       
-          // 判断是否有最后光标对象存在
-          if (lastEditRange) {
-              // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+            range = selection.getRangeAt(0);
+            // 判断是否有最后光标对象存在
+            if (lastEditRange) {
+                // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+                selection.removeAllRanges()
+                selection.addRange(lastEditRange)
+            } 
+            // 获取光标对象的范围界定对象，一般就是textNode对象
+            let textNode = range.startContainer;
+            let rangeStartOffset = range.startOffset
+            if (rangeStartOffset > 0) {
+              // 文本节点在光标位置处插入新的表情内容
+              textNode.insertData(rangeStartOffset, val.data)
+              // 光标移动到到原来的位置加上新内容的长度
+              range.setStart(textNode, rangeStartOffset + val.data.length)
+              // 光标开始和光标结束重叠
+              range.collapse(true)
+              // 清除选定对象的所有光标对象
               selection.removeAllRanges()
-              selection.addRange(lastEditRange)
-          } 
-          // 获取光标对象的范围界定对象，一般就是textNode对象
-          let textNode = range.startContainer;
-          let rangeStartOffset = range.startOffset
-          if (rangeStartOffset > 0) {
-            // 文本节点在光标位置处插入新的表情内容
-            textNode.insertData(rangeStartOffset, val.data)
-            // 光标移动到到原来的位置加上新内容的长度
-            range.setStart(textNode, rangeStartOffset + val.data.length)
-            // 光标开始和光标结束重叠
-            range.collapse(true)
-            // 清除选定对象的所有光标对象
-            selection.removeAllRanges()
-            // 插入新的光标对象
-            selection.addRange(range)
-            // 无论如何都要记录最后光标对象
-            lastEditRange = selection.getRangeAt(0)
-          }
+              // 插入新的光标对象
+              selection.addRange(range)
+              // 无论如何都要记录最后光标对象
+              lastEditRange = selection.getRangeAt(0)
+            } else {
+             this.emo =  val.data
+             selection.removeAllRanges()
+           
+            }
         }
       },
       //打开表情弹窗
