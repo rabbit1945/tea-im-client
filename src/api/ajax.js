@@ -3,6 +3,9 @@ import axios from "axios";
 import nprogress, { done } from "nprogress";
 //在当前模块中引入store
 import store from '@/store';
+
+//引入路由相关文件
+import router from "@/router";
 //如果出现进度条没有显示：一定是你忘记了引入样式了
 import "nprogress/nprogress.css";
 import { setToken, getToken,removeToken} from "@/utils/token";
@@ -43,22 +46,23 @@ requests.interceptors.response.use(
         return data;
     } else {
       // // token 校验失效
-      // if (data.code === 500) {
-      //   removeToken();
-      //   this.$router.push({path:'/login'})
-      //   // return alert(data.msg)
-      // }
+      if (data.code === 20401) {
+        removeToken();
+       router.push({path:'/login'})
+        
+        return;
+      }
       return data;
     }
      
    
   },
   (err) => {
-    // removeToken();
+    removeToken();
     console.log("服务器响应数据失败",err)
-    // this.$router.push({path:'/login'})
+    router.push({path:'/login'})
    
-    return false
+    return;
   }
 );
 //最终需要对外暴露（不对外暴露外面模块没办法使用）

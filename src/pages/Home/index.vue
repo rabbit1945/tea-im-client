@@ -12,7 +12,7 @@
         <Messages  :key="timer"/>
        
         <!-- 用户信息 -->
-        <UserList :showUser="true" :data = "userList" />
+        <UserList :showUser="true" :key="timer+ '-userList'"  />
         <!-- 房间管理 -->
         <Room @roomUserList="roomUserList"></Room>
         <router-view></router-view>
@@ -58,8 +58,11 @@ export default {
   },
   beforeDestroy () {
     this.$socket.close()
+     //token失效从新登录
+    
     window.removeEventListener("focus", this.onfocus,true);   
     window.removeEventListener("blur", this.onblur,true);
+
 
   },
   sockets: {
@@ -70,12 +73,15 @@ export default {
       console.log("Socket 断开",reason);
       if (this.$socket.connected === false) {
           this.userStatus = "offline"  
-      }         
+        
+      }
+          
     },
     async connect_error (error) {
       console.log("Socket 连接失败",error);
       if (this.$socket.connected === false) {
           this.userStatus = "offline"
+         
 
       }
 
@@ -84,32 +90,30 @@ export default {
       console.log("Socket 连接成功");
       if (this.$socket.connected === true) {
           this.userStatus = "online"
+          
       }
 
     },
 
     async error (error) {
         console.log("Socket错误:",error);
+        console.log(this.$socket.connected);
         this.handleClose("服务器出错，请联系管理员！！！");
-    }
+    },
+ 
        
 },
 methods: {
   roomUserList(val) {
-   
-    // 用户列表
-    this.userList = val.userList
     // 聊天室详情
     this.roomInfo = this.$store.state.user.roomInfo
     this.timer = this.roomInfo.room_id
     console.log(" this.timer", this.timer);
-
   },
   handleClose(error){
       this.$confirm(error,'错误',{
         confirmButtonText: '确定',
           type: 'error'
-
       })
         .then(_ => {
           this.$message({

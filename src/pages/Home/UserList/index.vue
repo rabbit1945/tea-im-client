@@ -1,33 +1,31 @@
  <template>
 <el-aside class="userList" style=" width: 158px;">
+    <ul
+    class="list"
+    v-infinite-scroll="load"
+    infinite-scroll-disabled="disabled">
+    
+        <li  v-for="val in userList" class="list list-line" id = "userLine" >
+          <img class="logo" id = "userLine" :src="val.photo" alt="">
+          <template v-if="val.is_online == 'online'">
+            <span class="userStatus" style = "background-color: cadetblue;"></span>
+          </template>
 
-          <ul
-          class="list"
-          v-infinite-scroll="load"
-          infinite-scroll-disabled="disabled">
-          <li v-for="val in data" class="list list-line" id = "userLine" >
-            <img class="logo" id = "userLine" :src="val.photo" alt="">
-            <template v-if="val.is_online == 'online'">
-              <span class="userStatus" style = "background-color: cadetblue;"></span>
-            </template>
+          <template v-if="val.is_online == 'offline'">
+            <span class="userStatus" ></span>
+          </template>
 
-            <template v-if="val.is_online == 'offline'">
-              <span class="userStatus" ></span>
-            </template>
-
-           
-            {{ val.nick_name }}
-          </li>
-        </ul>
-  
-
- </el-aside>
+          {{ val.nick_name }}
+        </li>
+    </ul>
+</el-aside>
   
  </template>
   <script> 
     export default {
       data () {
         return {
+          userList:[],
           count: 1,
           noMore:false, //控制滚动禁用 
           loading: false, //控制滚动条禁用
@@ -42,12 +40,6 @@
             showUser: { 
                 type:Boolean 
             },
-            data: {   
-               type:Array ,           
-                default () {
-                    return this.$store.state.user.roomUserList
-                }
-            },
          
         },
       computed: {
@@ -57,8 +49,8 @@
         }
       },
       mounted(){
-
-          this.load();
+       
+        this.load();
       },
       methods: {
        
@@ -74,15 +66,13 @@
           //派发一个action||获取聊天室的用户列表
           this.$store.dispatch("getRoomUserList",datas).then (res => {
             let list = res.userList;
-            for (let i = 0; i < list.length; i++) {             
-              this.data.push(list[i]);
-            }
+            this.userList = list
             // 如果请求回来的数据小于Size，则说明数据到底了。
             if (list.length < this.size) {
               this.noMore = true;
             }
             // 避免数据总条数是pageSize的倍数时，数据到底还会请求一次。
-            if (this.data.length === this.$store.state.user.roomUserList.total) {
+            if (this.userList.length === this.$store.state.user.roomUserList.total) {
               this.noMore = true;
             }
             this.loading = false;

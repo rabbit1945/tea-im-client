@@ -67,7 +67,6 @@
                   if (res === false) {
                     this.$alert("用户列表请求失败")
                   }
-                  console.log("room_id",room_id)
                  
                   this.$emit('roomUserList',res);  
                 })   
@@ -111,8 +110,6 @@
               }
 
               setCache('roomNum',JSON.stringify(this.msgNumList))
-             
-              console.log("wsoffmessageList1::", this.msgNumList )
                          
             }
             

@@ -120,7 +120,7 @@ const actions = {
 
             return result.data;
         } 
-return false;
+        return false;
     },
 
     //获取聊天室信息
