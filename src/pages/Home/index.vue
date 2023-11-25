@@ -122,10 +122,10 @@ methods: {
   onfocus(e){
       console.log('得到焦点');
       
-      this.$store.dispatch("getTitle", {
-          "user_id":this.$store.state.user.userInfo.user_id,
-          "contactList":""
-        })
+      // this.$store.dispatch("getTitle", {
+      //     "user_id":this.$store.state.user.userInfo.user_id,
+      //     "contactList":""
+      //   })
     },
     visibilitychange(e){
         console.log(document.visibilityState);

@@ -122,14 +122,17 @@
     },
       
     sockets: {
-      async roomCallback (data) {   
-        this.$refs.uploadFile.getMsg(data);
+      async roomCallback (data) { 
+        var user_id = data.user_id
+        var room_id = data.room_id
+        var contactList = data.contactList
+        console.log("roomCallback::",data)
         // 获取服务端发来的数据
-        await this.$store.dispatch("getMessage", data); 
-        // 定位最新数据的位置
-        this.$emit('findNewMsg',{"sendUserId":data.user_id,"userId":this.user_id,"room_id":data.room_id})
+        await this.$store.dispatch("getMessage", data).then(res =>{
+        this.$refs.uploadFile.getMsg(data);
+           // 定位最新数据的位置
+        this.$emit('findNewMsg',{"sendUserId":user_id,"userId":this.user_id,"room_id":room_id})
  
-
         this.contactList = []
         // 默认音频的大小
         this.audio.fileSize = 0
@@ -140,6 +143,9 @@
         }).then(res =>{
           this.title = this.$store.state.message.title;
         })
+
+        }); 
+       
 
       }
     },

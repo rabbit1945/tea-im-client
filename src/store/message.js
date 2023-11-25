@@ -47,18 +47,16 @@ const actions = {
      * 获取title 状态
      */
     async getTitle({commit}, data){
-
-        if (data.contactList.length > 0) {
-        let contactList = data.contactList.split(',')     
-        if (contactList.length > 0 && contactList.includes(user_id.toString()) === true) {
-                context = "有人@我"
-            } 
-        }
-       
         let title = "闪电"
-        let context = "新消息"    
-        let user_id = store.state.user.userInfo.user_id;
+        let context = "新消息"  
+        let user_id = store.state.user.userInfo.user_id; 
+        if (data.contactList.length > 0) {      
+            let contactList = data.contactList.split(',')     
         
+            if ( contactList.includes(user_id.toString()) === true) {
+                    context = "有人@我"
+            } 
+        }  
         if (user_id == data.user_id) {
             commit("GETTITLE",title);
             return title;
