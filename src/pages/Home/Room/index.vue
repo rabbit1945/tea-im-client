@@ -1,5 +1,5 @@
  <template>
-  <el-footer class="footer" direction = "vertical" width="100px" height="800px"  >
+  <el-footer class="footer" direction = "vertical" width="100px" height="800px">
   
     <ul  class="list" v-bind="message">
  
@@ -61,7 +61,7 @@
       },
       methods: {
         async selectRoom(room_id){
-          this.$store.dispatch('getRoomInfo',room_id).then(res => {          
+          await this.$store.dispatch('getRoomInfo',room_id).then(res => {          
             if (res) {       
                 this.$store.dispatch('getRoomUserList',{'pages':1,'size':100}).then(res => {
                   if (res === false) {

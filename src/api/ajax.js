@@ -54,10 +54,11 @@ requests.interceptors.response.use(
    
   },
   (err) => {
-    removeToken();
+    // removeToken();
     console.log("服务器响应数据失败",err)
-    // this.$router.push({path:'/login'})
-    // document.location.href = '/login'
+    this.$alert("网站异常，请重新登录");
+    this.$router.push({path:'/login'})
+   
     return false
   }
 );

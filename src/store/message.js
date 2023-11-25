@@ -10,10 +10,10 @@ import store from "@/store";
 
 const state = {
     title: "闪电",
-    messageList:null,
-    historyMessageList:null,
+    messageList:[],
+    historyMessageList:[],
     offTotal:0,
-    offMessageList:null
+    offMessageList:[]
 };
 // 
 const mutations = {
@@ -223,35 +223,35 @@ const actions = {
             let room_id = store.state.user.roomInfo.room_id
             let messageList = []
            
-                messageList = {
-                    "user_id": data.user_id,
-                    "tag":tag,
-                    "nick_name":data.nick_name,
-                    "msg":msg,
-                    "room_id":data.room_id,
-                    "seq":data.seq,
-                    "send_time":data.send_time,
-                    "userLogo":data.userLogo,
-                    "content_type":data.content_type,
-                    "file_name":data.file_name,
-                    "totalSize":totalSize,
-                    "original_file_name":data.original_file_name,
-                    "fileSize":file_size.toFixed(2),
-                    "md5":data.md5,
-                    "total_chunks":data.total_chunks,
-                    "upload_status":data.upload_status,
-                    "chunk_number":data.chunk_number,
-                    "merge_number":data.merge_number,
-                    "is_revoke":data.is_revoke ? data.is_revoke : 0,
-                    "delivered":0
-                }
+            messageList = {
+                "user_id": data.user_id,
+                "tag":tag,
+                "nick_name":data.nick_name,
+                "msg":msg,
+                "room_id":data.room_id,
+                "seq":data.seq,
+                "send_time":data.send_time,
+                "userLogo":data.userLogo,
+                "content_type":data.content_type,
+                "file_name":data.file_name,
+                "totalSize":totalSize,
+                "original_file_name":data.original_file_name,
+                "fileSize":file_size.toFixed(2),
+                "md5":data.md5,
+                "total_chunks":data.total_chunks,
+                "upload_status":data.upload_status,
+                "chunk_number":data.chunk_number,
+                "merge_number":data.merge_number,
+                "is_revoke":data.is_revoke ? data.is_revoke : 0,
+                "delivered":0
+            }
             if (room_id == data.room_id) {
                 let oldMsg = state.historyMessageList || []; 
                 oldMsg.push(messageList)
+                console.log("oldMsg",oldMsg);
                 // 聊天记录
                 commit("GETMESSAGELIST", messageList)
             } else {
-              
                 commit("GETOFFMESSAGELIST", messageList)
             }
             console.log("getMessage服务端发过来了一个数据:",messageList);

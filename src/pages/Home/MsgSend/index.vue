@@ -128,7 +128,8 @@
         await this.$store.dispatch("getMessage", data); 
         // 定位最新数据的位置
         this.$emit('findNewMsg',{"sendUserId":data.user_id,"userId":this.user_id,"room_id":data.room_id})
-        
+ 
+
         this.contactList = []
         // 默认音频的大小
         this.audio.fileSize = 0
@@ -368,9 +369,9 @@ convertImageToCanvas(image) {
           style = "display: none;"
         }
         this.stateStatus = style
-
       },
-      selectMsg(val) {// 选择emoji后调用的函数
+      selectMsg(val) {
+        // 选择emoji后调用的函数
          // 定义最后光标对象
         var lastEditRange;
         let input = this.$refs.input
@@ -416,15 +417,12 @@ convertImageToCanvas(image) {
 
       // 发送
       msgSend(){
-        this.$socket.open();
-        
+        this.$socket.open(); 
         let html = document.getElementById('sendMsg');
         console.log( html )
         if (html.textContent == ""  ) {  
-          this.$alert("你好，客官你还没有添写消息呢！！！");
-          
-        }
-        
+          this.$alert("你好，客官你还没有添写消息呢！！！");    
+        }    
         let messgae = html.innerHTML;
         let contactList =  this.contactList
         let content_type = 0; // 文本
@@ -432,15 +430,14 @@ convertImageToCanvas(image) {
            messgae = this.audio.file;
            content_type = 1; // 音频
         } 
-      
         let msgData = this.msgInfo()
         msgData.msg = messgae
         msgData.content_type = content_type
         msgData.contactList = contactList
         console.log("room_id",this.room_id)
         console.log("发送msgData",msgData)
-        this.$socket.volatile.emit('room',msgData);     
-        
+     
+        this.$socket.volatile.emit('room',msgData);       
       },
 
       /**

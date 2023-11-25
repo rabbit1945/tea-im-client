@@ -44,7 +44,7 @@
       data() {
         return {  
           historyMessageList:[],//获取消息
-          wsmessageList: [],
+        
           tabshow: false,//是否进行某种操作
           user_id:this.$store.state.user.userInfo.user_id, // 用户ID
           room_id:this.$store.state.user.roomInfo.room_id,
@@ -146,7 +146,7 @@
                 let data = this.historyMessageList[list.index]
                 data.is_revoke = 1
                 this.historyMessageList[list.index] = data
-                console.log("historyMessageList:",data);  
+               
                 
               } else {
                 this.$alert("请稍后重试")
@@ -155,9 +155,10 @@
 
 
       },
-          mounted(){
-
-        this.$store.state.message.historyMessageList= null
+      mounted(){
+        
+        this.$store.state.message.historyMessageList= []
+        console.log("初始化消息");
         // window.addEventListener("scroll", this.onScroll, true);
         // 初始化条数
         this.initLoadMsg()
@@ -327,13 +328,9 @@
         message: {      
           get() {
             let historyMessageList = this.$store.state.message.historyMessageList || [];
-            let wsmessageList = this.$store.state.message.messageList;
             this.historyMessageList = historyMessageList;
             console.log("historyMessageList::",historyMessageList)
-            if (wsmessageList) {
-              this.wsmessageList = wsmessageList
-              this.totalNum = this.historyMessageList.length
-            }  
+            this.totalNum = this.historyMessageList.length 
           }
         }
       },

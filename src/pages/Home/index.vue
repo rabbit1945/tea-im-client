@@ -103,8 +103,7 @@ methods: {
     this.roomInfo = this.$store.state.user.roomInfo
     this.timer = this.roomInfo.room_id
     console.log(" this.timer", this.timer);
-    // 聊天列表
-    // this.msgList = this.$store.state.message.historyMessageList
+
   },
   handleClose(error){
       this.$confirm(error,'错误',{
