@@ -11,6 +11,7 @@
 import SparkMD5 from "spark-md5";
 import { setCache, getCache,removeCache} from "@/utils/cache";
 const chunkSize =  3 * 1024 * 1024;//定义分片的大小 暂定为3M，方便测试
+const  maxSize  = 100 *1024 * 1024; // 最大
 export default {
   name: 'uploadPut',
   components: {},
@@ -43,10 +44,15 @@ export default {
           this.currentFile = file
           //文件大小(大于100m再分片哦，否则直接走普通文件上传的逻辑就可以了，这里只实现分片上传逻辑)
           const fileSize = File.size
+          if (fileSize > maxSize) {
+              this.$alert("上传文件小于"+maxSize/1024/1024+"M");
+              return;
+          }
           // 放入文件列表
           this.fileList = [{ "name": File.name }]
           // 可以设置大于多少兆可以分片上传，否则走普通上传
           if (fileSize <= chunkSize) {
+              console.log("普通：：",fileSize,chunkSize)
               const fileMd5 = await this.getFileMd5(file, 1);
               var reader=new FileReader();
               reader.readAsDataURL(file)
@@ -116,16 +122,20 @@ export default {
      * @param {*} chunkCount 
      * @param {*} fileSize 
      */
-    checkChunkExis(initUploadParams,fileMd5,File,chunkCount,fileSize) {
+    async checkChunkExis(initUploadParams,fileMd5,File,chunkCount,fileSize) {
          // 调用后端检查文件上传情况接口
-         this.$store.dispatch("checkChunkExis", initUploadParams).then (res => {
+         await this.$store.dispatch("checkChunkExis", initUploadParams).then (res => {
+          
+              if (res.code !== 10000) {
+                 this.$alert(res.msg);
+                 return;
+              }
               let uploadStatus = 0
-              if (res.type === 1) {         
+              if (res.data.type === 1) {         
                 uploadStatus = 3;   
-                console.log("上传成功",res)             
               } 
-              this.sendMsg(fileMd5,File.name,res.newFileName,chunkCount,fileSize,res.mergePath,uploadStatus)
-              this.type = res.type
+              this.sendMsg(fileMd5,File.name,res.data.newFileName,chunkCount,fileSize,res.data.mergePath,uploadStatus)
+              this.type = res.data.type
               this.file = File
 
                     

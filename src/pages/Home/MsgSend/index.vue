@@ -350,7 +350,7 @@ convertImageToCanvas(image) {
 
       fileSuccess(val) {
         if (val) {
-             let path = val.mergePath    
+             let path = val.mergePath  
             //获取最后一个.的位置
             let index= path.lastIndexOf(".");
             //获取后缀
