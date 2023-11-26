@@ -15,6 +15,7 @@
         <UserList :showUser="true" :key="timer+ '-userList'"  />
         <!-- 房间管理 -->
         <Room @roomUserList="roomUserList"></Room>
+       
         <router-view></router-view>
     </div>
   </el-container>
@@ -29,13 +30,13 @@ import UserList from './UserList';
 import Room from './Room';
 
 export default {
-  name: "",
+  name: "Home",
   components: {
     MsgTop,
     MsgBase,
     Messages,
     UserList,
-    Room
+    Room,  
 },
   data() {
     return {
@@ -46,7 +47,6 @@ export default {
       "msgList":this.$store.state.message.historyMessageList,
       "userStatus":"offline",
       "timer":""
-
     }
   },
   mounted() {

@@ -25,6 +25,13 @@ props: ['room']
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped>
-  
+  /* 头部 */
+  .top {
+    line-height: 50px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: cadetblue;
+
+  }
   </style>
   

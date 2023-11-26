@@ -156,13 +156,14 @@ const actions = {
         let result = await reqLogout();
         //action里面不能操作state，提交mutation修改state
         if(result.code === 10000){
+            commit("USERLOGIN",false);
             // 删除 token
             removeToken();
             // 删除授权
             removeCache('isAuthLogin')
-            commit("USERLOGIN",false);
             return true;
         }
+        return false;    
   },
 
 

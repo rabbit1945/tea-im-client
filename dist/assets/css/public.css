@@ -4,11 +4,17 @@
 }
 
 body {
-
-    background-image: url(../images/小猫1.jpeg);
-   
-    
+  background-color: aliceblue;   
 }
+
+
+.footer {
+  position: fixed;
+  bottom: 10px;
+  left: 40%;
+  z-index: -1;
+}
+
 
 .msg-content {
     margin-top: 1px;

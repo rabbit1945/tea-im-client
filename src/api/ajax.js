@@ -47,7 +47,6 @@ requests.interceptors.response.use(
     } else {
       // // token 校验失效
       if (data.code === 20401) {
-        removeToken();
        router.push({path:'/login'})
         
         return;
@@ -58,7 +57,6 @@ requests.interceptors.response.use(
    
   },
   (err) => {
-    removeToken();
     console.log("服务器响应数据失败",err)
     router.push({path:'/login'})
    

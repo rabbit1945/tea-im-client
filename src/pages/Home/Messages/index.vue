@@ -1,39 +1,38 @@
  <template>
     <div>
-  <el-main class="message el-main " v-bind="message" >
+      <el-main class="message el-main " v-bind="message" >
 
-         <!-- 接收到的消息 -->
-          <virtual-list
-            ref = "returnBottom"
-            class="msg-list"
-            :data-key="'seq'"
-            :data-sources="historyMessageList"
-            :data-component="itemComponent"
-            :keeps =this.keeps
-            :estimate-size= this.estimateSize
-            @totop = "totop"
-            @tobottom = "bottom"
-            @scroll = "onScroll"
-            :start = 100 
-            v-on:composeFile = 'composeFile' 
-          />  
-  </el-main>
-  <el-footer style="margin-top:2px;">
-          <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
-            <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
-          </el-badge>
-          <el-badge  v-if = "msgNum > 0 && isBottom === true" :value=msgNum 
-            class="item msg-badge-up">
-            <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
-          </el-badge>
-          <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg" />     
-          <div id="myAlertBox"  class= "alertBox" style="display:none"></div>
-</el-footer>
-
-    
-      </div>
- </template>
+            <!-- 接收到的消息 -->
+              <virtual-list
+                ref = "returnBottom"
+                class="msg-list"
+                :data-key="'seq'"
+                :data-sources="historyMessageList"
+                :data-component="itemComponent"
+                :keeps =this.keeps
+                :estimate-size= this.estimateSize
+                @totop = "totop"
+                @tobottom = "bottom"
+                @scroll = "onScroll"
+                :start = 100 
+                v-on:composeFile = 'composeFile' 
+              />  
+      </el-main>
+      <el-footer style="margin-top:2px;">
+        <el-badge v-if = "msgNum > 0 && isBottom === false" :value=msgNum  class="item msg-badge-down">
+          <el-button @click = "getLocation" size="small" icon = "el-icon-arrow-down">最新消息</el-button>
+        </el-badge>
+        <el-badge  v-if = "msgNum > 0 && isBottom === true" :value=msgNum 
+          class="item msg-badge-up">
+          <el-button  @click = "getLocation" size="small" icon = "el-icon-arrow-up">最新消息</el-button>
+        </el-badge>
+        <MsgSend :proTitle = "title" @findNewMsg = "findNewMsg" />     
+        <div id="myAlertBox"  class= "alertBox" style="display:none"></div>
+      </el-footer>
+  </div>
+</template>
   <script>
+  
   import virtualList from 'vue-virtual-scroll-list'
   import { setCache, getCache,removeCache} from "@/utils/cookie";
   let roomNum = getCache('roomNum')?JSON.parse(getCache('roomNum')):[]
@@ -336,7 +335,7 @@
       },
       components: {
         MsgSend,
-        virtualList
+        virtualList,
 
       }
     }
