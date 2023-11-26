@@ -2,9 +2,10 @@
 
 ## 下载IM项目 创建tea-im目录
 
-:::info
+```
 git clone git@gitee.com:gzy1991/tea-im.git
-:::
+```
+
 <a name="ELNaK"></a>
 
 ## 进入tea-im目录
@@ -13,16 +14,15 @@ git clone git@gitee.com:gzy1991/tea-im.git
 
 ### 下载服务端
 
-:::info
+```
 git clone git@gitee.com:gzy1991/tea-im-service.git
-:::
-<a name="A7wiD"></a>
+```
 
 ### 下载前端
 
-:::info
+```
 git clone git@gitee.com:gzy1991/tea-im-client.git
-:::
+```
 
 <a name="zNQyu"></a>
 
@@ -39,9 +39,8 @@ docker compose up -d
 <br />
 <a name="sMwZw"></a>
 ### 配置nginx 
+
 ```
-
-
 server {
 listen 8078;
 index index.php index.html;
@@ -175,9 +174,10 @@ proxy_set_header Connection "Upgrade";
 
 <a name="ozect"></a>
 ### 导入sql
-:::info
+
+```
 在mysql文件夹下面的sql文件，导入到数据库中。
-:::
+```
 <a name="icRfU"></a>
 ### 构建完成，重启docker
 ```
@@ -193,4 +193,3 @@ docker compose restart
 npm run build
 
 ```
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/2981007/1700996631154-b1e096f3-f72d-4d2d-9b20-7f462c2f1d8c.png#averageHue=%23a9ad92&clientId=u1c8a55ad-924b-4&from=paste&height=1115&id=u92b426c7&originHeight=1115&originWidth=1708&originalType=binary&ratio=1&rotation=0&showTitle=false&size=1091854&status=done&style=none&taskId=uacfd2adb-614a-4320-ab72-7e0b3cf0bdc&title=&width=1708)
