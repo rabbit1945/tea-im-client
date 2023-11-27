@@ -1,7 +1,9 @@
+import Register from '@/pages/Register'
 import Login from '@/pages/Login'
 import Home  from '@/pages/Home'
 
 export default [
+
     /**
      * 登录
      */
@@ -11,6 +13,19 @@ export default [
         component: Login,
         meta: { requiresGuest: true }, // 需要未登录
     },
+
+    /**
+     * 注册
+     */
+    {
+        path: '/register',
+        name:'Register',
+        component: Register,
+        meta: { requiresGuest: true }, // 需要未登录
+    },
+
+
+
     /**
      * 首页
      */

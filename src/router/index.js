@@ -110,19 +110,18 @@ router.beforeEach(async (to, from, next) => {
           next({ name: 'Login' })
         }
        
-   }else{
-      
-      let toPath = to.path;
-      
-      if(!to.meta.requiresGuest){
-        //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
-        next('/login?redirect='+toPath);
-      } else if(to.name == 'Login') {
-        next();
-      }
+  } else {
+    
+    let toPath = to.path;
+    if(!to.meta.requiresGuest){
+      //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
+      next(toPath);
+    } else if(to.name == 'Login' || to.name == 'Register') {
+      next();
+    }
        
     
-   }
+  }
 });
 
 export default router;

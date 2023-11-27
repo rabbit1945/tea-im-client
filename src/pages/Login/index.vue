@@ -6,7 +6,7 @@
          prop="login"
          :rules="[
       { required: true, message: '账号不能为空'},
-      { type: 'email', message: '账号必须是邮箱格式'}
+      { type: 'string', required: true, min: 3, message: '账号大于3个字符'}
     ]"
          >
          <el-input type="login" v-model="ruleForm.login" autocomplete="off" placeholder = "账号"></el-input>
@@ -16,7 +16,7 @@
          prop="password"
          :rules="[
             { required: true, message: '密码不能为空'},
-            { type: 'string', required: true, min: 6, message: '密码大于5个字符'}
+            { type: 'string', required: true, min: 6, message: '密码大于6个字符'}
 
           ]"
          >
@@ -37,7 +37,10 @@
               <!-- <svg class="icon" aria-hidden="true"  @click="getAuthLogin('github')">
                 <use xlink:href="#icon-github-fill"></use>
               </svg>   -->
+              <span  @click="register()"> 立即注册</span>
+              
             </span>
+           
           </div>
           
         
@@ -78,7 +81,7 @@
               'oauthToken': oauthToken 
               }).then(res => {
               if (res.code !== 10000) {
-                  return this.$alert("登录失败")
+                  return this.$alert(res.msg)
               }
               // 登录成功跳转页面
               this.$router.push('/');
@@ -114,7 +117,11 @@
 
       },
 
-      
+      async register() {
+        console.log("-------------------")
+        this.$router.push('/register');
+
+      },
       async submitForm(formName) {
         this.$refs[formName].validate(async(valid) => {
           if (valid) {
@@ -125,7 +132,7 @@
               
               login&&password&&(await this.$store.dispatch("userLogin", { login, password }).then (res => {
                   if (res.code !== 10000) {
-                    return this.$alert("登录失败")
+                    return this.$alert(res.msg)
                   }
                   // 登录成功跳转页面
                   this.$router.push('/');
@@ -166,13 +173,6 @@
     left:80%;
     margin:-150px 0 0 -260px; 
 }
-
-
-/* body {
-    background-image: url(./images/猫.jpeg);
-} */
-
-
 
 .logon input {
     display: block;
@@ -219,6 +219,10 @@
 .icon-login {
   display: block;
   margin-left: 100px;
+}
+
+.icon-login span {
+  cursor: pointer;
 }
 
 

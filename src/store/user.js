@@ -2,6 +2,7 @@
 
 // 导入api
 import {
+    reqUserRegister,
     reqUserLogin,
     reqRoomInfo,
     reqRoomUserList,
@@ -67,6 +68,15 @@ const actions = {
         } 
         return result;
     },
+
+     // 注册
+     async userRegister({ commit }, data) {
+        // 请求参数
+        let result = await reqUserRegister(data);
+         
+        return result;
+    },
+
 
     /**
      * gitee 登录

@@ -3,6 +3,11 @@ import mockRequests  from "./mockAjax";
 //登录
 //URL:/api/v1/login  method:post phone password
 export const reqUserLogin = (data)=>requests({url:'user/v1/login',data,method:'post'});
+
+//注册
+
+export const reqUserRegister = (data)=>requests({url:'user/v1/register',data,method:'post'});
+
 // 授权
 export const reqAuth = (type)=>requests({url:`user/v1/get/auth/${type}`,type,method:'get'});
 // 第三方登录
@@ -13,7 +18,7 @@ export const reqAuthLogin = (data)=>requests({url:'user/v1/auth/login',data,meth
 export const reqRoomInfo = (id)=>requests({url:`room/v1/room/info/${id}`,method:'get'});
 
 // 聊天室的用户列表
-//URL:/api/v1/login  method:post phone password
+
 export const reqRoomUserList = (data)=>requests({url:`room/v1/room/user/list/${data}`,method:'get'});
 export const reqRoomList = ()=>requests({url:`room/v1/room/index`,method:'get'});
 
