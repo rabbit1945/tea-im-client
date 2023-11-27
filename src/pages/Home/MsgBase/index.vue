@@ -6,8 +6,29 @@
           <img class="userLogo" :src= "userLogo" alt="">
           <span class="userStatus" v-if = "userStatus == 'online'" style="background-color: blue;"></span>
           <span class="name">{{ nickName }}</span> 
-            
-          <img @click = 'logout' src = "./images/logout.png" alt="登出"  class="logout">
+          <div class="bottom">
+            <div  @click = "onClick('service')">
+              <el-avatar :size="40" @error="errorHandler" src="/assets/images/gitee.png"></el-avatar>
+            </div>
+            <span  style="writing-mode: horizontal-tb;padding-right: 61px;  color: azure;">后端</span>
+
+            <div  @click = "onClick('client')">
+              <el-avatar :size="40" @error="errorHandler" src="/assets/images/gitee.png"></el-avatar>
+            </div>
+            <span  style="writing-mode: horizontal-tb;padding-right: 61px;  color: azure;">前端</span>
+
+            <div  @click = "onClick('yuque')">
+              <el-avatar :size="40" @error="errorHandler" src="/assets/images/yuque.png"></el-avatar>
+            </div>
+            <span  style="writing-mode: horizontal-tb;padding-right: 61px;  color: azure;">文档</span>
+
+            <div  @click = 'logout'>
+              <el-avatar :size="40" @error="errorHandler" src="/assets/images/logout.png"></el-avatar>
+            </div>
+        
+          </div>
+         
+
         
     </div>
 <!-- el-aside -->
@@ -26,7 +47,8 @@
         "nickName":this.$store.state.user.userInfo.nick_name,
         "userLogo": this.$store.state.user.userInfo.photo,
         "user_id":this.$store.state.user.userInfo.user_id,
-        "room_id":this.$store.state.user.roomInfo.room_id
+        "room_id":this.$store.state.user.roomInfo.room_id,
+  
       }
     },
     props:['userStatus'],
@@ -56,6 +78,20 @@
           
         })
         .catch(_ => {});
+      },
+      onClick(type) {
+        if (type == 'client') {
+          window.location.href = 'https://gitee.com/gzy1991/tea-im-client'
+        }
+
+        if (type == 'service') {
+          window.location.href = 'https://gitee.com/gzy1991/tea-im-service'
+        }
+
+        if (type == 'yuque') {
+          window.location.href = 'https://www.yuque.com/yiyan-2j8fb/iugs0e'
+        }
+        
       }
     }
   }
@@ -91,14 +127,24 @@
 
 }
 
+.bottom {
+    position: absolute;
+    bottom: 0px;
+    left: 20px;
+    cursor: pointer;
+  
+}
+
+.bottom span {
+  margin-top: 10px;
+}
+
 
 .logout {
-    position: absolute;
-    bottom: 10px;
-    left: 20px;
+   
     width: 40px;
     height: 40px;
-    cursor: pointer;
+   
 }
 
 .userStatus{
