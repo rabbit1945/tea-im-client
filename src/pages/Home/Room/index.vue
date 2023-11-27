@@ -1,5 +1,5 @@
  <template>
-  <el-footer class="footer" direction = "vertical" width="100px" height="800px">
+  <el-footer class="footer" direction = "vertical" width="100px" height="800px" v-bind="message">
   
     <ul  class="list" v-bind="message">
  
@@ -71,7 +71,8 @@
                   this.$emit('roomUserList',res);  
                 })   
                 this.selectRoomId = room_id
-               
+                this.msgNumList[room_id] = 0
+                setCache('roomNum',JSON.stringify(this.msgNumList))
             } else {
               this.$alert("聊天室信息请求失败")
             }
@@ -88,31 +89,35 @@
             
             if (offMessageList) {
               let room_id = offMessageList.room_id
-              
-              if (typeof(this.msgNumList[room_id]) === "undefined") {
+
+              if (room_id) {
+                if (typeof(this.msgNumList[room_id]) === "undefined") {
                 
                 this.msgNum = 0
                
-              }
-
-              for (let index = 0; index < roomList.length; index++) {
-              
-                if (roomList[index].room_id != this.selectRoomId) {
-                 
-                  if (roomList[index].room_id == room_id) {
-                    
-                    this.msgNum ++
-                    this.msgNumList[room_id] =  this.msgNum
-
-                  }
-                 
                 }
-              }
 
-              setCache('roomNum',JSON.stringify(this.msgNumList))
+                for (let index = 0; index < roomList.length; index++) {
+                
+                  if (roomList[index].room_id != this.selectRoomId) {
+                  
+                    if (roomList[index].room_id == room_id) {
+                      
+                      this.msgNum ++
+                      this.msgNumList[room_id] =  this.msgNum
+
+                    }
+                  
+                  }
+                }
+
+                setCache('roomNum',JSON.stringify(this.msgNumList))
+
+              } 
+              
+             
                          
-            }
-            
+            } 
           
           }
         }

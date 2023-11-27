@@ -35,9 +35,10 @@
   
   import virtualList from 'vue-virtual-scroll-list'
   import { setCache, getCache,removeCache} from "@/utils/cookie";
-  let roomNum = getCache('roomNum')?JSON.parse(getCache('roomNum')):[]
+  
   import MsgSend from '../MsgSend';
   import Item from '../Item';
+  var roomNum = getCache('roomNum')?JSON.parse(getCache('roomNum')):[]
     export default {
       name: "Message",
       data() {
@@ -234,6 +235,7 @@
           this.isBottom = false
           // 删除未读消息参数
           roomNum[this.room_id] = 0
+          console.log(roomNum);
           setCache('roomNum',JSON.stringify(roomNum))
         },
 
