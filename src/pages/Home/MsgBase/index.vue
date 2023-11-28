@@ -8,22 +8,22 @@
           <span class="name">{{ nickName }}</span> 
           <div class="bottom">
             <div  @click = "onClick('service')">
-              <el-avatar :size="40" @error="errorHandler" src="/assets/images/gitee.png"></el-avatar>
+              <el-avatar :size="40"  src="/assets/images/gitee.png"></el-avatar>
             </div>
             <span  style="writing-mode: horizontal-tb;padding-right: 61px;  color: azure;">后端</span>
 
             <div  @click = "onClick('client')">
-              <el-avatar :size="40" @error="errorHandler" src="/assets/images/gitee.png"></el-avatar>
+              <el-avatar :size="40" src="/assets/images/gitee.png"></el-avatar>
             </div>
             <span  style="writing-mode: horizontal-tb;padding-right: 61px;  color: azure;">前端</span>
 
             <div  @click = "onClick('yuque')">
-              <el-avatar :size="40" @error="errorHandler" src="/assets/images/yuque.png"></el-avatar>
+              <el-avatar :size="40" src="/assets/images/yuque.png"></el-avatar>
             </div>
             <span  style="writing-mode: horizontal-tb;padding-right: 61px;  color: azure;">文档</span>
 
             <div  @click = 'logout'>
-              <el-avatar :size="40" @error="errorHandler" src="/assets/images/logout.png"></el-avatar>
+              <el-avatar :size="40" src="/assets/images/logout.png"></el-avatar>
             </div>
         
           </div>

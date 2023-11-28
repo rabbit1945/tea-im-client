@@ -364,7 +364,7 @@
     position: relative;
     height: 800px;
     width: 800px;
-        overflow: auto;  
+    overflow: auto;  
     
     }
 

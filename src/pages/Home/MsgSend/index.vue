@@ -444,8 +444,7 @@ convertImageToCanvas(image) {
         msgData.msg = messgae
         msgData.content_type = content_type
         msgData.contactList = contactList
-        console.log("room_id",this.room_id)
-        console.log("发送msgData",msgData)
+        html.innerHTML = ""
      
         this.$socket.volatile.emit('room',msgData);       
       },

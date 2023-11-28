@@ -153,15 +153,7 @@
         },
         methods: {
 
-            copyOrderId2() {
-                var input = document.createElement("input"); // 创建input对象
-                input.value = this.source.msg; // 设置复制内容
-                document.body.appendChild(input); // 添加临时实例
-                input.select(); // 选择实例内容
-                document.execCommand("Copy"); // 执行复制
-                document.body.removeChild(input); // 删除临时实例
-                this.$message.success('复制成功！');
-            },
+         
           
             onContextmenu(event) {
                             
@@ -201,6 +193,22 @@
                     minWidth: 230 // 主菜单最小宽度
                 });
                 return false;
+            },
+
+            copyOrderId2() {
+                var input = document.createElement("input"); // 创建input对象
+                console.log(this.$refs.content.getAttribute('src'))
+                let content = this.$refs.content.textContent
+                if (content.length <= 0) {
+                    content = this.source.msg
+                }
+                
+                input.value = content; // 设置复制内容
+                document.body.appendChild(input); // 添加临时实例
+                input.select(); // 选择实例内容
+                document.execCommand("Copy"); // 执行复制
+                document.body.removeChild(input); // 删除临时实例
+                this.$message.success('复制成功！');
             },
 
             handleSpeak(){
