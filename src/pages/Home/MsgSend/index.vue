@@ -15,7 +15,7 @@
       
       <uploadPut ref="uploadFile" v-on:fileSuccess="fileSuccess"/> 
       <!-- <input type='file' ref='file' />  -->
-      <el-upload
+      <!-- <el-upload
        
         style="display: none;"
         class="upload-demo"
@@ -30,7 +30,7 @@
         :before-upload="handleBeforeupload"
         >
         <el-button  ref='file'  size="small" type="primary">点击上传</el-button>
-      </el-upload>
+      </el-upload> -->
 
       <at
        :style= stateStatus
@@ -201,20 +201,21 @@ methods: {
    * @param {*} fileList 
    */
   handleSuccess(response) {
-      console.log(response)
+     
       if (response.code === 10000 ) {
         let data = response.data
         if (Object.keys(data).length > 0) {
           let file = data.file
+          let fileName = data.fileName
           //获取最后一个.的位置
-          let index= file.lastIndexOf(".");
+          let index= fileName.lastIndexOf(".");
           //获取后缀
-          let ext = file.substr(index+1);
+          let ext = fileName.substr(index+1);
           // 获取文件类型 
           let content_type = this.fileExt(ext)
          
           this.sendAudio({
-            "file_name":data.fileName,
+            "file_name":fileName,
             "file_size":data.fileSize,
             "path":file,
             "content_type":content_type
@@ -323,19 +324,24 @@ convertImageToCanvas(image) {
          
       },
      
+      /**
+       * 音频
+       * @param {*} val 
+       */
       audioData(val) {   
         if (val) {
            this.$store.dispatch("uploadAudio", val.formData).then(res => {
-              let path = res.file    
+              let path = res.file 
+              let fileName =  res.fileName 
               //获取最后一个.的位置
-              let index= path.lastIndexOf(".");
+              let index= fileName.lastIndexOf(".");
               //获取后缀
-              let ext = path.substr(index+1);
+              let ext = fileName.substr(index+1);
               // 获取文件类型 
               let content_type = this.fileExt(ext)
               this.audio = {
                 'path':path,
-                'file_name':val.fileName,
+                'file_name':fileName,
                 'file_size':val.fileSize,
                 "content_type":content_type
               }
@@ -348,17 +354,19 @@ convertImageToCanvas(image) {
         
       },
 
+      // 上传文件
       fileSuccess(val) {
         if (val) {
-             let path = val.mergePath  
+            let path = val.mergePath  
+            let filename = val.filename
             //获取最后一个.的位置
-            let index= path.lastIndexOf(".");
+            let index= filename.lastIndexOf(".");
             //获取后缀
-            let ext = path.substr(index+1);
+            let ext = filename.substr(index+1);
             // 获取文件类型 
             val.content_type =  this.fileExt(ext)
             val.file_name =  val.newFileName
-            val.original_file_name = val.filename
+            val.original_file_name = filename
             val.file_size = val.totalSize
             val.md5 = val.identifier
             val.path = path

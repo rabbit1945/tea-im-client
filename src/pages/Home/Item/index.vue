@@ -22,7 +22,7 @@
                                 <av-bars
                             
                                 :canv-height ="30"
-                                :audio-src=this.source.msg>
+                                :audio-src=this.source.file_path>
                                 </av-bars>
                             </div>
                         </div>
@@ -34,8 +34,8 @@
                                 placement="left"  
                                 class="vedio"
                                 trigger="click">
-                                <img  :src=this.source.msg>
-                                <img  slot="reference" style="max-width: 800px;max-height: 800px;" :src=this.source.msg>
+                                <img  :src=this.source.file_path>
+                                <img  slot="reference" style="max-width: 800px;max-height: 800px;" :src=this.source.file_path>
                                 </el-popover>
                             </div>                
                         </div>
@@ -44,7 +44,7 @@
                             <div  @contextmenu.prevent="onContextmenu">
                                 <div>
                                     {{ this.source.original_file_name }}
-                                    <a :href=this.source.msg ref = "downFile" style="display: none;"></a>
+                                    <a :href=this.source.file_path ref = "downFile" style="display: none;"></a>
                                 </div>
                                 <div class="fileSize" contenteditable="false"> {{ this.source.fileSize }}KB</div>
                                 <div class="upload_status">
@@ -66,7 +66,7 @@
                                 class="vedio"
                                 trigger="click">
                                 <video controls class="popover-vedio">
-                                    <source :src="this.source.msg" />
+                                    <source :src="this.source.file_path" />
                                 </video>
                                 <img src="/assets/images/vedio.png" style="max-width: 400px;max-height: 400px;" slot="reference"/>
                                 <!-- <el-button slot="reference">{{ this.source.original_file_name }}</el-button> -->

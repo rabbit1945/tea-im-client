@@ -107,7 +107,8 @@ const actions = {
                     let msg = list[i].msg_content;
                     let pattern = /\b(https?:\/\/[^\s]+)/g;
                     let matches = msg.match(pattern); 
-                    if (matches !== null) {   
+                    let content_type = list[i].content_type; 
+                    if (matches !== null && content_type == 0) {   
                        
                         for (var urlKey=0;urlKey < matches.length;urlKey++) {
                         
@@ -127,7 +128,7 @@ const actions = {
                         "seq":list[i].seq,
                         "send_time":list[i].send_time,
                         "userLogo":list[i].photo,
-                        "content_type":list[i].content_type,
+                        "content_type":content_type,
                         "file_name":list[i].file_name,
                         "original_file_name":list[i].original_file_name,
                         "fileSize":file_size.toFixed(2),
@@ -138,8 +139,8 @@ const actions = {
                         "chunk_number":list[i].chunk_number,
                         "merge_number":list[i].merge_number,
                         "is_revoke":list[i].is_revoke ? list[i].is_revoke :0,
-                        "delivered":list[i].delivered
-
+                        "delivered":list[i].delivered,
+                        "file_path":list[i].file_path
                     }
                     
                     oldMsg.unshift(messageList)  
@@ -207,7 +208,8 @@ const actions = {
             let msg = data.sensitiveMsg;
             let pattern = /\b(https?:\/\/[^\s]+)/g;
             let matches = msg.match(pattern); 
-            if (matches !== null) {   
+            let content_type = data.content_type; 
+            if (matches !== null && content_type == 0) {   
                        
                 for (var urlKey=0;urlKey < matches.length;urlKey++) {
              
@@ -241,7 +243,8 @@ const actions = {
                 "chunk_number":data.chunk_number,
                 "merge_number":data.merge_number,
                 "is_revoke":data.is_revoke ? data.is_revoke : 0,
-                "delivered":0
+                "delivered":0,
+                "file_path":data.file_path
             }
             if (room_id == data.room_id) {
                 let oldMsg = state.historyMessageList || []; 
