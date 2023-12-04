@@ -431,9 +431,11 @@ convertImageToCanvas(image) {
       msgSend(){
         this.$socket.open(); 
         let html = document.getElementById('sendMsg');
-        console.log( html )
-        if (html.textContent == ""  ) {  
-          this.$alert("你好，客官你还没有添写消息呢！！！");    
+        console.log( "====",html.innerText.length )
+        let text = this.spaceTrim(html.innerText)
+        if (text.length === 0) {  
+          this.$alert("你好，客官你还没有添写消息呢！！！"); 
+          return;   
         }    
         let messgae = html.innerHTML;
         let contactList =  this.contactList
@@ -448,6 +450,11 @@ convertImageToCanvas(image) {
         msgData.contactList = contactList      
         html.innerHTML = ""
         this.$socket.volatile.emit('room',msgData);       
+      },
+
+
+      spaceTrim(val){
+          return val.replace(/(^\s*)|(\s*$)/g, "");
       },
 
       /**
