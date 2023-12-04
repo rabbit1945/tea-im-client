@@ -173,7 +173,7 @@ const actions = {
             removeCache('isAuthLogin')
             return true;
         }
-        return false;    
+        return result;    
   },
 
 

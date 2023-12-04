@@ -48,6 +48,7 @@ export default {
               this.$alert("上传文件小于"+maxSize/1024/1024+"M");
               return;
           }
+          console.log("File::",File);
           // 放入文件列表
           this.fileList = [{ "name": File.name }]
           // 可以设置大于多少兆可以分片上传，否则走普通上传
@@ -60,11 +61,12 @@ export default {
                 // 普通上传 
                 this.$store.dispatch("uploadPut", {
                     "file":e.target.result,
-                    "fileName":File.name
+                    "fileName":File.name,
+                    "fileSize":fileSize*1024
 
                 }).then(res => {
                      if (res) {
-                      this.sendMsg(fileMd5,File.name,res.newFileName,1,fileSize,res.path,3)
+                      this.sendMsg(fileMd5,File.name,res.newFileName,1,fileSize,res.path,res.thumbPath,3)
                      } else{
                         this.$alert("上传失败");
                      }
@@ -99,7 +101,7 @@ export default {
          
       },
 
-    sendMsg(fileMd5,filename,newFileName,totalChunks,totalSize,mergePath,uploadStatus) {
+    sendMsg(fileMd5,filename,newFileName,totalChunks,totalSize,mergePath,thumbPath,uploadStatus) {
       
       this.$emit('fileSuccess',{
           "room_id":this.room_id,
@@ -109,7 +111,9 @@ export default {
           "totalChunks":totalChunks,
           "totalSize":totalSize,
           "mergePath":mergePath,
-          "uploadStatus":uploadStatus
+          "uploadStatus":uploadStatus,
+          "thumbPath":thumbPath,
+
       });
 
     },          
@@ -134,7 +138,7 @@ export default {
               if (res.data.type === 1) {         
                 uploadStatus = 3;   
               } 
-              this.sendMsg(fileMd5,File.name,res.data.newFileName,chunkCount,fileSize,res.data.mergePath,uploadStatus)
+              this.sendMsg(fileMd5,File.name,res.data.newFileName,chunkCount,fileSize,res.data.mergePath,"",uploadStatus)
               this.type = res.data.type
               this.file = File
 

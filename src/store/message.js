@@ -140,7 +140,8 @@ const actions = {
                         "merge_number":list[i].merge_number,
                         "is_revoke":list[i].is_revoke ? list[i].is_revoke :0,
                         "delivered":list[i].delivered,
-                        "file_path":list[i].file_path
+                        "file_path":list[i].file_path,
+                        "thumb_path":list[i].thumb_path?list[i].thumb_path:list[i].file_path
                     }
                     
                     oldMsg.unshift(messageList)  
@@ -244,7 +245,8 @@ const actions = {
                 "merge_number":data.merge_number,
                 "is_revoke":data.is_revoke ? data.is_revoke : 0,
                 "delivered":0,
-                "file_path":data.file_path
+                "file_path":data.file_path,
+                "thumb_path":data.thumb_path?data.thumb_path:data.file_path
             }
             if (room_id == data.room_id) {
                 let oldMsg = state.historyMessageList || []; 

@@ -52,10 +52,9 @@ export default {
   mounted() {
     this.$socket.open() 
     window.addEventListener("blur", this.onblur,true);
-    window.addEventListener("focus", this.onfocus,true);   
-
-    
+    window.addEventListener("focus", this.onfocus,true);
   },
+
   beforeDestroy () {
     this.$socket.close()
      //token失效从新登录

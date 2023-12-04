@@ -28,15 +28,12 @@
                         </div>
                         <!-- 图片 -->
                         <div contenteditable = "false" class="text" v-if = "this.source.content_type === 2">
-                            <div  @contextmenu.prevent="onContextmenu"   >
-                                <el-popover
-                            
-                                placement="left"  
-                                class="vedio"
-                                trigger="click">
-                                <img  :src=this.source.file_path>
-                                <img  slot="reference" style="max-width: 800px;max-height: 800px;" :src=this.source.file_path>
-                                </el-popover>
+                            <div @contextmenu.prevent="onContextmenu"  >
+                                <el-image 
+                                    style="width: 200px; height: 200px"
+                                    :src="this.source.thumb_path" 
+                                    :preview-src-list=[this.source.file_path]>
+                                </el-image>
                             </div>                
                         </div>
                         <!-- 文件 -->

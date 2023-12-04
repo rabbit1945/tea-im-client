@@ -70,20 +70,17 @@ router.beforeEach(async (to, from, next) => {
   //  next();
   //获取仓库中的token-----可以确定用户是登录了
    let token  = store.state.user.token;
-
+ 
    //用户登录了
    if(token != null && to.meta.requiresAuth ){
      //已经登录而且还想去登录------不行
         try {
           // 获取房间信息
-          let room_id = store.state.user.roomInfo.room_id ? store.state.user.roomInfo.room_id:1
-          await store.dispatch('getRoomInfo',room_id);
-         
           Vue.use(new VueSocketIO({
             debug: true,
             // 正式 https://teaim.cn
             // 测试 http://192.168.1.108:9502
-            connection: Manager.connect("http://192.168.1.108:9502", {
+            connection: Manager.connect("https://teaim.cn", {
               connectionStateRecovery: {
                 // the backup duration of the sessions and the packets
                 maxDisconnectionDuration: 2 * 60 * 1000,
@@ -102,7 +99,11 @@ router.beforeEach(async (to, from, next) => {
             
           }));
           
+          let room_id = store.state.user.roomInfo.room_id ? store.state.user.roomInfo.room_id:1
+          console.log("room_id::",room_id)
+          await store.dispatch('getRoomInfo',room_id);
           next();
+       
         } catch (error) {
           
           //token失效从新登录
@@ -111,11 +112,14 @@ router.beforeEach(async (to, from, next) => {
         }
        
   } else {
-    
     let toPath = to.path;
     if(!to.meta.requiresGuest){
       //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
-      next(toPath);
+     // 删除 token
+     removeToken();
+     // 删除授权
+     removeCache('isAuthLogin')
+      next({ name: 'Login' })
     } else if(to.name == 'Login' || to.name == 'Register') {
       next();
     }

@@ -278,7 +278,7 @@ methods: {
       let input = this.$refs.input
       let innerHTML = input.innerHTML  
       let data = JSON.stringify(base64data)
-      let val = innerHTML + "<img id = 'image' onclick= 'myBtn(" + JSON.stringify(path) + ")' src=" + path + ">"
+      let val = innerHTML + "<img id = 'image' src=" + path + ">"
       input.innerHTML = val
     })
    
@@ -390,7 +390,7 @@ convertImageToCanvas(image) {
          // 定义最后光标对象
         var lastEditRange;
         let input = this.$refs.input
-        console.log(val)
+       
         let selection = getSelection()
         // 编辑框获得焦点
         input.focus() 
@@ -420,12 +420,13 @@ convertImageToCanvas(image) {
               // 插入新的光标对象
               selection.addRange(range)
               // 无论如何都要记录最后光标对象
-              lastEditRange = selection.getRangeAt(0)
+              lastEditRange = selection.getRangeAt(0)  
             } else {
-             this.emo =  val.data
-             selection.removeAllRanges()
-           
+              this.emo =  val.data
+              selection.removeAllRanges()
+         
             }
+            
         }
       },
       //打开表情弹窗
@@ -451,9 +452,8 @@ convertImageToCanvas(image) {
         let msgData = this.msgInfo()
         msgData.msg = messgae
         msgData.content_type = content_type
-        msgData.contactList = contactList
-        html.innerHTML = ""
-     
+        msgData.contactList = contactList      
+        this.emo = ""
         this.$socket.volatile.emit('room',msgData);       
       },
 
@@ -476,7 +476,8 @@ convertImageToCanvas(image) {
         msgData.file_path = data.path
         msgData.total_chunks =data.totalChunks
         msgData.original_file_name = data.original_file_name
-        msgData.upload_status = data.uploadStatus
+        msgData.upload_status = data.uploadStatus,
+        msgData.thumb_path = data.thumbPath,
         this.$socket.volatile.emit('room',msgData);  
       
       },
