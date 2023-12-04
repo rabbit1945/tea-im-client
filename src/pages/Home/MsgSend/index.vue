@@ -1,8 +1,8 @@
  <template>
      <div class="world">
-      <VEmojiPicker class = "msg-emoji" v-show = "showDialog" @select="selectMsg"/>     
+      <VEmojiPicker class = "msg-emoji" v-show = "showDialog"   @select="selectMsg"/>     
       <div class="msg-button">       
-        <el-button style="margin-left: 10px" @click="toogleDialogEmoji" type="primary" class = "msg-el-button">
+        <el-button style="margin-left: 10px" @click="toogleDialogEmoji" ref="emojis" type="primary" class = "msg-el-button">
           <img class = "msg-img" src="/assets/images/emoji.png">
         </el-button>
         <div @click="audioPermission">
@@ -14,23 +14,6 @@
       </div>
       
       <uploadPut ref="uploadFile" v-on:fileSuccess="fileSuccess"/> 
-      <!-- <input type='file' ref='file' />  -->
-      <!-- <el-upload
-       
-        style="display: none;"
-        class="upload-demo"
-        action="/api/upload/v1/files"
-        show-file-list:false
-        :headers=headers
-        multiple
-        :limit="3"
-        :file-list="fileList"
-        :on-success="handleSuccess"
-        :on-error="handleError"
-        :before-upload="handleBeforeupload"
-        >
-        <el-button  ref='file'  size="small" type="primary">点击上传</el-button>
-      </el-upload> -->
 
       <at
        :style= stateStatus
@@ -152,9 +135,12 @@
     },
     mounted(){ 
       window.addEventListener("keydown",this.send,true);
+      document.addEventListener("click", this.handleMousedown)
+
     },
     destroyed() {
       window.removeEventListener("keydown",this.send,true);
+      window.removeEventListener('click', this.handleMousedown)//监听鼠标按下
     },
     computed:{
       userList:{
@@ -165,6 +151,13 @@
     },
   
 methods: {
+
+  handleMousedown(e) {
+    if (this.showDialog && !this.$el.contains(event.target)) {
+        this.toogleDialogEmoji()
+      }
+  
+  },
   send() {
     
     if (window.event.ctrlKey&& window.event.code=='Enter')
@@ -453,7 +446,7 @@ convertImageToCanvas(image) {
         msgData.msg = messgae
         msgData.content_type = content_type
         msgData.contactList = contactList      
-        this.emo = ""
+        html.innerHTML = ""
         this.$socket.volatile.emit('room',msgData);       
       },
 

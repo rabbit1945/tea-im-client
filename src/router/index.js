@@ -8,6 +8,8 @@ Vue.use(VueRouter);
 
 import VueSocketIO from 'vue-socket.io' ;
 import Manager from "socket.io-client";
+import { setCache, getCache,removeCache} from "@/utils/cache";
+import { setToken, getToken,removeToken} from "@/utils/token";
 //引入store
 import store from "@/store";
 //需要重写VueRouter.prototype原型对象身上的push|replace方法
@@ -112,13 +114,13 @@ router.beforeEach(async (to, from, next) => {
         }
        
   } else {
-    let toPath = to.path;
+    let toPath = to.path; //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
+    // 删除 token
+    removeToken();
+    // 删除授权
+    removeCache('isAuthLogin')
     if(!to.meta.requiresGuest){
-      //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
-     // 删除 token
-     removeToken();
-     // 删除授权
-     removeCache('isAuthLogin')
+     
       next({ name: 'Login' })
     } else if(to.name == 'Login' || to.name == 'Register') {
       next();
