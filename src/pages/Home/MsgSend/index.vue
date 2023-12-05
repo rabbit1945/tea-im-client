@@ -32,7 +32,7 @@
           ref="input"
           id = "sendMsg"
           class="msg-content" 
-          placeholder="ctrl + enter 发送消息"
+          placeholder="ctrl + enter 发送消息  shift+@ 可以@他人，复制不可以哦！"
                   contenteditable>
              {{ emo }} 
         </div>
