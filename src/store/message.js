@@ -174,6 +174,7 @@ const actions = {
         if (result.code === 10000) {
             return result.data;
         } 
+        return false;
     },
 
     
