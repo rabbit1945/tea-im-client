@@ -204,16 +204,16 @@ export default {
         }
 
       },
-       chunk(chunkCount,fileSize,fileMd5,newFileName,seq) {
+      chunk(chunkCount,fileSize,fileMd5,newFileName,seq) {
         let File = this.file
         let num = 0
         
         for (var i = num; i < chunkCount; i++) {
             //分片开始位置
             let start = i * chunkSize
-            //分片结束位置
+                       //分片结束位置
             let end = Math.min(fileSize, start + chunkSize)
-            //取文件指定范围内的byte，从而得到分片数据
+                        //取文件指定范围内的byte，从而得到分片数据
             let chunkNumber = i
             
             let _chunkFile = File.raw.slice(start, end)
@@ -236,10 +236,10 @@ export default {
                 "chunkSize":chunkSize,
                 "uploadProgress":uploadProgress.toFixed(2) + '%'
               }
-              console.log("开始上传第" +chunkNumber + "个分片")
+            console.log("开始上传第" +chunkNumber + "个分片")
               this.$socket.emit('chunkFile',data);  
               
-            }         
+                         }    
 
         } 
 

@@ -71,7 +71,7 @@
               if (data.uploadStatus == 1) {
                 this.updateStatus(data);
               } 
-                 } else {
+            } else {
               return this.$alert(res.msg)
             }
           },
