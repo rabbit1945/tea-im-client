@@ -19,11 +19,12 @@
                         <!-- 音频 -->
                         <div contenteditable = "false" class="text" v-if = "this.source.content_type === 1">
                             <div  @contextmenu.prevent="onContextmenu"   >
-                                <av-bars
-                            
-                                :canv-height ="30"
-                                :audio-src=this.source.file_path>
-                                </av-bars>
+                              
+                                <mini-audio
+                                    :audio-source="this.source.file_path"
+                                ></mini-audio>
+
+
                             </div>
                         </div>
                         <!-- 图片 -->
