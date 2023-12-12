@@ -29,13 +29,19 @@
                         </div>
                         <!-- 图片 -->
                         <div contenteditable = "false" class="text" v-if = "this.source.content_type === 2">
-                            <div @contextmenu.prevent="onContextmenu"  >
+                            <div @contextmenu.prevent="onContextmenu"   v-if="this.source.upload_status === 3" >
                                 <el-image 
                                     style="width: 200px; height: 200px"
+                                    :load="msgLoad()"
                                     :src="this.source.thumb_path" 
-                                    :preview-src-list=[this.source.file_path]>
+                                    :preview-src-list=[this.source.file_path] lazy>
+                                    <div slot="placeholder" class="image-slot">
+                                      <span class="dot"> 加载中</span>
+                                    </div>
                                 </el-image>
-                            </div>                
+                            </div>
+                            <span v-else-if="this.source.upload_status === 4">加载失败...</span>   
+                            <span v-else>加载中...</span>              
                         </div>
                         <!-- 文件 -->
                         <div @click="down()"   contenteditable = "false" class="text file" v-if = "this.source.content_type === 3">
@@ -150,9 +156,10 @@
             }
         },
         methods: {
-
-         
-          
+       
+            msgLoad() {
+                console.log("------------------------------")
+            },
             onContextmenu(event) {
                             
                 this.$contextmenu({
