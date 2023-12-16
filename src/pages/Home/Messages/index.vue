@@ -79,8 +79,6 @@
           async updateMsgStatusCallback(val) {      
             let list = val.data  
             let seq = list.seq
-            console.log("上传状态::",[list.newFileName,list.uploadStatus,val.code]); 
-            console.log("消息::",this.historyMessageList)
             var targetObject = this.historyMessageList.find(function(obj) {
               return obj.seq === seq;
             });
@@ -88,7 +86,6 @@
             if (val.code !== 10000 ) {
               this.updateStatus(val.data);
             } else {
-
               if (list.uploadStatus == 1){
                   // 返回变成上传成功状态
                   targetObject.upload_status = 1       
@@ -96,6 +93,12 @@
                   this.composeFile(list);   
               } else {
                 targetObject.upload_status = list.uploadStatus
+                if (list.uploadStatus == 3) {
+                  
+                  targetObject.thumb_path    = list?.thumb_path
+                
+                }
+              
               }
               
 
@@ -158,7 +161,6 @@
       mounted(){
         
         this.$store.state.message.historyMessageList= []
-        console.log("初始化消息");
         // window.addEventListener("scroll", this.onScroll, true);
         // 初始化条数
         this.initLoadMsg()
@@ -190,7 +192,6 @@
               "chunkSize":Math.ceil(data.totalSize / data.totalChunks) 
           }
           list.uploadStatus = 2
-          console.log("合并文件::",list);  
           this.updateStatus(list);   
           await  this.$socket.emit('mergeFile',list);   
         },

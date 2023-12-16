@@ -5,7 +5,8 @@ import {
     reqcheckChunkExis,
     reqUploadChunk,
     reqUploadFiles,
-    reqUploadPut
+    reqUploadPut,
+    reqCreateThumb,
 } from "@/api";
 import { setCache, getCache,removeCache} from "@/utils/cache";
 import store from "@/store";
@@ -71,6 +72,7 @@ const actions = {
             return result.data;
         } 
     },
+
     async uploadPut({commit}, data) {
         let result = await reqUploadPut(data);
         if (result.code === 10000) {
@@ -79,11 +81,20 @@ const actions = {
 
         return false;
     },
+    /**
+     * 生成縮略圖
+     * @param {*} param0 
+     * @param {*} data 
+     * @returns 
+     */
+    async createThumb({commit}, data) {
+        let result = await reqCreateThumb(data);
+        if (result.code === 10000) {
+            return result.data;
+        } 
 
-
-    
-
-
+        return false;
+    },
 
 }
 

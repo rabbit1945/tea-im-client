@@ -45,5 +45,6 @@ export const reqUploadChunk =  (data)=>requests({url:'upload/v1/chunk',data,meth
 
 // 合并分片
 export const reqUploadMerge =  (data)=>requests({url:'upload/v1/merge',data,method:'post'});
-
+// 生成縮略圖
+export const reqCreateThumb =  (data)=>requests({url:'upload/v1/create/thumb',data,method:'post'});
 

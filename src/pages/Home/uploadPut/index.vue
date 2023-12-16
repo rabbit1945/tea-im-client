@@ -113,7 +113,6 @@ export default {
           "mergePath":mergePath,
           "uploadStatus":uploadStatus,
           "thumbPath":thumbPath,
-
       });
 
     },          
@@ -138,7 +137,7 @@ export default {
               if (res.data.type === 1) {         
                 uploadStatus = 3;   
               } 
-              this.sendMsg(fileMd5,File.name,res.data.newFileName,chunkCount,fileSize,res.data.mergePath,"",uploadStatus)
+              this.sendMsg(fileMd5,File.name,res.data.newFileName,chunkCount,fileSize,res.data.mergePath,res.data.thumbPath,uploadStatus)
               this.type = res.data.type
               this.file = File
 

@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import VueAudio from 'vue-audio-better'
+// import VueAudio from 'vue-audio-better'
 import MetaInfo from 'vue-meta-info';
 import VueCookies from 'vue-cookies'
 import AudioVisual from 'vue-audio-visual'
@@ -30,7 +30,7 @@ import * as API from '@/api';
 //引入表单校验插件
 Vue.config.productionTip = false
 Vue.use(ElementUI);
-Vue.use(VueAudio);
+// Vue.use(VueAudio);
 Vue.use(MetaInfo);
 Vue.use(VueCookies)
 Vue.use(AudioVisual)

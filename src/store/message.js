@@ -83,26 +83,22 @@ const actions = {
         let parms = `${room_id}`
         if (data.page) {
             parms = `${room_id}/${data.page}/${data.limit}`
-        } 
-       
-                // 请求参数
+        }     
+        // 请求参数
         let result = await reqGetMsg(parms);
-        if (result.code === 10000) {
-            
+        console.log("getGetMsg::",result)
+        if (result.code === 10000) {        
             let list = result.data.list;
             let msg = [];
             let user_id = store.state.user.userInfo.user_id;
-            let oldMsg = state.historyMessageList || []; 
-            
-            
-            for (var i = 0; i < list.length; i++) {
-                
+            let oldMsg = state.historyMessageList || [];            
+            for (var i = 0; i < list.length; i++) {                
                 if (list[i].msg_form && room_id == list[i].room_id ) {
 
                     var tag = 0; // 0 自己发的  1 被人发的
                     if (user_id != list[i].msg_form) {
                         tag = 1;
-                                        }
+                    }
                     // url的处理
                     let msg = list[i].msg_content;
                     let pattern = /\b(https?:\/\/[^\s]+)/g;

@@ -15,7 +15,7 @@ let requests = axios.create({
   //基础路径
   baseURL: "/api",
   //请求不能超过10s
-  timeout: 120000, 
+  timeout: 5000, 
 });
 
 //请求拦截器----在项目中发请求（请求没有发出去）可以做一些事情
@@ -38,7 +38,6 @@ requests.interceptors.request.use(
 requests.interceptors.response.use(
   (res) => {
     let data = res.data;
-    
     //进度条结束
     nprogress.done();
     if (data.code === 10000){   
@@ -53,14 +52,13 @@ requests.interceptors.response.use(
       }
       return data;
     }
-     
-   
   },
   (err) => {
     console.log("服务器响应数据失败",err)
-    router.push({path:'/login'})
-   
-    return;
+    if (err.response.status === 500 || err.response.status === 401 ) {
+      router.push({path:'/login'})
+    }
+    return ;
   }
 );
 //最终需要对外暴露（不对外暴露外面模块没办法使用）

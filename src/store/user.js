@@ -136,7 +136,8 @@ const actions = {
     //获取聊天室信息
     async getRoomInfo({ commit },id) {
         let result = await reqRoomInfo(id);
-                let code = result?.code;
+        let code = result?.code;
+
         if (code === 10000) {       
             let list = result?.data;
             //提交用户信息
@@ -146,7 +147,7 @@ const actions = {
             
             return true;
         }
-    return false;
+        return false;
     },
 
     async getRoomList({ commit }){

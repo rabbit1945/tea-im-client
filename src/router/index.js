@@ -82,7 +82,7 @@ router.beforeEach(async (to, from, next) => {
             debug: true,
             // 正式 https://teaim.cn
             // 测试 http://192.168.1.108:9502
-            connection: Manager.connect("https://teaim.cn",{
+            connection: Manager.connect("https://teaim.cn", {
               connectionStateRecovery: {
                 // the backup duration of the sessions and the packets
                 maxDisconnectionDuration: 2 * 60 * 1000,
@@ -106,8 +106,7 @@ router.beforeEach(async (to, from, next) => {
           await store.dispatch('getRoomInfo',room_id);
           next();
        
-        } catch (error) {
-          
+        } catch (error) {        
           //token失效从新登录
           await store.dispatch('userLogout');
           next({ name: 'Login' })

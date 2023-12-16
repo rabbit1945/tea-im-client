@@ -363,7 +363,7 @@ convertImageToCanvas(image) {
             val.file_size = val.totalSize
             val.md5 = val.identifier
             val.path = path
-
+            console.log("上传文件::",val)
             this.sendAudio(val)
 
         }
@@ -431,7 +431,6 @@ convertImageToCanvas(image) {
       msgSend(){
         this.$socket.open(); 
         let html = document.getElementById('sendMsg');
-        console.log( "====",html.innerText.length )
         let text = this.spaceTrim(html.innerText)
         if (text.length === 0) {  
           this.$alert("你好，客官你还没有添写消息呢！！！"); 
@@ -478,14 +477,12 @@ convertImageToCanvas(image) {
         msgData.original_file_name = data.original_file_name
         msgData.upload_status = data.uploadStatus,
         msgData.thumb_path = data.thumbPath,
+        console.log("发送音频图片文本",data)
         this.$socket.volatile.emit('room',msgData);  
       
       },
 
-     
-
       msgInfo(){
-
         const user_id = this.user_id;
         const nick_name = this.nick_name;
         const userLogo = this.userLogo;
@@ -496,10 +493,7 @@ convertImageToCanvas(image) {
             "nick_name": nick_name,     
             "userLogo":userLogo,           
         };
-
         return msgData;
-        
-
       }
   
     }

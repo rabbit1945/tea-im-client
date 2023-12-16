@@ -32,12 +32,8 @@
                             <div @contextmenu.prevent="onContextmenu"   v-if="this.source.upload_status === 3" >
                                 <el-image 
                                     style="width: 200px; height: 200px"
-                                    :load="msgLoad()"
                                     :src="this.source.thumb_path" 
                                     :preview-src-list=[this.source.file_path] lazy>
-                                    <div slot="placeholder" class="image-slot">
-                                      <span class="dot"> 加载中</span>
-                                    </div>
                                 </el-image>
                             </div>
                             <span v-else-if="this.source.upload_status === 4">加载失败...</span>   
@@ -95,6 +91,8 @@
   </template>
   
   <script>
+    import VueAudio from 'vue-audio-better'
+    Vue.use(VueAudio);
     import Vue from 'vue'
     import Contextmenu from "vue-contextmenujs"
     Vue.use(Contextmenu);
@@ -156,10 +154,6 @@
             }
         },
         methods: {
-       
-            msgLoad() {
-                console.log("------------------------------")
-            },
             onContextmenu(event) {
                             
                 this.$contextmenu({
@@ -324,16 +318,16 @@
         },
         sockets: {
 
-            async updateMsgStatusCallback(val) {
+            // async updateMsgStatusCallback(val) {
             
-                let list = val.data  
+            //     let list = val.data  
                
-                if (val.code === 10000 ) {
-                    // 返回变成上传成功状态
-                    this.list.upload_status = list.uploadStatus
-                }
+            //     if (val.code === 10000 ) {
+            //         // 返回变成上传成功状态
+            //         this.list.upload_status = list.uploadStatus
+            //     }
 
-            }
+            // }
            
            
           
