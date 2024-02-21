@@ -32,12 +32,10 @@
           ref="input"
           id = "sendMsg"
           class="msg-content" 
-          placeholder="ctrl + enter 发送消息  shift+@ 可以@他人，复制不可以哦！"
+          placeholder="enter 发送消息  shift+@ 可以@他人，复制不可以哦！"
                   contenteditable>
              {{ emo }} 
-        </div>
-        <!-- <el-button class= "sendButton" type="success">发送</el-button> -->
-       
+        </div>       
       </at>
 
       </div>
@@ -158,11 +156,11 @@ methods: {
       }
   
   },
-  send() {
+  send(event) {
     
-    if (window.event.ctrlKey&& window.event.code=='Enter')
+    if (window.event.code=='Enter')
         {
-          this.msgSend();
+          this.msgSend(event);
         }   
 
   },
@@ -172,7 +170,6 @@ methods: {
 
   },
   handleBeforeupload(file){
-    console.log("file",file)
     this.fileName = file.name
     this.fileSize = file.size
   },
@@ -428,7 +425,7 @@ convertImageToCanvas(image) {
       },
 
       // 发送
-      msgSend(){
+      msgSend(event){
         this.$socket.open(); 
         let html = document.getElementById('sendMsg');
         let text = this.spaceTrim(html.innerText)
@@ -448,10 +445,9 @@ convertImageToCanvas(image) {
         msgData.content_type = content_type
         msgData.contactList = contactList      
         html.innerHTML = ""
-        this.$socket.volatile.emit('room',msgData);       
-      },
-
-
+        this.$socket.volatile.emit('room',msgData); 
+        event.preventDefault();  
+      }, 
       spaceTrim(val){
           return val.replace(/(^\s*)|(\s*$)/g, "");
       },
