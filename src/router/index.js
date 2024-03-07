@@ -82,7 +82,7 @@ router.beforeEach(async (to, from, next) => {
             debug: true,
             // 正式 https://teaim.cn
             // 测试 http://127.0.0.1:9502
-            connection: Manager.connect("http://127.0.0.1:9502", {
+            connection: Manager.connect("https://teaim.cn", {
               connectionStateRecovery: {
                 // the backup duration of the sessions and the packets
                 maxDisconnectionDuration: 2 * 60 * 1000,
