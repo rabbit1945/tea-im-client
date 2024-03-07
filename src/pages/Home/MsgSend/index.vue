@@ -32,6 +32,7 @@
           ref="input"
           id = "sendMsg"
           class="msg-content" 
+          @keydown="send"
           placeholder="enter 发送消息  shift+@ 可以@他人，复制不可以哦！"
                   contenteditable>
              {{ emo }} 
@@ -68,7 +69,7 @@
         userLogo:this.$store.state.user.userInfo.photo, // 头像
         room_id:this.$store.state.user.roomInfo.room_id, // 房间ID
         audio:{}, // 音频数据
-        showUser:false,    // 是否显示@他人的用户表单
+        atStatus:false,    // 是否显示@他人的用户表单
         sumNoticeOtherUser:0,
         countStr:0, // 统计字符的数量
         members: [], // @ 用户列表
@@ -89,7 +90,7 @@
         ],
         fileName:"",
         fileSize:0,
-        stateStatus:"display: block;",
+        stateStatus:"display:block;",
         emo:""
 
 
@@ -132,12 +133,12 @@
       }
     },
     mounted(){ 
-      window.addEventListener("keydown",this.send,true);
+      // window.addEventListener("keydown",this.send,true);
       document.addEventListener("click", this.handleMousedown)
 
     },
     destroyed() {
-      window.removeEventListener("keydown",this.send,true);
+      // window.removeEventListener("keydown",this.send,true);
       window.removeEventListener('click', this.handleMousedown)//监听鼠标按下
     },
     computed:{
@@ -150,141 +151,141 @@
   
 methods: {
 
-  handleMousedown(e) {
-    if (this.showDialog && !this.$el.contains(event.target)) {
-        this.toogleDialogEmoji()
-      }
-  
-  },
-  send(event) {
-    
-    if (window.event.code=='Enter')
+      handleMousedown(e) {
+        if (this.showDialog && !this.$el.contains(event.target)) {
+            this.toogleDialogEmoji()
+          }
+      
+      },
+      send(event) {
+        
+        if (window.event.code =='Enter')
         {
-          this.msgSend(event);
-        }   
-
-  },
-
-  audioPermission() {
-    this.$refs.permission.getPermission();
-
-  },
-  handleBeforeupload(file){
-    this.fileName = file.name
-    this.fileSize = file.size
-  },
-  
-  /**
-   * 上传成功
-   * @param {*} err 
-   * @param {*} file 
-   * @param {*} fileLis 
-   */
-  handleError(err, file, fileLis){
-    this.$alert("文件上传失败，请重新上传！！！")
-  },
-
-  /**
-   * 上传成功
-   * @param {*} response 
-   * @param {*} file 
-   * @param {*} fileList 
-   */
-  handleSuccess(response) {
-     
-      if (response.code === 10000 ) {
-        let data = response.data
-        if (Object.keys(data).length > 0) {
-          let file = data.file
-          let fileName = data.fileName
-          //获取最后一个.的位置
-          let index= fileName.lastIndexOf(".");
-          //获取后缀
-          let ext = fileName.substr(index+1);
-          // 获取文件类型 
-          let content_type = this.fileExt(ext)
          
-          this.sendAudio({
-            "file_name":fileName,
-            "file_size":data.fileSize,
-            "path":file,
-            "content_type":content_type
-          })
-        }
+          this.msgSend(event);
+        }  
+      },
 
-      } else {
+      audioPermission() {
+        this.$refs.permission.getPermission();
+
+      },
+      handleBeforeupload(file){
+        this.fileName = file.name
+        this.fileSize = file.size
+      },
+      
+      /**
+       * 上传成功
+       * @param {*} err 
+       * @param {*} file 
+       * @param {*} fileLis 
+       */
+      handleError(err, file, fileLis){
         this.$alert("文件上传失败，请重新上传！！！")
-      }
+      },
+
+      /**
+       * 上传成功
+       * @param {*} response 
+       * @param {*} file 
+       * @param {*} fileList 
+       */
+      handleSuccess(response) {
+        
+          if (response.code === 10000 ) {
+            let data = response.data
+            if (Object.keys(data).length > 0) {
+              let file = data.file
+              let fileName = data.fileName
+              //获取最后一个.的位置
+              let index= fileName.lastIndexOf(".");
+              //获取后缀
+              let ext = fileName.substr(index+1);
+              // 获取文件类型 
+              let content_type = this.fileExt(ext)
+            
+              this.sendAudio({
+                "file_name":fileName,
+                "file_size":data.fileSize,
+                "path":file,
+                "content_type":content_type
+              })
+            }
+
+          } else {
+            this.$alert("文件上传失败，请重新上传！！！")
+          }
+          
+
+      },
+
+      fileExt(ext){
+        let content_type = 0
+        if (this.imagesExt.indexOf(ext.toLowerCase()) !== -1)
+        {
+          content_type = 2
+        } else if(this.audioExt.indexOf(ext.toLowerCase()) !== -1) {
+          content_type = 1
+        } else if(this.videoExt.indexOf(ext.toLowerCase()) !== -1) {
+          content_type = 4
+        } else {
+          content_type = 3
+        }
+        return content_type;
+
+      },
+      
+    
+      upload() {
+
+        let filebutton = this.$refs.uploadFile.$refs.uploadfileBut;
+        filebutton.$el.click() 
+      },
+ 
+      btnClick() {
+          // 更多参数 和使用可以看它包里面的README.md文件
+          const screenShotHandler = new ScreenShort({
+            // 是否启用webrtc，值为boolean类型，值为false则使用html2canvas来截图
+            enableWebRtc: false,
+            // 层级级别，这个要比你页面上其他元素的z-index的值大，不然截不了
+            level: 2001,
+            // saveCallback:(code, msg) => {
+            //   // 在此处根据实际业务需要通过参数做判断即可
+            //   console.log(code,msg);
+            // },
+            completeCallback: this.callback, // 截图成功完成的回调
+            closeCallback: this.closeFn, // 截图取消的回调
+            canvasWidth:  window.innerWidth,
+            canvasHeight:  window.innerHeight,
+          })
+      },
+        
+      callback(base64data,cutInfo) {
+        this.$store.dispatch("uploadBase64", base64data).then(res => {
+          console.log("uploadFiles",res);
+          let path = res.file
+          let input = this.$refs.input
+          let innerHTML = input.innerHTML  
+          let data = JSON.stringify(base64data)
+          let val = innerHTML + "<img id = 'image' src=" + path + ">"
+          input.innerHTML = val
+        })
       
 
-  },
+      },
 
-  fileExt(ext){
-    let content_type = 0
-    if (this.imagesExt.indexOf(ext.toLowerCase()) !== -1)
-    {
-      content_type = 2
-    } else if(this.audioExt.indexOf(ext.toLowerCase()) !== -1) {
-      content_type = 1
-    } else if(this.videoExt.indexOf(ext.toLowerCase()) !== -1) {
-      content_type = 4
-    } else {
-      content_type = 3
-    }
-    return content_type;
+      convertImageToCanvas(image) {
+          var canvas = document.createElement('canvas')
+          canvas.width = image.width
+          canvas.height = image.height
+          canvas.getContext('2d').drawImage(image, 0, 0)
+          return canvas
+      },
 
-  },
-  
- 
-  upload() {
-
-    let filebutton = this.$refs.uploadFile.$refs.uploadfileBut;
-    filebutton.$el.click() 
-  },
- 
-  btnClick() {
-      // 更多参数 和使用可以看它包里面的README.md文件
-      const screenShotHandler = new ScreenShort({
-        // 是否启用webrtc，值为boolean类型，值为false则使用html2canvas来截图
-        enableWebRtc: false,
-        // 层级级别，这个要比你页面上其他元素的z-index的值大，不然截不了
-        level: 2001,
-        // saveCallback:(code, msg) => {
-        //   // 在此处根据实际业务需要通过参数做判断即可
-        //   console.log(code,msg);
-        // },
-        completeCallback: this.callback, // 截图成功完成的回调
-        closeCallback: this.closeFn, // 截图取消的回调
-        canvasWidth:  window.innerWidth,
-        canvasHeight:  window.innerHeight,
-      })
-  },
-  
-   callback(base64data,cutInfo) {
-    console.log(base64data)
-    this.$store.dispatch("uploadBase64", base64data).then(res => {
-      console.log("uploadFiles",res);
-      let path = res.file
-      let input = this.$refs.input
-      let innerHTML = input.innerHTML  
-      let data = JSON.stringify(base64data)
-      let val = innerHTML + "<img id = 'image' src=" + path + ">"
-      input.innerHTML = val
-    })
-   
-
-  },
-
-convertImageToCanvas(image) {
-      var canvas = document.createElement('canvas')
-      canvas.width = image.width
-      canvas.height = image.height
-      canvas.getContext('2d').drawImage(image, 0, 0)
-      return canvas
-    },
-    closeFn() {
-      // 取消截图的回调
-    },
+      closeFn() {
+        // 取消截图的回调
+      },
 
    
      // 过滤联系人
@@ -301,8 +302,8 @@ convertImageToCanvas(image) {
       },
       // 获取联系人
       getValue(val) {
-         console.log("contactListval:", val);
-         return this.contactList.push({
+          this.atStatus = true
+          this.contactList.push({
           "nick_name":val.nick_name,
           "is_robot":val.is_robot,
           "photo":val.photo,
@@ -311,7 +312,7 @@ convertImageToCanvas(image) {
           "content_type":val.content_type,
           "room_id":val.room_id,
          });
-         
+        
       },
      
       /**
@@ -368,7 +369,7 @@ convertImageToCanvas(image) {
       },
 
       statusClass(val) {
-        console.log(val)
+       console.log("状态::",val)
         let style = "display: block;"
         if (val.status === true) {
           style = "display: none;"
@@ -432,7 +433,8 @@ convertImageToCanvas(image) {
         if (text.length === 0) {  
           this.$alert("你好，客官你还没有添写消息呢！！！"); 
           return;   
-        }    
+        }   
+        
         let messgae = html.innerHTML;
         let contactList =  this.contactList
         let content_type = 0; // 文本
