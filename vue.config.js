@@ -13,6 +13,7 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
     })
   ]
 }
+
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave:false,
