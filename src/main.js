@@ -9,7 +9,6 @@ import AudioVisual from 'vue-audio-visual'
 import uploader from 'vue-simple-uploader'
 import App from './App.vue';
 
-
 //引入路由相关文件
 import router from "@/router";
 //引入仓库进行注册
@@ -35,9 +34,28 @@ Vue.use(MetaInfo);
 Vue.use(VueCookies)
 Vue.use(AudioVisual)
 Vue.use(uploader)
+// 屏幕自适应穿透px为rem模板
+/* 调整缩放比例 start */
+import { monitorZoom } from "@/utils/monitorZoom.js";
+const m = monitorZoom();
 
+if (window.screen.width * window.devicePixelRatio >= 3840) {
+  document.body.style.zoom = 100 / (Number(m) / 2); // 屏幕为 4k 时
+} else if (window.screen.width * window.devicePixelRatio >= 2560) {
+  document.body.style.zoom = 1; // 屏幕为 2k 时
+} else if (window.screen.width * window.devicePixelRatio >= 1920) {
+  document.body.style.zoom = 100 / (Number(m) / 1.5); // 屏幕为 2k 时
+} else if (window.screen.width * window.devicePixelRatio >= 1440) {
+  document.body.style.zoom = 100 / (Number(m) / 1.1); // 屏幕为 2k 时
+} else {
+  document.body.style.zoom = 100 / Number(m);
+
+}
+
+ 
+/* 调整缩放比例 end */
 new Vue({
-  render: h => h(App),
+  
   //全局事件总线$bus配置
   beforeCreate() {
     Vue.prototype.$bus = this;
@@ -46,5 +64,6 @@ new Vue({
   //router进行注册
   router,
   //注册store
-  store
+  store,
+  render: h => h(App),
 }).$mount('#app')

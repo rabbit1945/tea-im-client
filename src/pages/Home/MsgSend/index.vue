@@ -106,6 +106,10 @@
       
     sockets: {
       async roomCallback (data) { 
+
+        if (data.length <=0) {
+          this.$alert("参数为空，请重新参数")
+        }
         var user_id = data.user_id
         var room_id = data.room_id
         var contactList = data.contactList
@@ -475,7 +479,6 @@ methods: {
         msgData.original_file_name = data.original_file_name
         msgData.upload_status = data.uploadStatus,
         msgData.thumb_path = data.thumbPath,
-        console.log("发送音频图片文本",data)
         this.$socket.volatile.emit('room',msgData);  
       
       },

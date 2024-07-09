@@ -184,7 +184,7 @@ proxy_set_header Connection "Upgrade";
 
 docker compose restart
 
-```
+```np
 
 <a name="bhlpm"></a>
 ### 构建vue前端,生成dist文件

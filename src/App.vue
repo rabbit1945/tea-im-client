@@ -1,14 +1,14 @@
 <template>
-   <router-view></router-view>
+  <div class="about">
+    <router-view></router-view>
+  </div>
+  
 </template>
 
 <script>
 
 export default {
   name: "App",
-  components: {
-   
-  },
   metaInfo() {
     return {
       title: this.$store.state.message.title, // set a title
@@ -48,12 +48,17 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+.about {
+  
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
-  margin-top: 60px;
+  /* 假设1rem等于100px */
+  width: 70rem; /* 相当于750px */
+  margin: 0 auto;
+  
+  
 }
 </style>
