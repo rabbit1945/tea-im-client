@@ -134,10 +134,10 @@
     max-width: 100%;
     padding: 0px 35px 0; 
     margin:auto;
-    position:absolute; 
-    top:20%;
-    left:70%;
-    /* margin:-150px 0 0 -260px;  */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
 }
 
 .logon input {

@@ -1,6 +1,9 @@
 <template>
-  <div class="about">
-    <router-view></router-view>
+  <div id="about">
+    
+      <router-view></router-view>
+
+    
   </div>
   
 </template>
@@ -33,7 +36,17 @@ export default {
   mounted () {
     document.oncontextmenu = function (e) {
             return false;
-        }
+    }
+    var browerWidth = window.innerWidth; //浏览器可视宽度
+    console.log('browerWidth::',browerWidth);
+    var baseWidth = 1440; //设计稿宽度
+    var zoomValue = browerWidth / baseWidth; //缩放比例计算
+    document.getElementById("about").style.transform = "scale(" + zoomValue + "," + zoomValue + ")"; //mainContainer为主容器id
+    window.onresize = function () { //窗口尺寸变化时，重新计算和缩放
+      browerWidth = window.innerWidth;
+      zoomValue = browerWidth / baseWidth;
+      document.getElementById("about").style.transform = "scale(" + zoomValue + "," + zoomValue + ")";
+    }
    },
 
   destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug
@@ -48,7 +61,7 @@ export default {
 </script>
 
 <style>
-.about {
+#about {
   
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -56,9 +69,6 @@ export default {
   /* text-align: center; */
   color: #2c3e50;
   /* 假设1rem等于100px */
-  width: 70rem; /* 相当于750px */
   margin: 0 auto;
-  
-  
 }
 </style>

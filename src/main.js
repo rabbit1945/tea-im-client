@@ -38,11 +38,11 @@ Vue.use(uploader)
 /* 调整缩放比例 start */
 import { monitorZoom } from "@/utils/monitorZoom.js";
 const m = monitorZoom();
-
+console.log(window.screen.width * window.devicePixelRatio);
 if (window.screen.width * window.devicePixelRatio >= 3840) {
   document.body.style.zoom = 100 / (Number(m) / 2); // 屏幕为 4k 时
 } else if (window.screen.width * window.devicePixelRatio >= 2560) {
-  document.body.style.zoom = 1; // 屏幕为 2k 时
+  document.body.style.zoom = 0.75; // 屏幕为 2k 时
 } else if (window.screen.width * window.devicePixelRatio >= 1920) {
   document.body.style.zoom = 100 / (Number(m) / 1.5); // 屏幕为 2k 时
 } else if (window.screen.width * window.devicePixelRatio >= 1440) {

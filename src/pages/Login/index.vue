@@ -164,14 +164,12 @@
     /* box-shadow: 0 2px 12px 0  ALICEBLUE;
     border-radius: 8px;  */
     width: 400px;
-    height: 300px;
     max-width: 100%;
     padding: 0px 35px 0; 
     margin:auto;
-    position:absolute; 
-    top:50%;
-    left:80%;
-    margin:-150px 0 0 -260px; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .logon input {
