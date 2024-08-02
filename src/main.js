@@ -37,20 +37,37 @@ Vue.use(uploader)
 // 屏幕自适应穿透px为rem模板
 /* 调整缩放比例 start */
 import { monitorZoom } from "@/utils/monitorZoom.js";
-const m = monitorZoom();
-console.log(window.screen.width * window.devicePixelRatio);
-if (window.screen.width * window.devicePixelRatio >= 3840) {
-  document.body.style.zoom = 100 / (Number(m) / 2); // 屏幕为 4k 时
-} else if (window.screen.width * window.devicePixelRatio >= 2560) {
-  document.body.style.zoom = 0.75; // 屏幕为 2k 时
-} else if (window.screen.width * window.devicePixelRatio >= 1920) {
-  document.body.style.zoom = 100 / (Number(m) / 1.5); // 屏幕为 2k 时
-} else if (window.screen.width * window.devicePixelRatio >= 1440) {
-  document.body.style.zoom = 100 / (Number(m) / 1.1); // 屏幕为 2k 时
+
+const userAgentInfo = navigator.userAgent;
+const mobileAgents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod'];
+let mobileFlag = false;
+
+for (let i = 0; i < mobileAgents.length; i++) {
+  if (userAgentInfo.indexOf(mobileAgents[i]) > 0) {
+    mobileFlag = true;
+    break;
+  }
+}
+if (mobileFlag) {
+  document.body.style.zoom = 0.75;
 } else {
-  document.body.style.zoom = 100 / Number(m);
+  const m = monitorZoom();
+  console.log(window.screen.width * window.devicePixelRatio);
+  if (window.screen.width * window.devicePixelRatio >= 3840) {
+    document.body.style.zoom = 100 / (Number(m) / 2); // 屏幕为 4k 时
+  } else if (window.screen.width * window.devicePixelRatio >= 2560) {
+    document.body.style.zoom = 0.75; // 屏幕为 2k 时
+  } else if (window.screen.width * window.devicePixelRatio >= 1920) {
+    document.body.style.zoom = 100 / (Number(m) / 1.5); // 屏幕为 2k 时
+  } else if (window.screen.width * window.devicePixelRatio >= 1440) {
+    document.body.style.zoom = 100 / (Number(m) / 1.1); // 屏幕为 2k 时
+  } else {
+    document.body.style.zoom = 100 / Number(m);
 
 }
+
+}
+
 
  
 /* 调整缩放比例 end */

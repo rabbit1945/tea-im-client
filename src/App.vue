@@ -34,19 +34,19 @@ export default {
     }
   },
   mounted () {
-    document.oncontextmenu = function (e) {
-            return false;
-    }
-    var browerWidth = window.innerWidth; //浏览器可视宽度
-    console.log('browerWidth::',browerWidth);
-    var baseWidth = 1440; //设计稿宽度
-    var zoomValue = browerWidth / baseWidth; //缩放比例计算
-    document.getElementById("about").style.transform = "scale(" + zoomValue + "," + zoomValue + ")"; //mainContainer为主容器id
-    window.onresize = function () { //窗口尺寸变化时，重新计算和缩放
-      browerWidth = window.innerWidth;
-      zoomValue = browerWidth / baseWidth;
-      document.getElementById("about").style.transform = "scale(" + zoomValue + "," + zoomValue + ")";
-    }
+    // document.oncontextmenu = function (e) {
+    //         return false;
+    // }
+    // var browerWidth = window.innerWidth; //浏览器可视宽度
+    // console.log('browerWidth::',browerWidth);
+    // var baseWidth = 1440; //设计稿宽度
+    // var zoomValue = browerWidth / baseWidth; //缩放比例计算
+    // document.getElementById("about").style.transform = "scale(" + zoomValue + "," + zoomValue + ")"; //mainContainer为主容器id
+    // window.onresize = function () { //窗口尺寸变化时，重新计算和缩放
+    //   browerWidth = window.innerWidth;
+    //   zoomValue = browerWidth / baseWidth;
+    //   document.getElementById("about").style.transform = "scale(" + zoomValue + "," + zoomValue + ")";
+    // }
    },
 
   destroyed() { //离开这个界面之后，删除滚动事件，不然容易除bug
