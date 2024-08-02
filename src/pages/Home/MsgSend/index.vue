@@ -16,6 +16,7 @@
       <uploadPut ref="uploadFile" v-on:fileSuccess="fileSuccess"/> 
 
       <at
+      v-if="userRole == 0"
        :style= stateStatus
        :members="members" 
        :filter-match="filterMatch"
@@ -27,7 +28,6 @@
           <!-- <img :src="s.item.avatar"> -->
           <span v-text="s.item.nick_name"></span>
         </template>
-    
         <div
           ref="input"
           id = "sendMsg"
@@ -36,8 +36,10 @@
           placeholder="enter 发送消息  shift+@ 可以@他人，复制不可以哦！"
                   contenteditable>
              {{ emo }} 
-        </div>       
+        </div>  
+
       </at>
+      <div class="login"><el-button  v-if="userRole == 1" @click="login" type="primary" round>请先登录...</el-button></div>
 
       </div>
  </template>
@@ -65,6 +67,7 @@
         drawer: false,
         direction: 'btt',
         user_id:this.$store.state.user.userInfo.user_id, // 用户ID
+        userRole:this.$store.state.user.userInfo.user_role,
         nick_name:this.$store.state.user.userInfo.nick_name, // 昵称
         userLogo:this.$store.state.user.userInfo.photo, // 头像
         room_id:this.$store.state.user.roomInfo.room_id, // 房间ID
@@ -105,15 +108,15 @@
     },
       
     sockets: {
-      async roomCallback (data) { 
+      async roomCallback (result) { 
 
-        if (data.length <=0) {
-          this.$alert("参数为空，请重新参数")
-        }
+        console.log("roomCallback::",result)
+        var data = result.data
+        if (result.code != 10000 || data.length <=0 ) return this.$alert(" 请求失败，请重新请求");
         var user_id = data.user_id
         var room_id = data.room_id
         var contactList = data.contactList
-        console.log("roomCallback::",data)
+
         // 获取服务端发来的数据
         await this.$store.dispatch("getMessage", data).then(res =>{
             this.$refs.uploadFile.getMsg(data);
@@ -155,7 +158,13 @@
   
 methods: {
 
+  login() {
+        this.$router.push('/login')
+      },
+
       handleMousedown(e) {
+        if(this.userRole === 1 ) return;
+
         if (this.showDialog && !this.$el.contains(event.target)) {
             this.toogleDialogEmoji()
           }
@@ -242,12 +251,13 @@ methods: {
       
     
       upload() {
-
+        if (this.userRole === 1 ) return;
         let filebutton = this.$refs.uploadFile.$refs.uploadfileBut;
         filebutton.$el.click() 
       },
  
       btnClick() {
+           if (this.userRole === 1 ) return;
           // 更多参数 和使用可以看它包里面的README.md文件
           const screenShotHandler = new ScreenShort({
             // 是否启用webrtc，值为boolean类型，值为false则使用html2canvas来截图
@@ -381,6 +391,7 @@ methods: {
         this.stateStatus = style
       },
       selectMsg(val) {
+        if(this.userRole === 1 ) return;
         // 选择emoji后调用的函数
          // 定义最后光标对象
         var lastEditRange;
@@ -431,6 +442,7 @@ methods: {
 
       // 发送
       msgSend(event){
+        if(this.userRole === 1 ) return;
         this.$socket.open(); 
         let html = document.getElementById('sendMsg');
         let text = this.spaceTrim(html.innerText)
@@ -463,6 +475,7 @@ methods: {
        */
       sendAudio(data)
       {
+        if(this.userRole === 1 ) return;
         
         if (data.length <=0) {
           this.$alert("参数为空，请重新参数")
@@ -492,7 +505,8 @@ methods: {
             "room_id": room_id,
             "user_id": user_id,
             "nick_name": nick_name,     
-            "userLogo":userLogo,           
+            "userLogo":userLogo,
+            "userRole": this.userRole,         
         };
         return msgData;
       }
@@ -520,14 +534,14 @@ methods: {
     left: 0px;
     right: 0px;
     padding-top: 10px;
-        height: 107px;
+    height: 107px;
     border-top: 1px solid #fff;
     background-color: white;
-      }
+    
+  }
   .msg-button {
     position: relative;
     height: 38px;
-    margin-top: -9px;
   }
   .msg-el-button {
     margin-right: 10px;
@@ -547,7 +561,7 @@ methods: {
     position: absolute;
      left: 70px;
     bottom: 124px;
-z-index: 2;
+    z-index: 2;
   }
 
   .send {
@@ -561,8 +575,10 @@ z-index: 2;
 
   }
 
+  .login {
+   text-align: center;
+  }
 
-  
 
   .userList {
     min-width: 100px;

@@ -72,7 +72,6 @@ router.beforeEach(async (to, from, next) => {
   //  next();
   //获取仓库中的token-----可以确定用户是登录了
    let token  = store.state.user.token;
- 
    //用户登录了
    if(token != null && to.meta.requiresAuth ){
      //已经登录而且还想去登录------不行
@@ -82,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
             debug: true,
             // 正式 https://teaim.cn
             // 测试 http://127.0.0.1:9502
-            connection: Manager.connect("https://teaim.cn", {
+            connection: Manager.connect("http://127.0.0.1:9502", {
               connectionStateRecovery: {
                 // the backup duration of the sessions and the packets
                 maxDisconnectionDuration: 2 * 60 * 1000,
@@ -101,10 +100,16 @@ router.beforeEach(async (to, from, next) => {
             
           }));
           
-          let room_id = store.state.user.roomInfo.room_id ? store.state.user.roomInfo.room_id:1
+          let room_id = store.state.user.roomInfo.room_id??1;
           console.log("room_id::",room_id)
-          await store.dispatch('getRoomInfo',room_id);
-          next();
+          await store.dispatch('getRoomInfo',room_id).then(res => {
+          console.log('res::',res);
+          if(res){
+            // 登录成功跳转页面
+            next();
+          }
+         });          
+         
        
         } catch (error) {        
           //token失效从新登录
@@ -113,7 +118,28 @@ router.beforeEach(async (to, from, next) => {
         }
        
   } else {
-    let toPath = to.path; //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
+   
+    
+    // let toPath = to.path; //把未登录的时候向去而没有去成的信息，存储于地址栏中【路由】
+    console.log("未登录1")
+
+    if (to.name == 'Home') {
+      console.log("未登录"+to.name )
+      // 游客登录
+      await store.dispatch('userLogin',{"user_role":1}).then(res=>{
+        if (res.code !== 10000) {
+          next({ name: 'Login' })
+        }
+        // 登录成功跳转页面
+        router.push('/');
+
+      })
+      return
+
+      
+    }
+    
+   
     // 删除 token
     removeToken();
     // 删除授权

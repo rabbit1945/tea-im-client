@@ -85,7 +85,7 @@
         this.stopRecorder();
         this.startEnd = false;
         this.isShowPermission = false;
-        this.$emit('statusClass',{'status':false});
+        this.$emit('statusClass',{'status':false}); 
        
       },
  
