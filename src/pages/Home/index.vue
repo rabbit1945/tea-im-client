@@ -1,5 +1,5 @@
 <template>
-  <el-container style="display: flex;justify-content: center;">
+  <el-container style="display: flex; align-items: center; justify-content: center;">
     <div class="wrap">
       <!-- 路由组件出口的地方 -->
       
