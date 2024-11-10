@@ -22,20 +22,20 @@ module.exports = defineConfig({
     proxy: {
      
       "/api": {
-        target: "http://127.0.0.1:8078/",
+        target: "http://localhost:8078/",
        
       },
 
       "/static": {
-        target: "http://127.0.0.1:8078/",
+        target: "http://localhost:8078/",
       },
 
       "/files": {
-        target: "http://127.0.0.1:8078/storage",
+        target: "http://localhost:8078/storage",
       },
 
       "/audio": {
-        target: "http://127.0.0.1:8078/storage",
+        target: "http://localhost:8078/storage",
       },
 
     },

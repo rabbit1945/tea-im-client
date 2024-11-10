@@ -463,6 +463,7 @@ methods: {
         msgData.content_type = content_type
         msgData.contactList = contactList      
         html.innerHTML = ""
+        console.log("发送消息::",msgData)
         this.$socket.volatile.emit('room',msgData); 
         event.preventDefault();  
       }, 
