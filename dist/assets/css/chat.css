@@ -1,0 +1,64 @@
+
+.cen {
+  
+    height: 100%;
+    width:1100px;
+    margin:auto;
+    
+}
+.wrap {
+    position: relative;
+    margin-left: 100px;
+    margin-top: 100px;
+    margin-right: 150px;
+    height: 100%;
+}
+
+
+.chatRoomName {
+    margin-left: 30px;
+    color:rgba(9, 7, 7, 0.77);
+}
+
+.peopleNumber {
+    display: block;
+    float: right;
+    margin-right: 47px;
+    color:rgba(9, 7, 7, 0.77);
+}
+
+.login  img {
+    display: block;
+    height: 50px;
+    width: 50px;
+    margin-top: 400px;
+    margin-left: 20px;
+
+}
+
+.register  img {
+    display: block;
+    height: 50px;
+    width: 50px;
+    padding-top: 10px;
+    margin-left: 20px;
+}
+
+
+
+.userId {
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
